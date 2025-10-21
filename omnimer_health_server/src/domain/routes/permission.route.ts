@@ -16,13 +16,11 @@ router.get(
   verifyAccessToken,
   //checkPermission("permission.getall"),
   checkPermission("bodyPart.update"),
-  permissionController.getAll.bind(permissionController)
+  permissionController.getAll
 );
-router.post(
-  "/",
-  verifyAccessToken,
-  permissionController.create.bind(permissionController)
-);
-router.delete("/:id", permissionController.delete.bind(permissionController));
+router.post("/", verifyAccessToken, permissionController.create);
+router.delete("/:id", permissionController.delete);
+router.get("/:id", permissionController.getById);
+router.put("/:id", verifyAccessToken, permissionController.update);
 
 export default router;

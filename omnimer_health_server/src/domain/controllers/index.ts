@@ -1,3 +1,3 @@
-export { UserController } from "./user.controller";
-export { PermissionController } from "./permission.controller";
-export { RoleController } from "./role.controller";
+export * from "./auth.controller";
+export * from "./permission.controller";
+export * from "./role.controller";
