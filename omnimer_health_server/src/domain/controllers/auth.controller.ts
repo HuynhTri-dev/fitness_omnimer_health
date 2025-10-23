@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { AuthService } from "../services/auth.service";
+import { AuthService } from "../services/Auth.service";
 import { HttpError } from "../../utils/HttpError";
 import {
   sendBadRequest,
@@ -39,7 +39,11 @@ export class AuthController {
     }
   };
 
-  refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+  createNewAccessToken = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { refreshToken } = req.body;
 
@@ -48,7 +52,9 @@ export class AuthController {
         return;
       }
 
-      const newTokens = await this.authService.refreshToken(refreshToken);
+      const newTokens = await this.authService.createNewAccessToken(
+        refreshToken
+      );
 
       return sendSuccess(res, newTokens, "Tokens refreshed successfully");
     } catch (err: any) {

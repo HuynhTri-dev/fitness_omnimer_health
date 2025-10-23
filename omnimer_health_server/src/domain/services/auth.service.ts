@@ -1,4 +1,4 @@
-import { UserRepository } from "../repositories/user.repository";
+import { UserRepository } from "../repositories";
 import { IUser } from "../models";
 import { JwtUtils } from "../../utils/JwtUtils";
 import { logAudit, logError } from "../../utils/LoggerUtil";
@@ -96,7 +96,7 @@ export class AuthService {
     }
   }
 
-  async refreshToken(refreshToken: string) {
+  async createNewAccessToken(refreshToken: string) {
     try {
       const decoded: any = JwtUtils.verifyRefreshToken(refreshToken);
 

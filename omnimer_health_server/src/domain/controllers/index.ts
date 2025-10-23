@@ -1,3 +1,4 @@
-export * from "./auth.controller";
-export * from "./permission.controller";
-export * from "./role.controller";
+export * from "./Auth.controller";
+export * from "./Permission.controller";
+export * from "./Role.controller";
+export * from "./BodyPart.controller";

@@ -1,4 +1,8 @@
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../common/constants/AppConstants";
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_PAGE,
+  DEFAULT_SORT,
+} from "../common/constants/AppConstants";
 import DateUtils from "./DateUtils";
 
 export interface PaginationQueryOptions {
@@ -34,7 +38,7 @@ export function buildQueryOptions(
       : DEFAULT_LIMIT;
 
   // 🔹 Xử lý sort
-  let sortObj: Record<string, 1 | -1> | undefined;
+  let sortObj: Record<string, 1 | -1> = DEFAULT_SORT;
   if (parsedQuery.sort && parsedQuery.sort !== "null") {
     const fields = parsedQuery.sort.split(",");
     const obj: Record<string, 1 | -1> = {};

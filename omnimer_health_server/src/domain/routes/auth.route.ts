@@ -14,4 +14,6 @@ router.post("/register", authController.register);
 
 router.post("/login", authController.login);
 
+router.post("/new-access-token", authController.createNewAccessToken);
+
 export default router;
