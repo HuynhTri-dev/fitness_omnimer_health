@@ -6,8 +6,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@types/*": ["types/*"],
-      "@utils/*": ["utils/*"]
+      "@app/*": ["src/app/*"],
+      "@data/*": ["src/data/*"],
+      "@domain/*": ["src/domain/*"],
+      "@presentation/*": ["src/presentation/*"],
+      "@services/*": ["src/services/*"],
+      "@utils/*": ["src/utils/*"],
+      "@types/*": ["src/app/types/*"]
     },
     "noImplicitAny": true,
     "noUnusedLocals": true,
