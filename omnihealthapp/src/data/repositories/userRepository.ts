@@ -9,10 +9,12 @@ import {
 import { post } from '../api/callAPI';
 import { IAuthResponse } from '../entities/AuthReponse';
 import { API_ENDPOINTS } from '../api/endPoint';
+import { IUserRepository } from '@/domain/interfaces/IUserRepository';
 
-export class UserRepository {
+export class UserRepository implements IUserRepository {
   async register(
     userData: Partial<IUser>,
+    password: string,
     avatarFile?: any,
   ): Promise<ApiResponse<IAuthResponse>> {
     const formData = new FormData();
@@ -21,6 +23,7 @@ export class UserRepository {
       if (value !== undefined && value !== null) formData.append(key, value);
     });
     if (avatarFile) formData.append('image', avatarFile);
+    formData.append('password', password);
 
     const res = await post<IAuthResponse>(API_ENDPOINTS.AUTH.LOGIN, {
       body: formData,
