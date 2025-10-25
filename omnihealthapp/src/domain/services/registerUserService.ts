@@ -2,6 +2,7 @@ import { FirebaseAuthService } from '@/services/firebaseAuthService';
 import { IUserRepository } from '@/domain/interfaces/IUserRepository';
 import { ApiResponse } from '@/app/types/ApiResponse';
 import { IUser } from '@/data/models/User.model';
+import { IAuthResponse } from '@/data/entities/AuthReponse';
 
 export class RegisterUserService {
   constructor(private userRepo: IUserRepository) {}
@@ -11,11 +12,12 @@ export class RegisterUserService {
    * 1. Tạo user trên Firebase Auth -> lấy uid
    * 2. Gửi thông tin user + uid + avatar lên backend
    */
+
   async execute(
     userData: Partial<IUser>,
     password: string,
     avatarFile?: any,
-  ): Promise<ApiResponse<IUser>> {
+  ): Promise<ApiResponse<IAuthResponse>> {
     if (!userData.email || !password) {
       return Promise.reject({
         success: false,
@@ -29,6 +31,6 @@ export class RegisterUserService {
     userData.uid = uid;
 
     // 2️⃣ Gửi lên backend
-    return this.userRepo.register(userData, avatarFile);
+    return this.userRepo.register(userData, password, avatarFile);
   }
 }

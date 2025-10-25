@@ -1,23 +1,23 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { IUser } from '@/data/models/User.model';
 import { encryptedStorage, STORAGE_KEYS } from '@/config/storageManager';
 import { RegisterUserService } from '@/domain/services/registerUserService';
 import { UserRepository } from '@/data/repositories/userRepository';
 import { ApiResponse } from '@/app/types/ApiResponse';
+import { IAuthResponse } from '@/data/entities/AuthReponse';
+
+// State
 
 // Khởi tạo service
 const registerService = new RegisterUserService(new UserRepository());
 
 interface AuthState {
-  user: IUser | null;
-  accessToken: string | null;
+  authRes: IAuthResponse | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
-  user: null,
-  accessToken: null,
+  authRes: null,
   loading: false,
   error: null,
 };
@@ -52,8 +52,7 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     logout(state) {
-      state.user = null;
-      state.accessToken = null;
+      state.authRes = null;
       encryptedStorage.set(STORAGE_KEYS.ACCESS_TOKEN, '');
     },
   },
@@ -65,16 +64,14 @@ export const authSlice = createSlice({
       })
       .addCase(
         registerUser.fulfilled,
-        (state, action: PayloadAction<ApiResponse<IUser>>) => {
+        (state, action: PayloadAction<ApiResponse<IAuthResponse>>) => {
           state.loading = false;
-          state.user = action.payload.data ?? null;
-          // AccessToken lưu nếu backend trả về
-          state.accessToken = (action.payload.data as any)?.accessToken ?? null;
+          state.authRes = action.payload.data ?? null;
         },
       )
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload ?? 'Đăng ký thất bại';
+        state.error = action.error ?? 'Đăng ký thất bại';
       });
   },
 });
