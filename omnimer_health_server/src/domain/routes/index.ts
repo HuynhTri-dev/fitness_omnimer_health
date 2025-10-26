@@ -8,6 +8,7 @@ import exerciseTypeRoute from "./exercise-type.route";
 import muscleRoute from "./muscle.route";
 import exerciseCategoryRoute from "./exercise-category.route";
 import exerciseRatingRoute from "./exercise-rating.route";
+import exerciseRoute from "./exercise.route";
 
 function setupRoutes(app: Express) {
   app.use("/api/v1/permission", permissionRoute);
@@ -19,5 +20,6 @@ function setupRoutes(app: Express) {
   app.use("/api/v1/muscle", muscleRoute);
   app.use("/api/v1/exercise-category", exerciseCategoryRoute);
   app.use("/api/v1/exercise-rating", exerciseRatingRoute);
+  app.use("/api/v1/exercise", exerciseRoute);
 }
 export default setupRoutes;

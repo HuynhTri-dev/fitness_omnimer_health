@@ -64,3 +64,30 @@ export const uploadMultipleImages = (fieldName: string, maxCount = 5) =>
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: fileFilterBuilder(FILE_TYPES.image),
   }).array(fieldName, maxCount);
+
+/**
+ * Upload đồng thời 1 ảnh và 1 video
+ * @param imageField tên field ảnh (vd: "image")
+ * @param videoField tên field video (vd: "video")
+ */
+export const uploadImageAndVideo = (
+  imageField: string = "image",
+  videoField: string = "video"
+) =>
+  multer({
+    storage,
+    limits: {
+      fileSize: 50 * 1024 * 1024, // cho phép tối đa 50MB (ưu tiên video)
+    },
+    fileFilter(req, file, cb) {
+      const allowedTypes = [...FILE_TYPES.image, ...FILE_TYPES.video];
+      if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new HttpError(400, "File này không được phép"));
+      }
+    },
+  }).fields([
+    { name: imageField, maxCount: 1 }, // chỉ 1 ảnh
+    { name: videoField, maxCount: 1 }, // chỉ 1 video
+  ]);

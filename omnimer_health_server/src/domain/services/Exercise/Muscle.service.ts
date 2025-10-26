@@ -94,12 +94,16 @@ export class MuscleService {
         }
       }
 
-      const updated = await this.muscleRepository.update(id, {
-        name: data.name || muscle.name,
-        bodyPartIds: data.bodyPartIds || muscle.bodyPartIds,
-        description: data.description ?? muscle.description,
-        imageUrl,
-      });
+      const updated = await this.muscleRepository.updateWithSession(
+        id,
+        {
+          name: data.name || muscle.name,
+          bodyPartIds: data.bodyPartIds || muscle.bodyPartIds,
+          description: data.description ?? muscle.description,
+          imageUrl,
+        },
+        session
+      );
 
       await session.commitTransaction();
 

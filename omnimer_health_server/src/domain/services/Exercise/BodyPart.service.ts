@@ -93,11 +93,15 @@ export class BodyPartService {
         }
       }
 
-      const updated = await this.bodyPartRepository.update(id, {
-        name: data.name || bodyPart.name,
-        description: data.description ?? bodyPart.description,
-        imageUrl,
-      });
+      const updated = await this.bodyPartRepository.updateWithSession(
+        id,
+        {
+          name: data.name || bodyPart.name,
+          description: data.description ?? bodyPart.description,
+          imageUrl,
+        },
+        session
+      );
 
       await session.commitTransaction();
 

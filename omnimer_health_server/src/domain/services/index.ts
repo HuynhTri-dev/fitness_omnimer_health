@@ -7,3 +7,4 @@ export * from "./Exercise/ExerciseType.service";
 export * from "./Exercise/Muscle.service";
 export * from "./Exercise/ExerciseCategory.service";
 export * from "./Exercise/ExerciseRating.service";
+export * from "./Exercise/Exercise.service";

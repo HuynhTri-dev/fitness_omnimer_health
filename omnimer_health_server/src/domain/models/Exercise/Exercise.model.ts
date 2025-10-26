@@ -12,8 +12,8 @@ export interface IExercise extends Document {
   description?: string | null;
   instructions?: string;
 
-  equipment: Types.ObjectId[]; // ref: Equipment
-  bodyPart: Types.ObjectId[]; // ref: BodyPart
+  equipments: Types.ObjectId[]; // ref: Equipment
+  bodyParts: Types.ObjectId[]; // ref: BodyPart
   mainMuscles?: Types.ObjectId[]; // ref: Muscle
   secondaryMuscles?: Types.ObjectId[]; // ref: Muscle
   exerciseTypes: Types.ObjectId[]; // ref: ExerciseType
@@ -24,7 +24,7 @@ export interface IExercise extends Document {
   imageUrl?: string | null;
   videoUrl?: string | null;
 
-  rating?: { avg: number; count: number };
+  met?: number | null;
 }
 
 const exerciseSchema = new Schema<IExercise>(
@@ -35,11 +35,11 @@ const exerciseSchema = new Schema<IExercise>(
     description: { type: String, default: null },
     instructions: { type: String, default: null },
 
-    equipment: {
+    equipments: {
       type: [{ type: Schema.Types.ObjectId, ref: "Equipment" }],
       required: true,
     },
-    bodyPart: {
+    bodyParts: {
       type: [{ type: Schema.Types.ObjectId, ref: "BodyPart" }],
       required: true,
     },
@@ -69,13 +69,7 @@ const exerciseSchema = new Schema<IExercise>(
     imageUrl: { type: String, default: null },
     videoUrl: { type: String, default: null },
 
-    rating: {
-      type: {
-        avg: { type: Number, default: 0 },
-        count: { type: Number, default: 0 },
-      },
-      default: { avg: 0, count: 0 },
-    },
+    met: { type: Number, default: null },
   },
   { timestamps: true }
 );

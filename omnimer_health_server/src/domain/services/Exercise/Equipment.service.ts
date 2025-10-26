@@ -94,11 +94,15 @@ export class EquipmentService {
         }
       }
 
-      const updated = await this.equipmentRepository.update(id, {
-        name: data.name || equipment.name,
-        description: data.description ?? equipment.description,
-        imageUrl,
-      });
+      const updated = await this.equipmentRepository.updateWithSession(
+        id,
+        {
+          name: data.name || equipment.name,
+          description: data.description ?? equipment.description,
+          imageUrl,
+        },
+        session
+      );
 
       await session.commitTransaction();
 

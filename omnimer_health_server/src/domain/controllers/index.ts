@@ -7,3 +7,4 @@ export * from "./Exercise/ExerciseType.controller";
 export * from "./Exercise/Muscle.controller";
 export * from "./Exercise/ExerciseCategory.controller";
 export * from "./Exercise/ExerciseRating.controller";
+export * from "./Exercise/Exercise.controller";

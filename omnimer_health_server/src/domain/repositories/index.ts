@@ -9,3 +9,4 @@ export * from "./Exercise/ExerciseType.repository";
 export * from "./Exercise/Muscle.repository";
 export * from "./Exercise/ExerciseCategory.repository";
 export * from "./Exercise/ExerciseRating.repository";
+export * from "./Exercise/Exercise.repository";
