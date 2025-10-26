@@ -136,4 +136,22 @@ export class BaseRepository<T> {
       throw e;
     }
   }
+
+  /**
+   * Cập nhật một bản ghi theo ID (có hỗ trợ transaction session)
+   */
+  async updateWithSession(
+    id: string,
+    data: UpdateQuery<T>,
+    session: ClientSession
+  ): Promise<T | null> {
+    try {
+      if (!Types.ObjectId.isValid(id)) return null;
+      return this.model
+        .findByIdAndUpdate(id, data, { new: true, session })
+        .exec();
+    } catch (e) {
+      throw e;
+    }
+  }
 }

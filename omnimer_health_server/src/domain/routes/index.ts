@@ -2,10 +2,13 @@ import { Express } from "express";
 import permissionRoute from "./permission.route";
 import roleRoute from "./role.route";
 import authRoute from "./auth.route";
-import bodyPartRoute from "./bodyPart.route";
+import bodyPartRoute from "./body-part.route";
 import equipmentRoute from "./equipment.route";
 import exerciseTypeRoute from "./exercise-type.route";
 import muscleRoute from "./muscle.route";
+import exerciseCategoryRoute from "./exercise-category.route";
+import exerciseRatingRoute from "./exercise-rating.route";
+import exerciseRoute from "./exercise.route";
 
 function setupRoutes(app: Express) {
   app.use("/api/v1/permission", permissionRoute);
@@ -15,5 +18,8 @@ function setupRoutes(app: Express) {
   app.use("/api/v1/equipment", equipmentRoute);
   app.use("/api/v1/exercise-type", exerciseTypeRoute);
   app.use("/api/v1/muscle", muscleRoute);
+  app.use("/api/v1/exercise-category", exerciseCategoryRoute);
+  app.use("/api/v1/exercise-rating", exerciseRatingRoute);
+  app.use("/api/v1/exercise", exerciseRoute);
 }
 export default setupRoutes;
