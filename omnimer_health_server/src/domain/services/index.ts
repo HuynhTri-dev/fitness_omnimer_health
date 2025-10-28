@@ -1,6 +1,11 @@
 export * from "./Profile/Auth.service";
+export * from "./Profile/User.service";
+export * from "./Profile/HealthProfile.service";
+export * from "./Profile/Goal.service";
+
 export * from "./System/Permission.service";
 export * from "./System/Role.service";
+
 export * from "./Exercise/BodyPart.service";
 export * from "./Exercise/Equipment.service";
 export * from "./Exercise/ExerciseType.service";

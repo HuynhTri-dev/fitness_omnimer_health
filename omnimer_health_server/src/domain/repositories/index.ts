@@ -1,8 +1,12 @@
-export { BaseRepository } from "./Base.repository";
-export { UserRepository } from "./Profile/User.repository";
-export { SystemLogRepository } from "./System/SystemLog.repository";
-export { RoleRepository } from "./System/Role.repository";
-export { PermissionRepository } from "./System/Permission.repository";
+export * from "./Base.repository";
+export * from "./Profile/User.repository";
+export * from "./Profile/HealthProfile.repository";
+export * from "./Profile/Goal.repository";
+
+export * from "./System/SystemLog.repository";
+export * from "./System/Role.repository";
+export * from "./System/Permission.repository";
+
 export * from "./Exercise/BodyPart.repository";
 export * from "./Exercise/Equipment.repository";
 export * from "./Exercise/ExerciseType.repository";

@@ -2,6 +2,8 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 import {
   ExperienceLevelEnum,
   ExperienceLevelTuple,
+  RiskLevelEnum,
+  RiskLevelTuple,
 } from "../../../common/constants/EnumConstants";
 
 export interface IBloodPressure {
@@ -16,18 +18,28 @@ export interface ICholesterol {
 }
 
 export interface IHealthStatus {
-  knownConditions: string[];
-  painLocations: string[];
-  jointIssues: string[];
-  injuries: string[];
-  abnormalities: string[];
-  notes?: string;
+  knownConditions?: string[]; // Danh sách các bệnh/chứng đã biết (ví dụ: "Tăng huyết áp", "Tiểu đường type 2")
+  painLocations?: string[]; // Các vị trí đau hiện tại trên cơ thể (ví dụ: "Lưng dưới", "Gối phải")
+  jointIssues?: string[]; // Vấn đề về khớp (ví dụ: "Thoái hóa khớp gối", "Viêm khớp vai")
+  injuries?: string[]; // Các chấn thương (hiện tại hoặc trước đây) (ví dụ: "Gãy tay", "Trật cổ chân")
+  abnormalities?: string[]; // Bất thường khác trong cơ thể (ví dụ: "Mạch nhanh", "Rối loạn nhịp tim")
+  notes?: string; // Ghi chú bổ sung (tùy chọn) - ví dụ: “Đang trong quá trình phục hồi sau phẫu thuật”
+}
+
+export interface IAiEvaluation {
+  summary: string; // Mô tả tổng quan (AI sinh ra)
+  score?: number; // Điểm đánh giá sức khỏe (0–100)
+  riskLevel?: RiskLevelEnum; // Mức rủi ro sức khỏe
+  updatedAt?: Date; // Lần cập nhật gần nhất
+  modelVersion?: string; // Phiên bản AI sử dụng
 }
 
 export interface IHealthProfile extends Document {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
+  checkupDate: Date;
 
+  age: number;
   height?: number;
   weight?: number;
   waist?: number;
@@ -49,13 +61,17 @@ export interface IHealthProfile extends Document {
   bloodSugar?: number;
 
   healthStatus?: IHealthStatus;
+
+  aiEvaluation?: IAiEvaluation;
 }
 
 const healthProfileSchema = new Schema<IHealthProfile>(
   {
     _id: { type: Schema.Types.ObjectId, auto: true },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    checkupDate: { type: Date, required: true, default: Date.now },
 
+    age: { type: Number, required: true },
     height: Number,
     weight: Number,
     waist: Number,
@@ -91,6 +107,14 @@ const healthProfileSchema = new Schema<IHealthProfile>(
       abnormalities: { type: [String], default: [] },
       notes: String,
     },
+
+    aiEvaluation: {
+      summary: { type: String, default: "" },
+      score: Number,
+      riskLevel: { type: String, enum: RiskLevelTuple },
+      updatedAt: Date,
+      modelVersion: String,
+    },
   },
   {
     timestamps: true, // createdAt & updatedAt
@@ -98,7 +122,7 @@ const healthProfileSchema = new Schema<IHealthProfile>(
 );
 
 // Index _userId để query nhanh
-healthProfileSchema.index({ _userId: 1 });
+healthProfileSchema.index({ _userId: 1, checkupDate: -1 });
 
 export const HealthProfile = mongoose.model<IHealthProfile>(
   "HealthProfile",
