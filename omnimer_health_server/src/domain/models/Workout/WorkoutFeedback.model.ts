@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types, Model } from "mongoose";
 
 // Interface cho Workout Feedback
 export interface IWorkoutFeedback extends Document {
-  _workoutId: Types.ObjectId; // liên kết đến Workout
+  workoutId: Types.ObjectId; // liên kết đến Workout
   suitability?: number; // 1-5
   workout_goal_achieved?: boolean;
   target_muscle_felt?: string;
@@ -15,7 +15,7 @@ export interface IWorkoutFeedback extends Document {
 
 const WorkoutFeedbackSchema: Schema<IWorkoutFeedback> = new Schema(
   {
-    _workoutId: {
+    workoutId: {
       type: Schema.Types.ObjectId,
       ref: "Workout",
       required: true,

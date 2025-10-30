@@ -158,7 +158,7 @@ export class WorkoutTemplateService {
    */
   async getWorkoutTemplateById(workoutTemplateId: string) {
     try {
-      const template = await this.workoutTemplateRepo.findById(
+      const template = await this.workoutTemplateRepo.getWorkoutTemplateById(
         workoutTemplateId
       );
 
@@ -190,7 +190,7 @@ export class WorkoutTemplateService {
    */
   async getAllWorkoutTemplates(options?: PaginationQueryOptions) {
     try {
-      return await this.workoutTemplateRepo.findAll({}, options);
+      return await this.workoutTemplateRepo.findAllWorkoutTemplate({}, options);
     } catch (err: any) {
       await logError({
         action: "getAllWorkoutTemplates",
@@ -217,7 +217,7 @@ export class WorkoutTemplateService {
     options?: PaginationQueryOptions
   ) {
     try {
-      return await this.workoutTemplateRepo.findAll(
+      return await this.workoutTemplateRepo.findAllWorkoutTemplate(
         { createdForUserId: userId },
         options
       );

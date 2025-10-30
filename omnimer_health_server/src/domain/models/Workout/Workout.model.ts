@@ -17,7 +17,7 @@ export interface IWorkoutSet {
 
 // 🔹 Interface cho từng bài tập trong buổi tập
 export interface IWorkoutDetail {
-  _exerciseId: Types.ObjectId;
+  exerciseId: Types.ObjectId;
   type: WorkoutDetailTypeEnum;
   sets: IWorkoutSet[];
   summary?: {
@@ -40,8 +40,8 @@ export interface IWorkoutDeviceSummary {
 // 🔹 Interface tổng cho Workout document
 export interface IWorkout extends Document {
   _id: Types.ObjectId;
-  _userId: Types.ObjectId;
-  _workoutTemplateId?: Types.ObjectId;
+  userId: Types.ObjectId;
+  workoutTemplateId?: Types.ObjectId;
   date: Date;
   totalDuration: number;
 
@@ -60,13 +60,13 @@ const WorkoutSchema: Schema<IWorkout> = new Schema(
       type: Schema.Types.ObjectId,
       auto: true,
     },
-    _userId: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
       index: true,
     },
-    _workoutTemplateId: {
+    workoutTemplateId: {
       type: Schema.Types.ObjectId,
       ref: "WorkoutTemplate",
     },
@@ -78,7 +78,7 @@ const WorkoutSchema: Schema<IWorkout> = new Schema(
     workoutDetail: {
       type: [
         {
-          _exerciseId: {
+          exerciseId: {
             type: Schema.Types.ObjectId,
             ref: "Exercise",
             required: true,
