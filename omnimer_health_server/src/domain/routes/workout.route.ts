@@ -21,9 +21,9 @@ const controller = new WorkoutController(service);
 const router = express.Router();
 
 router.post("/", verifyAccessToken, controller.create);
-router.get("/", controller.getAll);
+router.get("/", verifyAccessToken, controller.getAll);
 router.get("/user", verifyAccessToken, controller.getByUser);
-router.get("/:id", controller.getById);
+router.get("/:id", verifyAccessToken, controller.getById);
 router.put("/:id", verifyAccessToken, controller.update);
 router.delete("/:id", verifyAccessToken, controller.delete);
 router.post(

@@ -200,14 +200,16 @@ export class WorkoutService {
    * - For admin usage.
    * - Supports pagination and sorting.
    *
+   * @param userId - ID of the user requesting the data
    * @param options - Optional pagination and filtering options
    * @returns Paginated list of workout templates
    */
-  async getAllWorkouts(options?: PaginationQueryOptions) {
+  async getAllWorkouts(userId: string, options?: PaginationQueryOptions) {
     try {
       return await this.workoutRepo.findAllWorkout({}, options);
     } catch (err: any) {
       await logError({
+        userId,
         action: "getAllWorkouts",
         message: err.message || err,
         errorMessage: err.stack || err,

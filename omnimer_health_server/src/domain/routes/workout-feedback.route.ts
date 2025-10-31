@@ -1,22 +1,22 @@
 import express from "express";
 
-import { WorkoutTemplateController } from "../controllers";
-import { WorkoutTemplate } from "../models";
-import { WorkoutTemplateRepository } from "../repositories";
-import { WorkoutTemplateService } from "../services";
+import { WorkoutFeedbackController } from "../controllers";
+import { WorkoutFeedback } from "../models";
+import { WorkoutFeedbackRepository } from "../repositories";
+import { WorkoutFeedbackService } from "../services";
 import { verifyAccessToken } from "../../common/middlewares/auth.middleware";
 
-const service = new WorkoutTemplateService(
-  new WorkoutTemplateRepository(WorkoutTemplate)
+const service = new WorkoutFeedbackService(
+  new WorkoutFeedbackRepository(WorkoutFeedback)
 );
 
-const controller = new WorkoutTemplateController(service);
+const controller = new WorkoutFeedbackController(service);
 
 const router = express.Router();
 
 router.post("/", verifyAccessToken, controller.create);
 router.get("/", verifyAccessToken, controller.getAll);
-router.get("/user", verifyAccessToken, controller.getByUser);
+router.get("/workout/:workoutId", verifyAccessToken, controller.getByWorkoutId);
 router.get("/:id", verifyAccessToken, controller.getById);
 router.put("/:id", verifyAccessToken, controller.update);
 router.delete("/:id", verifyAccessToken, controller.delete);

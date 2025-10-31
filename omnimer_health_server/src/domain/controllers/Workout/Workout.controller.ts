@@ -92,8 +92,14 @@ export class WorkoutController {
    */
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const user = req.user as DecodePayload;
+      const userId = user?.id?.toString();
+      if (!userId) return sendUnauthorized(res);
       const options = buildQueryOptions(req.query as any);
-      const workouts = await this.workoutService.getAllWorkouts(options);
+      const workouts = await this.workoutService.getAllWorkouts(
+        userId,
+        options
+      );
       return sendSuccess(res, workouts, "Danh sách tất cả buổi tập");
     } catch (err) {
       next(err);
