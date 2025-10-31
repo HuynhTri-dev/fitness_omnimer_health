@@ -6,6 +6,7 @@ import {
 
 // 🔹 Interface cho từng set
 export interface IWorkoutSet {
+  _id: Types.ObjectId;
   setOrder: number;
   reps?: number;
   weight?: number;
@@ -13,28 +14,37 @@ export interface IWorkoutSet {
   distance?: number; // mét
   restAfterSetSeconds?: number;
   notes?: string;
+  done: boolean;
+}
+
+// 🔹 Interface cho dữ liệu thiết bị ở từng bài tập
+export interface IWorkoutDeviceData {
+  _id: Types.ObjectId;
+  heartRateAvg?: number;
+  heartRateMax?: number;
+  caloriesBurned?: number;
 }
 
 // 🔹 Interface cho từng bài tập trong buổi tập
 export interface IWorkoutDetail {
+  _id: Types.ObjectId;
   exerciseId: Types.ObjectId;
   type: WorkoutDetailTypeEnum;
   sets: IWorkoutSet[];
-  summary?: {
-    totalSets?: number;
-    totalReps?: number;
-    totalWeight?: number;
-    totalDuration?: number;
-    caloriesBurned?: number;
-    distance?: number;
-  };
+  durationMin?: number; // tổng thời gian cho bài tập (nếu có)
+  deviceData?: IWorkoutDeviceData; // dữ liệu từ thiết bị cho từng bài tập
 }
 
-// 🔹 Interface cho device summary
-export interface IWorkoutDeviceSummary {
-  heartRateAvg?: number;
-  heartRateMax?: number;
-  caloriesBurned?: number;
+// 🔹 Interface tổng hợp cuối buổi
+export interface IWorkoutSummary {
+  heartRateAvgAllWorkout?: number;
+  heartRateMaxAllWorkout?: number;
+  totalSets?: number;
+  totalReps?: number;
+  totalWeight?: number;
+  totalDuration?: number;
+  totalCalories?: number;
+  totalDistance?: number;
 }
 
 // 🔹 Interface tổng cho Workout document
@@ -42,13 +52,11 @@ export interface IWorkout extends Document {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
   workoutTemplateId?: Types.ObjectId;
-  date: Date;
-  totalDuration: number;
-
+  timeStart: Date;
   notes?: string;
 
   workoutDetail: IWorkoutDetail[];
-  deviceSummary?: IWorkoutDeviceSummary;
+  summary?: IWorkoutSummary; // tổng kết toàn buổi
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -56,10 +64,7 @@ export interface IWorkout extends Document {
 // 🔹 Schema cho Workout
 const WorkoutSchema: Schema<IWorkout> = new Schema(
   {
-    _id: {
-      type: Schema.Types.ObjectId,
-      auto: true,
-    },
+    _id: { type: Schema.Types.ObjectId, auto: true },
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -71,8 +76,7 @@ const WorkoutSchema: Schema<IWorkout> = new Schema(
       ref: "WorkoutTemplate",
     },
 
-    date: { type: Date, default: Date.now },
-    totalDuration: { type: Number, default: 0 },
+    timeStart: { type: Date, default: Date.now },
     notes: { type: String },
 
     workoutDetail: {
@@ -98,32 +102,34 @@ const WorkoutSchema: Schema<IWorkout> = new Schema(
                 distance: { type: Number },
                 restAfterSetSeconds: { type: Number, default: 0 },
                 notes: { type: String },
+                done: { type: Boolean, default: false },
               },
             ],
             default: [],
           },
-          summary: {
-            totalSets: { type: Number },
-            totalReps: { type: Number },
-            totalWeight: { type: Number },
-            totalDuration: { type: Number },
-            caloriesBurned: { type: Number },
-            distance: { type: Number },
+          durationMin: { type: Number },
+          deviceData: {
+            heartRateAvg: Number,
+            heartRateMax: Number,
+            caloriesBurned: Number,
           },
         },
       ],
       default: [],
     },
 
-    deviceSummary: {
-      heartRateAvg: Number,
-      heartRateMax: Number,
-      caloriesBurned: Number,
+    summary: {
+      totalSets: Number,
+      totalReps: Number,
+      totalWeight: Number,
+      totalDuration: Number,
+      totalCalories: Number,
+      totalDistance: Number,
+      heartRateAvgAllWorkout: Number,
+      heartRateMaxAllWorkout: Number,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 // 🔹 Export model

@@ -13,6 +13,7 @@ import userRoute from "./user.route";
 import healthProfileRoute from "./health-profile.route";
 import goalRoute from "./goal.route";
 import workoutTemplateRoute from "./workout-template.route";
+import workoutRoute from "./workout.route";
 
 function setupRoutes(app: Express) {
   // System
@@ -33,6 +34,7 @@ function setupRoutes(app: Express) {
   app.use("/api/v1/exercise", exerciseRoute);
   // Workout
   app.use("/api/v1/workout-template", workoutTemplateRoute);
+  app.use("/api/v1/workout", workoutRoute);
   // Deices
 }
 export default setupRoutes;
