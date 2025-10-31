@@ -9,11 +9,23 @@ import muscleRoute from "./muscle.route";
 import exerciseCategoryRoute from "./exercise-category.route";
 import exerciseRatingRoute from "./exercise-rating.route";
 import exerciseRoute from "./exercise.route";
+import userRoute from "./user.route";
+import healthProfileRoute from "./health-profile.route";
+import goalRoute from "./goal.route";
+import workoutTemplateRoute from "./workout-template.route";
+import workoutRoute from "./workout.route";
+import workoutFeedbackRoute from "./workout-feedback.route";
 
 function setupRoutes(app: Express) {
+  // System
   app.use("/api/v1/permission", permissionRoute);
   app.use("/api/v1/role", roleRoute);
+  // Profile
   app.use("/api/v1/auth", authRoute);
+  app.use("/api/v1/user", userRoute);
+  app.use("/api/v1/health-profile", healthProfileRoute);
+  app.use("/api/v1/goal", goalRoute);
+  // Exercise
   app.use("/api/v1/body-part", bodyPartRoute);
   app.use("/api/v1/equipment", equipmentRoute);
   app.use("/api/v1/exercise-type", exerciseTypeRoute);
@@ -21,5 +33,10 @@ function setupRoutes(app: Express) {
   app.use("/api/v1/exercise-category", exerciseCategoryRoute);
   app.use("/api/v1/exercise-rating", exerciseRatingRoute);
   app.use("/api/v1/exercise", exerciseRoute);
+  // Workout
+  app.use("/api/v1/workout-template", workoutTemplateRoute);
+  app.use("/api/v1/workout", workoutRoute);
+  app.use("/api/v1/workout-feedback", workoutFeedbackRoute);
+  // Deices
 }
 export default setupRoutes;

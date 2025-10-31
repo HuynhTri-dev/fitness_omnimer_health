@@ -81,3 +81,16 @@ export const WorkoutDetailTypeTuple = Object.values(WorkoutDetailTypeEnum) as [
   WorkoutDetailTypeEnum,
   ...WorkoutDetailTypeEnum[]
 ];
+
+//  =================== RISK LEVEL ===================
+export enum RiskLevelEnum {
+  Low = "low",
+  Medium = "Medium",
+  High = "high",
+  Unknown = "",
+}
+
+export const RiskLevelTuple = Object.values(RiskLevelEnum) as [
+  RiskLevelEnum,
+  ...RiskLevelEnum[]
+];
