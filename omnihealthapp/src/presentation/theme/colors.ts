@@ -3,7 +3,7 @@ export const COLORS = {
   WHITE: '#FFFFFF',
   BLACK: '#000000',
   PRIMARY: '#5EAFD8',
-  SECONDARY: '#2A96C8',
+  SECONDARY: '#338BAB',
 
   // UI Colors
   BACKGROUND: '#F8F9FA',
@@ -13,6 +13,9 @@ export const COLORS = {
   WARNING: '#FFCC00',
   INFO: '#5856D6',
 
+  // Danger Color
+  DANGER: '#E15858',
+  DANGER_HOVER: '#B84343',
   // Gray Scale
   GRAY_100: '#F8F9FA',
   GRAY_200: '#E9ECEF',

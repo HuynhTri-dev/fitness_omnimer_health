@@ -71,7 +71,11 @@ export const authSlice = createSlice({
       )
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error ?? 'Đăng ký thất bại';
+        // action.payload will contain the message when rejectWithValue is used
+        state.error =
+          (action.payload as unknown as string) ??
+          action.error?.message ??
+          'Đăng ký thất bại';
       })
       .addCase(loginUser.pending, state => {
         state.loading = true;
@@ -86,7 +90,10 @@ export const authSlice = createSlice({
       )
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error ?? 'Đăng nhập thất bại';
+        state.error =
+          (action.payload as unknown as string) ??
+          action.error?.message ??
+          'Đăng nhập thất bại';
       });
   },
 });
