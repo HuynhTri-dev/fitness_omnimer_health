@@ -31,6 +31,7 @@ class RouteConfig {
           create: (_) => RegisterCubit(
             registerUseCase: sl(),
             authenticationBloc: sl<AuthenticationBloc>(),
+            getRolesForSelectBoxUseCase: sl(),
           ),
           child: const RegisterScreen(),
         );
@@ -54,7 +55,7 @@ class RouteConfig {
   // ==================== BUILD AUTHENTICATED PAGES ====================
   static Widget buildPage({
     required String routeName,
-    required String? role,
+    required List<String>? role,
     Map<String, dynamic>? arguments,
   }) {
     // Kiểm tra quyền truy cập
@@ -81,7 +82,7 @@ class RouteConfig {
   }
 
   // ==================== BUILD MAIN SCREEN BY ROLE ====================
-  static Widget? _buildMainScreenByRole(String? role) {
+  static Widget? _buildMainScreenByRole(List<String>? role) {
     // TODO: Return AdminMainScreen by role
     // final normalizedRole = RoleGuard.getNormalizedRole(role);
 
@@ -103,7 +104,7 @@ class RouteConfig {
 
   // ==================== COMMON SCREENS ====================
   static Widget _buildProfileScreen(
-    String? role,
+    List<String>? role,
     Map<String, dynamic>? arguments,
   ) {
     // TODO: Implement profile screen với custom layout theo role
@@ -111,7 +112,7 @@ class RouteConfig {
   }
 
   static Widget _buildSettingsScreen(
-    String? role,
+    List<String>? role,
     Map<String, dynamic>? arguments,
   ) {
     // TODO: Implement settings screen
@@ -155,7 +156,7 @@ class RouteConfig {
 
 /// Trang hiển thị khi không đủ quyền
 class _ForbiddenPage extends StatelessWidget {
-  final String? role;
+  final List<String>? role;
   final String routeName;
 
   const _ForbiddenPage({required this.role, required this.routeName});
