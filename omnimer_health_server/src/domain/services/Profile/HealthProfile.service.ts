@@ -44,6 +44,8 @@ export class HealthProfileService {
         data.userId?.toString() ?? userId
       );
 
+      console.log("User: ", user);
+
       // Compute key health metrics (e.g., BMI, body fat, etc.)
       const metrics = calculateHealthMetrics({
         gender: user?.gender,
@@ -59,6 +61,8 @@ export class HealthProfileService {
         muscleMass: data.muscleMass,
         whr: data.whr,
       });
+
+      console.log("User metrics: ", metrics);
 
       // Prepare input for AI model evaluation
       const aiInput = {
