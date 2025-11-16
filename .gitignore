@@ -122,3 +122,9 @@ build/
 
 # Example or test data
 app-example/
+
+# Generate Data
+exercises/
+
+# Data Training
+3T-FIT/DATA/data/

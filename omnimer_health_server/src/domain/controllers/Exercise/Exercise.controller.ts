@@ -22,16 +22,15 @@ export class ExerciseController {
       const userId = user?.id?.toString();
       if (!userId) return sendUnauthorized(res);
 
-      // Khi dùng multer.fields → files là Record<string, Express.Multer.File[]>
       const files = req.files as
         | Record<string, Express.Multer.File[]>
         | undefined;
-      const imageFile = files?.image?.[0];
+      const imageFiles = files?.image; // lấy tất cả ảnh
       const videoFile = files?.video?.[0];
 
       const exercise = await this.exerciseService.createExercise(
         userId,
-        imageFile,
+        imageFiles,
         videoFile,
         req.body
       );
@@ -53,13 +52,13 @@ export class ExerciseController {
       const files = req.files as
         | Record<string, Express.Multer.File[]>
         | undefined;
-      const imageFile = files?.image?.[0];
+      const imageFiles = files?.image;
       const videoFile = files?.video?.[0];
 
       const updated = await this.exerciseService.updateExercise(
         userId,
         id,
-        imageFile,
+        imageFiles,
         videoFile,
         req.body
       );
