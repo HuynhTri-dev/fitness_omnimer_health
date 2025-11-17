@@ -35,7 +35,7 @@ export class ExerciseController {
         req.body
       );
 
-      return sendCreated(res, exercise, "Tạo bài tập thành công");
+      return sendCreated(res, exercise, "Create exercise success");
     } catch (err) {
       next(err);
     }
@@ -63,7 +63,7 @@ export class ExerciseController {
         req.body
       );
 
-      return sendSuccess(res, updated, "Cập nhật bài tập thành công");
+      return sendSuccess(res, updated, "Update exercise success");
     } catch (err) {
       next(err);
     }
@@ -76,7 +76,20 @@ export class ExerciseController {
 
       const list = await this.exerciseService.getAllExercises(options);
 
-      return sendSuccess(res, list, "Lấy danh sách bài tập thành công");
+      return sendSuccess(res, list);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  // =================== GET ALL ===================
+  getById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id;
+
+      const exercise = await this.exerciseService.getExerciseById(id);
+
+      return sendSuccess(res, exercise);
     } catch (err) {
       next(err);
     }
@@ -92,7 +105,7 @@ export class ExerciseController {
       const { id } = req.params;
       await this.exerciseService.deleteExercise(userId, id);
 
-      return sendSuccess(res, true, "Xoá bài tập thành công");
+      return sendSuccess(res, true, "Delete exercise success");
     } catch (err) {
       next(err);
     }

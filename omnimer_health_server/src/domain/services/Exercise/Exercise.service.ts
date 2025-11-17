@@ -175,16 +175,28 @@ export class ExerciseService {
   // =================== GET ALL ===================
   async getAllExercises(options?: PaginationQueryOptions) {
     try {
-      const list = await this.exerciseRepository.findAll({}, options);
-      await logAudit({
-        action: "getAllExercises",
-        message: "Lấy danh sách exercises",
-        status: StatusLogEnum.Success,
-      });
+      const list = await this.exerciseRepository.getExercises(options);
+
       return list;
     } catch (err: any) {
       await logError({
         action: "getAllExercises",
+        message: err.message || err,
+        errorMessage: err.stack || err,
+      });
+      throw err;
+    }
+  }
+
+  // =================== GET ALL ===================
+  async getExerciseById(id: string) {
+    try {
+      const exercise = await this.exerciseRepository.getExerciseById(id);
+
+      return exercise;
+    } catch (err: any) {
+      await logError({
+        action: "getExerciseById",
         message: err.message || err,
         errorMessage: err.stack || err,
       });

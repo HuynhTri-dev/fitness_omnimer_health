@@ -179,6 +179,33 @@ export class HealthProfileService {
     }
   }
 
+  /**
+   * Retrieve a specific health profile by userId.
+   *
+   * @param userId - The ID of the userId in health profile.
+   * @returns The corresponding HealthProfile document.
+   *
+   * @throws HttpError - If the profile does not exist.
+   */
+  async getHealthProfileLatestByUserId(userId: string) {
+    try {
+      const healthProfile =
+        await this.healthProfileRepo.getHealthProfileLatestByUserId(userId);
+      if (!healthProfile) {
+        throw new HttpError(404, "HealthProfile not found");
+      }
+      return healthProfile;
+    } catch (err: any) {
+      await logError({
+        userId,
+        action: "getHealthProfileLatestByUserId",
+        message: err.message || err,
+        errorMessage: err.stack || err,
+      });
+      throw err;
+    }
+  }
+
   // =========================================================
   // UPDATE
   // =========================================================
