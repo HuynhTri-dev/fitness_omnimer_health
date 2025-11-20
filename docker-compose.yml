@@ -16,6 +16,8 @@ services:
       - "8000:8000" # Mở cổng API
     env_file:
       - ./omnimer_health_server/.env # Load biến môi trường (chứa thông tin kết nối Cloud DB/Redis)
+    environment:
+      - PORT=8000
     # Đã loại bỏ depends_on vì DB/Redis chạy trên Cloud
 
   # 2. 🤖 Python AI/FastAPI Service (3T-FIT)
