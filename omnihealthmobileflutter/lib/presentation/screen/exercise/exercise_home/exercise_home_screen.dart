@@ -150,12 +150,20 @@ class _ExerciseHomeViewState extends State<_ExerciseHomeView> {
                             _FilterButton(
                               resultCount: state.exercises.length,
                               onPressed: () async {
+                                // Lấy bloc hiện tại từ context của màn hình
+                                final bloc = context.read<ExerciseHomeBloc>();
+
                                 await showModalBottomSheet(
                                   context: context,
                                   isScrollControlled: true,
                                   backgroundColor: Colors.transparent,
-                                  builder: (context) =>
-                                      _FilterSheet(state: state),
+                                  builder: (ctx) {
+                                    // "Mang" lại bloc vào trong bottom sheet
+                                    return BlocProvider.value(
+                                      value: bloc,
+                                      child: _FilterSheet(state: state),
+                                    );
+                                  },
                                 );
                               },
                             ),
