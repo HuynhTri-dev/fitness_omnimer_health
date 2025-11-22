@@ -15,6 +15,7 @@ import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_ho
 import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/blocs/exercise_home_state.dart';
 import 'package:omnihealthmobileflutter/presentation/common/button/button_primary.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_cube/flutter_cube.dart';
 
 part 'widgets/header_and_search.dart';
 part 'widgets/exercise_list.dart';
