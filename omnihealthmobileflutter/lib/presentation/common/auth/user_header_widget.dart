@@ -90,15 +90,6 @@ class UserHeaderWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  SizedBox(width: AppSpacing.sm),
-
-                  // Menu icon indicator
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 20.sp,
-                    color: AppColors.textSecondary,
-                  ),
                 ],
               ),
             ),
