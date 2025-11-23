@@ -78,10 +78,7 @@ class MoreScreen extends StatelessWidget {
         children: [
           // Section: Account
           const MoreSectionHeader(title: 'ACCOUNT'),
-          AccountSection(
-            onProfileTap: () => _handleProfileTap(context),
-            onPremiumTap: () => _handlePremiumTap(context),
-          ),
+          AccountSection(onPremiumTap: () => _handlePremiumTap(context)),
 
           // Section: Health & Data
           const MoreSectionHeader(title: 'HEALTH & DATA'),
@@ -150,10 +147,6 @@ class MoreScreen extends StatelessWidget {
   }
 
   // Navigation handlers
-  void _handleProfileTap(BuildContext context) {
-    _showComingSoonSnackbar(context, 'Profile');
-  }
-
   void _handlePremiumTap(BuildContext context) {
     _showComingSoonSnackbar(context, 'Premium Upgrade');
   }
