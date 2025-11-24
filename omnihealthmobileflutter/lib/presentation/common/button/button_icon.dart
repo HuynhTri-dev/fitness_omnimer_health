@@ -73,7 +73,6 @@ class _ButtonIconState extends State<ButtonIcon> {
           'spacing': 10.0.h,
         };
       case ButtonIconSize.medium:
-      default:
         return {
           'fontSize': 16.0.sp,
           'iconSize': 20.0.sp,
