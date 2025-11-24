@@ -8,7 +8,7 @@ class UserEntity extends Equatable {
   final String? fullname;
   final String? birthday;
   final GenderEnum? gender;
-  final List<String>? roleName;
+  final List<String>? roleNames;
   final String? imageUrl;
   final File? image;
 
@@ -19,8 +19,17 @@ class UserEntity extends Equatable {
     this.gender,
     this.roleNames,
     this.imageUrl,
+    this.image,
   });
 
   @override
-  List<Object?> get props => [email, fullname, birthday, gender, roleNames];
+  List<Object?> get props => [
+    email,
+    fullname,
+    birthday,
+    gender,
+    roleNames,
+    imageUrl,
+    image,
+  ];
 }
