@@ -59,7 +59,6 @@ class _ButtonPrimaryState extends State<ButtonPrimary> {
       case ButtonSize.large:
         return {'fontSize': 20.0, 'paddingH': 20.0, 'paddingV': 16.0};
       case ButtonSize.medium:
-      default:
         return {'fontSize': 16.0, 'paddingH': 16.0, 'paddingV': 12.0};
     }
   }

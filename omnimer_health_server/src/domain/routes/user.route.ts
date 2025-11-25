@@ -98,6 +98,6 @@ router.put("/:id", verifyAccessToken, uploadImage("image"), controller.update);
  *                   items:
  *                     $ref: '#/components/schemas/User'
  */
-router.get("/", controller.getAll);
+router.get("/", verifyAccessToken, controller.getAll);
 
 export default router;
