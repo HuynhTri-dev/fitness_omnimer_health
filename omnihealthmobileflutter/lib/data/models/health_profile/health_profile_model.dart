@@ -56,9 +56,31 @@ class HealthProfileModel {
   });
 
   factory HealthProfileModel.fromJson(Map<String, dynamic> json) {
+    // Handle userId being either a String or a Map
+    String? userId;
+    if (json['userId'] is Map) {
+      userId = json['userId']['_id'] as String?;
+    } else {
+      userId = json['userId'] as String?;
+    }
+
+    // Handle healthStatus being a Map (from API) or List (legacy/local)
+    List<String>? healthStatusList;
+    if (json['healthStatus'] is Map) {
+      final statusMap = json['healthStatus'] as Map<String, dynamic>;
+      healthStatusList = [];
+      statusMap.forEach((key, value) {
+        if (value is List) {
+          healthStatusList!.addAll(value.map((e) => e.toString()));
+        }
+      });
+    } else if (json['healthStatus'] is List) {
+      healthStatusList = List<String>.from(json['healthStatus']);
+    }
+
     return HealthProfileModel(
-      id: json['id'] as String?,
-      userId: json['userId'] as String?,
+      id: json['id'] as String? ?? json['_id'] as String?,
+      userId: userId,
       checkupDate: json['checkupDate'] as String,
       height: json['height']?.toDouble(),
       weight: json['weight']?.toDouble(),
@@ -68,7 +90,8 @@ class HealthProfileModel {
       bmi: json['bmi']?.toDouble(),
       bmr: json['bmr']?.toDouble(),
       whr: json['whr']?.toDouble(),
-      bodyFat: json['bodyFat']?.toDouble(),
+      bodyFat:
+          json['bodyFat']?.toDouble() ?? json['bodyFatPercentage']?.toDouble(),
       muscleMass: json['muscleMass']?.toDouble(),
       maxPushUps: json['maxPushUps'] as int?,
       maxWeightLifted: json['maxWeightLifted']?.toDouble(),
@@ -83,9 +106,7 @@ class HealthProfileModel {
           ? CholesterolModel.fromJson(json['cholesterol'])
           : null,
       bloodSugar: json['bloodSugar']?.toDouble(),
-      healthStatus: json['healthStatus'] != null
-          ? List<String>.from(json['healthStatus'])
-          : null,
+      healthStatus: healthStatusList,
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
     );
@@ -190,10 +211,7 @@ class BloodPressureModel {
   final int systolic;
   final int diastolic;
 
-  BloodPressureModel({
-    required this.systolic,
-    required this.diastolic,
-  });
+  BloodPressureModel({required this.systolic, required this.diastolic});
 
   factory BloodPressureModel.fromJson(Map<String, dynamic> json) {
     return BloodPressureModel(
@@ -203,17 +221,11 @@ class BloodPressureModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'systolic': systolic,
-      'diastolic': diastolic,
-    };
+    return {'systolic': systolic, 'diastolic': diastolic};
   }
 
   BloodPressure toEntity() {
-    return BloodPressure(
-      systolic: systolic,
-      diastolic: diastolic,
-    );
+    return BloodPressure(systolic: systolic, diastolic: diastolic);
   }
 
   factory BloodPressureModel.fromEntity(BloodPressure entity) {
@@ -229,11 +241,7 @@ class CholesterolModel {
   final double hdl;
   final double ldl;
 
-  CholesterolModel({
-    required this.total,
-    required this.hdl,
-    required this.ldl,
-  });
+  CholesterolModel({required this.total, required this.hdl, required this.ldl});
 
   factory CholesterolModel.fromJson(Map<String, dynamic> json) {
     return CholesterolModel(
@@ -244,19 +252,11 @@ class CholesterolModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'total': total,
-      'hdl': hdl,
-      'ldl': ldl,
-    };
+    return {'total': total, 'hdl': hdl, 'ldl': ldl};
   }
 
   Cholesterol toEntity() {
-    return Cholesterol(
-      total: total,
-      hdl: hdl,
-      ldl: ldl,
-    );
+    return Cholesterol(total: total, hdl: hdl, ldl: ldl);
   }
 
   factory CholesterolModel.fromEntity(Cholesterol entity) {

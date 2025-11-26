@@ -1,11 +1,14 @@
+import 'package:omnihealthmobileflutter/core/api/api_response.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/health_profile_repository.dart';
+import '../base_usecase.dart';
 
-class DeleteHealthProfileUseCase {
-  final HealthProfileRepository _repository;
+class DeleteHealthProfileUseCase implements UseCase<ApiResponse<bool>, String> {
+  final HealthProfileRepository repository;
 
-  DeleteHealthProfileUseCase(this._repository);
+  DeleteHealthProfileUseCase(this.repository);
 
-  Future<void> call(String id) async {
-    return await _repository.deleteHealthProfile(id);
+  @override
+  Future<ApiResponse<bool>> call(String params) async {
+    return await repository.deleteHealthProfile(params);
   }
 }

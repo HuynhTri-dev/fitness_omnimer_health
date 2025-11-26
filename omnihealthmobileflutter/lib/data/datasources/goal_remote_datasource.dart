@@ -1,39 +1,85 @@
-import 'package:dio/dio.dart';
-import 'package:omnihealthmobileflutter/data/models/health_profile/goal/goal_model.dart';
+import 'package:omnihealthmobileflutter/core/api/api_client.dart';
+import 'package:omnihealthmobileflutter/core/api/api_response.dart';
+import 'package:omnihealthmobileflutter/core/api/endpoints.dart';
+import 'package:omnihealthmobileflutter/data/models/goal/goal_model.dart';
+import 'package:omnihealthmobileflutter/utils/logger.dart';
 
 abstract class GoalRemoteDataSource {
-  Future<List<GoalModel>> getGoalsByUserId(String userId);
-  Future<GoalModel> createGoal(GoalModel goal);
-  Future<GoalModel> updateGoal(GoalModel goal);
-  Future<void> deleteGoal(String goalId);
+  Future<ApiResponse<List<GoalModel>>> getGoalsByUserId(String userId);
+  Future<ApiResponse<GoalModel>> createGoal(GoalModel goal);
+  Future<ApiResponse<GoalModel>> updateGoal(GoalModel goal);
+  Future<ApiResponse<bool>> deleteGoal(String goalId);
 }
 
 class GoalRemoteDataSourceImpl implements GoalRemoteDataSource {
-  final Dio _dio;
+  final ApiClient apiClient;
 
-  GoalRemoteDataSourceImpl(this._dio);
+  GoalRemoteDataSourceImpl({required this.apiClient});
 
   @override
-  Future<List<GoalModel>> getGoalsByUserId(String userId) async {
-    final response = await _dio.get('/goals', queryParameters: {'userId': userId});
-    final List data = response.data['data'] as List;
-    return data.map((json) => GoalModel.fromJson(json)).toList();
+  Future<ApiResponse<List<GoalModel>>> getGoalsByUserId(String userId) async {
+    try {
+      final response = await apiClient.get<List<GoalModel>>(
+        Endpoints.getGoalsByUserId(userId),
+        parser: (json) {
+          if (json is List) {
+            return json
+                .map((e) => GoalModel.fromJson(e as Map<String, dynamic>))
+                .toList();
+          }
+          return <GoalModel>[];
+        },
+      );
+      return response;
+    } catch (e) {
+      logger.e(e);
+      return ApiResponse.error(
+        "Lấy danh sách mục tiêu thất bại: ${e.toString()}",
+      );
+    }
   }
 
   @override
-  Future<GoalModel> createGoal(GoalModel goal) async {
-    final response = await _dio.post('/goals', data: goal.toJson());
-    return GoalModel.fromJson(response.data['data']);
+  Future<ApiResponse<GoalModel>> createGoal(GoalModel goal) async {
+    try {
+      final response = await apiClient.post<GoalModel>(
+        Endpoints.createGoal,
+        data: goal.toJson(),
+        parser: (json) => GoalModel.fromJson(json as Map<String, dynamic>),
+      );
+      return response;
+    } catch (e) {
+      logger.e(e);
+      return ApiResponse.error("Tạo mục tiêu thất bại: ${e.toString()}");
+    }
   }
 
   @override
-  Future<GoalModel> updateGoal(GoalModel goal) async {
-    final response = await _dio.put('/goals/${goal.id}', data: goal.toJson());
-    return GoalModel.fromJson(response.data['data']);
+  Future<ApiResponse<GoalModel>> updateGoal(GoalModel goal) async {
+    try {
+      final response = await apiClient.put<GoalModel>(
+        Endpoints.updateGoal(goal.id!),
+        data: goal.toJson(),
+        parser: (json) => GoalModel.fromJson(json as Map<String, dynamic>),
+      );
+      return response;
+    } catch (e) {
+      logger.e(e);
+      return ApiResponse.error("Cập nhật mục tiêu thất bại: ${e.toString()}");
+    }
   }
 
   @override
-  Future<void> deleteGoal(String goalId) async {
-    await _dio.delete('/goals/$goalId');
+  Future<ApiResponse<bool>> deleteGoal(String goalId) async {
+    try {
+      final response = await apiClient.delete<bool>(
+        Endpoints.deleteGoal(goalId),
+        parser: (json) => true,
+      );
+      return response;
+    } catch (e) {
+      logger.e(e);
+      return ApiResponse.error("Xóa mục tiêu thất bại: ${e.toString()}");
+    }
   }
 }

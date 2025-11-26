@@ -1,5 +1,4 @@
 import 'package:get_it/get_it.dart';
-import 'package:dio/dio.dart';
 import 'package:omnihealthmobileflutter/core/api/api_client.dart';
 import 'package:omnihealthmobileflutter/data/datasources/auth_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/body_part_datasource.dart';
@@ -69,8 +68,7 @@ import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_ho
 import 'package:omnihealthmobileflutter/services/secure_storage_service.dart';
 import 'package:omnihealthmobileflutter/services/shared_preferences_service.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_bloc.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_menu/goal/bloc/goal_bloc.dart';
-
+import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -128,7 +126,7 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<GoalRemoteDataSource>(
-    () => GoalRemoteDataSourceImpl(sl()),
+    () => GoalRemoteDataSourceImpl(apiClient: sl()),
   );
 
   // ======================
@@ -236,18 +234,10 @@ Future<void> init() async {
     () => DeleteHealthProfileUseCase(sl()),
   );
 
-  sl.registerLazySingleton<GetGoalsUseCase>(
-    () => GetGoalsUseCase(sl()),
-  );
-  sl.registerLazySingleton<CreateGoalUseCase>(
-    () => CreateGoalUseCase(sl()),
-  );
-  sl.registerLazySingleton<UpdateGoalUseCase>(
-    () => UpdateGoalUseCase(sl()),
-  );
-  sl.registerLazySingleton<DeleteGoalUseCase>(
-    () => DeleteGoalUseCase(sl()),
-  );
+  sl.registerLazySingleton<GetGoalsUseCase>(() => GetGoalsUseCase(sl()));
+  sl.registerLazySingleton<CreateGoalUseCase>(() => CreateGoalUseCase(sl()));
+  sl.registerLazySingleton<UpdateGoalUseCase>(() => UpdateGoalUseCase(sl()));
+  sl.registerLazySingleton<DeleteGoalUseCase>(() => DeleteGoalUseCase(sl()));
 
   // ======================
   // Blocs / Cubits

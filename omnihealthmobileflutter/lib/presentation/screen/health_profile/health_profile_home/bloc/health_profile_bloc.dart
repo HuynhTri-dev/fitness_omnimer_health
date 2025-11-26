@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/base_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_profile/create_health_profile.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_profile/delete_health_profile.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_profile/get_health_profile_by_id.dart';
@@ -26,14 +27,14 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
     required CreateHealthProfileUseCase createHealthProfileUseCase,
     required UpdateHealthProfileUseCase updateHealthProfileUseCase,
     required DeleteHealthProfileUseCase deleteHealthProfileUseCase,
-  })  : _getHealthProfilesUseCase = getHealthProfilesUseCase,
-        _getHealthProfileByIdUseCase = getHealthProfileByIdUseCase,
-        _getLatestHealthProfileUseCase = getLatestHealthProfileUseCase,
-        _getHealthProfilesByUserIdUseCase = getHealthProfilesByUserIdUseCase,
-        _createHealthProfileUseCase = createHealthProfileUseCase,
-        _updateHealthProfileUseCase = updateHealthProfileUseCase,
-        _deleteHealthProfileUseCase = deleteHealthProfileUseCase,
-        super(const HealthProfileInitial()) {
+  }) : _getHealthProfilesUseCase = getHealthProfilesUseCase,
+       _getHealthProfileByIdUseCase = getHealthProfileByIdUseCase,
+       _getLatestHealthProfileUseCase = getLatestHealthProfileUseCase,
+       _getHealthProfilesByUserIdUseCase = getHealthProfilesByUserIdUseCase,
+       _createHealthProfileUseCase = createHealthProfileUseCase,
+       _updateHealthProfileUseCase = updateHealthProfileUseCase,
+       _deleteHealthProfileUseCase = deleteHealthProfileUseCase,
+       super(const HealthProfileInitial()) {
     on<GetHealthProfilesEvent>(_onGetHealthProfiles);
     on<GetHealthProfileByIdEvent>(_onGetHealthProfileById);
     on<GetLatestHealthProfileEvent>(_onGetLatestHealthProfile);
@@ -49,8 +50,12 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
   ) async {
     emit(const HealthProfileLoading());
     try {
-      final profiles = await _getHealthProfilesUseCase();
-      emit(HealthProfilesLoaded(profiles));
+      final response = await _getHealthProfilesUseCase(NoParams());
+      if (response.success && response.data != null) {
+        emit(HealthProfilesLoaded(response.data!));
+      } else {
+        emit(HealthProfileError(response.message));
+      }
     } catch (e) {
       emit(HealthProfileError(_extractErrorMessage(e)));
     }
@@ -62,8 +67,12 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
   ) async {
     emit(const HealthProfileLoading());
     try {
-      final profile = await _getHealthProfileByIdUseCase(event.id);
-      emit(HealthProfileLoaded(profile));
+      final response = await _getHealthProfileByIdUseCase(event.id);
+      if (response.success && response.data != null) {
+        emit(HealthProfileLoaded(response.data!));
+      } else {
+        emit(HealthProfileError(response.message));
+      }
     } catch (e) {
       emit(HealthProfileError(_extractErrorMessage(e)));
     }
@@ -75,8 +84,12 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
   ) async {
     emit(const HealthProfileLoading());
     try {
-      final profile = await _getLatestHealthProfileUseCase();
-      emit(HealthProfileLoaded(profile));
+      final response = await _getLatestHealthProfileUseCase(NoParams());
+      if (response.success && response.data != null) {
+        emit(HealthProfileLoaded(response.data!));
+      } else {
+        emit(HealthProfileError(response.message));
+      }
     } catch (e) {
       emit(HealthProfileError(_extractErrorMessage(e)));
     }
@@ -88,8 +101,12 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
   ) async {
     emit(const HealthProfileLoading());
     try {
-      final profiles = await _getHealthProfilesByUserIdUseCase(event.userId);
-      emit(HealthProfilesLoaded(profiles));
+      final response = await _getHealthProfilesByUserIdUseCase(event.userId);
+      if (response.success && response.data != null) {
+        emit(HealthProfilesLoaded(response.data!));
+      } else {
+        emit(HealthProfileError(response.message));
+      }
     } catch (e) {
       emit(HealthProfileError(_extractErrorMessage(e)));
     }
@@ -101,8 +118,12 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
   ) async {
     emit(const HealthProfileLoading());
     try {
-      final profile = await _createHealthProfileUseCase(event.profile);
-      emit(HealthProfileCreateSuccess(profile));
+      final response = await _createHealthProfileUseCase(event.profile);
+      if (response.success && response.data != null) {
+        emit(HealthProfileCreateSuccess(response.data!));
+      } else {
+        emit(HealthProfileError(response.message));
+      }
     } catch (e) {
       emit(HealthProfileError(_extractErrorMessage(e)));
     }
@@ -114,8 +135,14 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
   ) async {
     emit(const HealthProfileLoading());
     try {
-      final profile = await _updateHealthProfileUseCase(event.id, event.profile);
-      emit(HealthProfileUpdateSuccess(profile));
+      final response = await _updateHealthProfileUseCase(
+        UpdateHealthProfileParams(id: event.id, profile: event.profile),
+      );
+      if (response.success && response.data != null) {
+        emit(HealthProfileUpdateSuccess(response.data!));
+      } else {
+        emit(HealthProfileError(response.message));
+      }
     } catch (e) {
       emit(HealthProfileError(_extractErrorMessage(e)));
     }
@@ -127,8 +154,12 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
   ) async {
     emit(const HealthProfileLoading());
     try {
-      await _deleteHealthProfileUseCase(event.id);
-      emit(const HealthProfileDeleteSuccess());
+      final response = await _deleteHealthProfileUseCase(event.id);
+      if (response.success) {
+        emit(const HealthProfileDeleteSuccess());
+      } else {
+        emit(HealthProfileError(response.message));
+      }
     } catch (e) {
       emit(HealthProfileError(_extractErrorMessage(e)));
     }

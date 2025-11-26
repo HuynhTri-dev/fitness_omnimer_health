@@ -1,11 +1,17 @@
+import 'package:omnihealthmobileflutter/core/api/api_response.dart';
 import 'package:omnihealthmobileflutter/domain/entities/health_profile/health_profile_entity.dart';
 
 abstract class HealthProfileRepository {
-  Future<List<HealthProfile>> getHealthProfiles();
-  Future<HealthProfile> getHealthProfileById(String id);
-  Future<HealthProfile> getLatestHealthProfile();
-  Future<List<HealthProfile>> getHealthProfilesByUserId(String userId);
-  Future<HealthProfile> createHealthProfile(HealthProfile profile);
-  Future<HealthProfile> updateHealthProfile(String id, HealthProfile profile);
-  Future<void> deleteHealthProfile(String id);
+  Future<ApiResponse<List<HealthProfile>>> getHealthProfiles();
+  Future<ApiResponse<HealthProfile>> getHealthProfileById(String id);
+  Future<ApiResponse<HealthProfile>> getLatestHealthProfile();
+  Future<ApiResponse<List<HealthProfile>>> getHealthProfilesByUserId(
+    String userId,
+  );
+  Future<ApiResponse<HealthProfile>> createHealthProfile(HealthProfile profile);
+  Future<ApiResponse<HealthProfile>> updateHealthProfile(
+    String id,
+    HealthProfile profile,
+  );
+  Future<ApiResponse<bool>> deleteHealthProfile(String id);
 }
