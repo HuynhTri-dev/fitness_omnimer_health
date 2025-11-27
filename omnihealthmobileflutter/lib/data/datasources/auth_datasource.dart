@@ -5,6 +5,7 @@ import 'package:omnihealthmobileflutter/core/constants/storage_constant.dart';
 import 'package:omnihealthmobileflutter/data/models/auth/auth_model.dart';
 import 'package:omnihealthmobileflutter/data/models/auth/login_model.dart';
 import 'package:omnihealthmobileflutter/data/models/auth/register_model.dart';
+import 'package:omnihealthmobileflutter/data/models/auth/user_model.dart';
 import 'package:omnihealthmobileflutter/services/secure_storage_service.dart';
 import 'package:omnihealthmobileflutter/core/api/api_response.dart';
 import 'package:omnihealthmobileflutter/services/shared_preferences_service.dart';
@@ -30,6 +31,9 @@ abstract class AuthDataSource {
   Future<ApiResponse<void>> logout();
 
   Future<ApiResponse<UserAuthModel>> getAuth();
+
+  /// Update user profile
+  Future<ApiResponse<UserModel>> updateUser(String id, UserModel user);
 }
 
 class AuthDataSourceImpl implements AuthDataSource {
@@ -190,6 +194,23 @@ class AuthDataSourceImpl implements AuthDataSource {
       return response;
     } catch (e) {
       return ApiResponse<UserAuthModel>.error("Get Auth: ${e.toString()}");
+    }
+  }
+
+  @override
+  Future<ApiResponse<UserModel>> updateUser(String id, UserModel user) async {
+    try {
+      final formData = await user.toFormData();
+      final response = await apiClient.put<UserModel>(
+        Endpoints.updateUser(id),
+        data: formData,
+        parser: (json) => UserModel.fromJson(json as Map<String, dynamic>),
+      );
+      return response;
+    } catch (e) {
+      return ApiResponse<UserModel>.error(
+        "Update user failed: ${e.toString()}",
+      );
     }
   }
 }

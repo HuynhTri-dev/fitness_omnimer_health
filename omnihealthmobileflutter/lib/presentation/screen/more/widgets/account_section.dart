@@ -6,7 +6,7 @@ import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/more/widgets/more_menu_item.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/more/profile/verify_account_screen.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/more/profile/info_account_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/info_account_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/more/profile/change_password_screen.dart';
 
 /// Account section widget for More screen

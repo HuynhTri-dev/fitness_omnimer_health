@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:omnihealthmobileflutter/domain/entities/auth/user_entity.dart';
 import 'package:omnihealthmobileflutter/core/constants/enum_constant.dart';
+import 'package:dio/dio.dart';
 
 class UserModel {
   final String? id;
@@ -80,5 +81,25 @@ class UserModel {
       imageUrl: entity.imageUrl,
       image: entity.image,
     );
+  }
+
+  /// Chuyển sang FormData (cho upload ảnh)
+  Future<FormData> toFormData() async {
+    final map = <String, dynamic>{};
+    if (fullname != null) map['fullname'] = fullname;
+    if (birthday != null) map['birthday'] = birthday;
+    if (gender != null) map['gender'] = gender!.name;
+
+    // Không gửi các trường cấm update: roleNames, roleIds, id, email
+
+    if (image != null) {
+      String fileName = image!.path.split('/').last;
+      map['image'] = await MultipartFile.fromFile(
+        image!.path,
+        filename: fileName,
+      );
+    }
+
+    return FormData.fromMap(map);
   }
 }

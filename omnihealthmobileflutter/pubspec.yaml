@@ -59,6 +59,7 @@ dependencies:
   font_awesome_flutter: ^10.12.0
   curved_labeled_navigation_bar: ^2.0.6
   flutter_cube: ^0.1.1
+  health: ^13.2.1
 
 dev_dependencies:
   flutter_test:

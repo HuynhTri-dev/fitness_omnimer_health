@@ -38,6 +38,7 @@ import 'package:omnihealthmobileflutter/domain/usecases/auth/login_usecase.dart'
 import 'package:omnihealthmobileflutter/domain/usecases/auth/logout_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/auth/refresh_token_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/auth/register_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/auth/update_user_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_body_parts_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_equipments_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_exercise_categories_usecase.dart';
@@ -72,6 +73,7 @@ import 'package:omnihealthmobileflutter/services/shared_preferences_service.dart
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/bloc/health_profile_form_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/cubits/info_account_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -184,6 +186,7 @@ Future<void> init() async {
     () => RefreshTokenUseCase(sl()),
   );
   sl.registerLazySingleton<RegisterUseCase>(() => RegisterUseCase(sl()));
+  sl.registerLazySingleton<UpdateUserUseCase>(() => UpdateUserUseCase(sl()));
   sl.registerLazySingleton<GetRolesForSelectBoxUseCase>(
     () => GetRolesForSelectBoxUseCase(sl()),
   );
@@ -314,6 +317,14 @@ Future<void> init() async {
       updateGoalUseCase: sl(),
       deleteGoalUseCase: sl(),
       getGoalByIdUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => InfoAccountCubit(
+      sharedPreferencesService: sl(),
+      updateUserUseCase: sl(),
+      authenticationBloc: sl(),
     ),
   );
 }
