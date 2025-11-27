@@ -1,4 +1,4 @@
-import { BaseRepository } from "../Base.repository";
+import { BaseRepository } from "../base.repository";
 import { IUser } from "../../models";
 import { Model, Types } from "mongoose";
 import {
@@ -30,6 +30,7 @@ export class UserRepository extends BaseRepository<IUser> {
         : [];
 
       const userResponse: IUserResponse = {
+        _id: user._id,
         fullname: user.fullname,
         email: user.email ?? null,
         imageUrl: user.imageUrl,

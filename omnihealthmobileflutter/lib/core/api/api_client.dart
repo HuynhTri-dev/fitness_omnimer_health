@@ -279,7 +279,6 @@ Data: ${error.response?.data}
           extra: {'requiresAuth': requiresAuth},
         ),
       );
-      logger.i("Response: ${response}");
       return _handleResponse<T>(response, fromJsonT: parser);
     } on DioException catch (e) {
       throw _handleError<T>(e);
@@ -408,22 +407,18 @@ Data: ${error.response?.data}
     final status = e.response!.statusCode ?? 500;
     final body = e.response!.data;
     String message;
-    dynamic error;
 
     // Nếu server trả về format chuẩn {success, message, error}
     if (body is Map && body.containsKey('success')) {
       message = body['message']?.toString() ?? "Lỗi không xác định";
-      error = body['error'];
     } else if (body is Map) {
       // Fallback cho format không chuẩn
       message =
           body['message']?.toString() ??
           body['error']?.toString() ??
           "Lỗi không xác định";
-      error = body;
     } else {
       message = "Lỗi không xác định";
-      error = body;
     }
 
     switch (status) {

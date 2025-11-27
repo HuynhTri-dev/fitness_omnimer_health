@@ -7,29 +7,27 @@ Mục tiêu: xây dựng nền tảng AI biết **mapping dữ liệu sức kh�
 ### 1. Dữ liệu đầu vào
 
 - **User health profile (tĩnh):**
-    
-    Lấy dữ liệu từ dabase dữ liệu cơ bản, sức khỏe hiện tại, mục tiêu hiện tại của người dùng
-    
+  Lấy dữ liệu từ dabase dữ liệu cơ bản, sức khỏe hiện tại, mục tiêu hiện tại của người dùng
 - **Danh sách bài tập phù hợp:**
-    
-    Exercise: name
-    
+  Exercise: name
 
-Sử dụng phương pháp RAG để lọc ra các bài tập phù hợp với : Goal, Nhóm cơ muốn tập luyện (BodyPart, Muscle), Tình trạng cơ bản hiện tại (sung sức, bình thường, hơi mệt) để chọn ra các bài tập có độ khó và mức rep/set hợp lý. Từ phương pháp này lọc ra danh sách: 
+Sử dụng phương pháp RAG để lọc ra các bài tập phù hợp với : Goal, Nhóm cơ muốn tập luyện (BodyPart, Muscle), Tình trạng cơ bản hiện tại (sung sức, bình thường, hơi mệt) để chọn ra các bài tập có độ khó và mức rep/set hợp lý. Từ phương pháp này lọc ra danh sách:
 
 ```jsx
-exercises: [{
-	_id: Object.Id,
-	name: "Push ups"
-}]
+exercises: [
+  {
+    _id: Object.Id,
+    name: "Push ups",
+  },
+];
 ```
 
 ⇒ Từ đó lấy danh sách exercises đưa vào input
 
 - **Số lượng bài tập X tính theo mục tiêu: thì mình sẽ truyền vào:**
-    - **Tăng cơ (hypertrophy):** chọn khoảng **5-8 bài tập** trong buổi, mỗi bài tập 2-4 hiệp (sets) với 8-12 lần (reps) mỗi hiệp, dùng mức tạ vừa tới nặng (~ 60-80% 1RM) là tối ưu. Ví dụ: 3 bài lớn (multi-joint) + 2-3 bài nhỏ (isolation). Nhiều nghiên cứu đề xuất rằng khối lượng huấn luyện (sets × reps × tải) là biến số quan trọng. [PMC+1](https://pmc.ncbi.nlm.nih.gov/articles/PMC6950543/?utm_source=chatgpt.com)
-    - **Tăng sức mạnh (strength):** nên chọn khoảng **4-6 bài tập** vì bài tập nặng, mỗi bài 2-3 hiệp, mỗi hiệp khoảng 1-5 lần với tải rất nặng (~ 80-100% 1RM) sẽ kích thích tốt. [PMC+1](https://pmc.ncbi.nlm.nih.gov/articles/PMC7927075/?utm_source=chatgpt.com)
-    - **Sức bền cơ bản / giảm mỡ / sức khỏe tổng thể:** có thể sử dụng **5-8 bài tập** nhẹ hơn, mỗi bài có thể 12-20 lần hoặc hơn, tập với tải nhẹ-vừa và/hoặc nhiều động tác kết hợp (compound + body-weight) để tăng nhịp tim và tiêu hao năng lượng. Ví dụ: 1-2 bài khởi động, 4-5 bài chính, 1 bài giãn cơ kết thúc.
+  - **Tăng cơ (hypertrophy):** chọn khoảng **5-8 bài tập** trong buổi, mỗi bài tập 2-4 hiệp (sets) với 8-12 lần (reps) mỗi hiệp, dùng mức tạ vừa tới nặng (~ 60-80% 1RM) là tối ưu. Ví dụ: 3 bài lớn (multi-joint) + 2-3 bài nhỏ (isolation). Nhiều nghiên cứu đề xuất rằng khối lượng huấn luyện (sets × reps × tải) là biến số quan trọng. [PMC+1](https://pmc.ncbi.nlm.nih.gov/articles/PMC6950543/?utm_source=chatgpt.com)
+  - **Tăng sức mạnh (strength):** nên chọn khoảng **4-6 bài tập** vì bài tập nặng, mỗi bài 2-3 hiệp, mỗi hiệp khoảng 1-5 lần với tải rất nặng (~ 80-100% 1RM) sẽ kích thích tốt. [PMC+1](https://pmc.ncbi.nlm.nih.gov/articles/PMC7927075/?utm_source=chatgpt.com)
+  - **Sức bền cơ bản / giảm mỡ / sức khỏe tổng thể:** có thể sử dụng **5-8 bài tập** nhẹ hơn, mỗi bài có thể 12-20 lần hoặc hơn, tập với tải nhẹ-vừa và/hoặc nhiều động tác kết hợp (compound + body-weight) để tăng nhịp tim và tiêu hao năng lượng. Ví dụ: 1-2 bài khởi động, 4-5 bài chính, 1 bài giãn cơ kết thúc.
 
 ```json
 {
@@ -85,7 +83,7 @@ exercises: [{
 					"kg": 20,
 					"km": 12, // Đối với các bài liên quan về chạy, đạp xe
 					"min": 2, // Đối với bài về cardio thì có
-					"minRest": 3 
+					"minRest": 3
 			}],
 		},
 		{
@@ -94,7 +92,7 @@ exercises: [{
 		...
 	],
 	"suitabilityScore": 0.92,
-	"predictedAvgHR": 115, 
+	"predictedAvgHR": 115,
 	"predictedPeakHR": 135
 }
 ```
@@ -156,23 +154,18 @@ Model AI có thể gợi ý riêng biệt cho từng userId.
  └── Lưu kết quả vào Personal Learning Profile
 
 ```
+
 ### **Hybrid Recommendation Model (Kết hợp RAG + ML)**
 
 Kết hợp 2 tầng:
 
 - **Tầng 1 (RAG / Rule-based Filtering):**
-    
-    Dùng dữ liệu bài tập (exercise dataset) và thông tin health profile để **lọc sơ bộ** các bài tập hợp lý (theo mục tiêu, muscle target, trạng thái sức khỏe, equipment,…).
-    
-    → Kết quả: danh sách “có khả năng phù hợp”. gồm
-    
-    ```json
-    exercisesName: [string]
-    ```
-    
+  Dùng dữ liệu bài tập (exercise dataset) và thông tin health profile để **lọc sơ bộ** các bài tập hợp lý (theo mục tiêu, muscle target, trạng thái sức khỏe, equipment,…).
+  → Kết quả: danh sách “có khả năng phù hợp”. gồm
+  ```json
+  exercisesName: [string]
+  ```
 - **Tầng 2 (ML Model - Regression + Ranking):**
-    
-    Mô hình học sâu hoặc hồi quy (regression / neural ranking) để **ước lượng suitabilityScore**, **predict HR**, **calories** dựa trên dữ liệu tập luyện quá khứ (`workout_id`, `exercise_name`, `intensity`, `fatigue`, `calories`, `effectiveness`...).
-    
+  Mô hình học sâu hoặc hồi quy (regression / neural ranking) để **ước lượng suitabilityScore**, **predict HR**, **calories** dựa trên dữ liệu tập luyện quá khứ (`workout_id`, `exercise_name`, `intensity`, `fatigue`, `calories`, `effectiveness`...).
 
 > => Tầng 1 giống “retrieval” trong RAG, tầng 2 là “ranking/prediction”.

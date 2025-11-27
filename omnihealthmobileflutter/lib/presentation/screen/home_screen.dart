@@ -1,12 +1,22 @@
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
+import 'package:omnihealthmobileflutter/injection_container.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/blocs/exercise_home_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/blocs/exercise_home_event.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/exercise_home_screen.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/health_profile_home_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_event.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_state.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/health_profile_page.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/more/more_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_home/workout_home_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_state.dart';
 
 /// Màn hình Home chính với Bottom Navigation Bar
 /// Quản lý 4 trang chính của ứng dụng:
@@ -28,12 +38,48 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   // Danh sách các trang
-  final List<Widget> _pages = const [
-    ExerciseHomeScreen(),
-    WorkoutHomeScreen(),
-    HealthProfileHomeScreen(),
-    MoreScreen(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      BlocProvider(
+        create: (_) => sl<ExerciseHomeBloc>()..add(LoadInitialData()),
+        child: const ExerciseHomeScreen(),
+      ),
+      const WorkoutHomeScreen(),
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                sl<HealthProfileBloc>()
+                  ..add(const GetLatestHealthProfileEvent()),
+          ),
+          BlocProvider(create: (_) => sl<GoalBloc>()),
+        ],
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<HealthProfileBloc, HealthProfileState>(
+              listener: (context, state) {
+                // When profile is loaded, load goals
+                if (state is HealthProfileLoaded) {
+                  final authState = context.read<AuthenticationBloc>().state;
+                  if (authState is AuthenticationAuthenticated) {
+                    context.read<HealthProfileBloc>().add(
+                      GetHealthProfileGoalsEvent(authState.user.id),
+                    );
+                  }
+                }
+              },
+            ),
+          ],
+          child: const HealthProfilePage(),
+        ),
+      ),
+      const MoreScreen(),
+    ];
+  }
 
   /// Xử lý khi thay đổi tab
   void _onTabChanged(int index) {

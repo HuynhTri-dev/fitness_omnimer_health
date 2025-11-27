@@ -53,46 +53,39 @@ class _ButtonIconState extends State<ButtonIcon> {
   bool get _isSolid => widget.variant.name.contains('Solid');
   bool get _isOutline => widget.variant.name.contains('Outline');
 
-  // Lấy size theo preset với ScreenUtil
+  // Size config with increased padding for spacious UI
   Map<String, double> _getSizeConfig() {
     switch (widget.size) {
       case ButtonIconSize.small:
         return {
           'fontSize': 14.0.sp,
           'iconSize': 16.0.sp,
-          'paddingH': 10.0.h,
-          'paddingV': 6.0.w,
+          'paddingH': 14.0.h,
+          'paddingV': 8.0.w,
           'spacing': 6.0.h,
         };
       case ButtonIconSize.large:
         return {
           'fontSize': 20.0.sp,
           'iconSize': 24.0.sp,
-          'paddingH': 16.0.h,
-          'paddingV': 12.0.w,
+          'paddingH': 20.0.h,
+          'paddingV': 16.0.w,
           'spacing': 10.0.h,
         };
       case ButtonIconSize.medium:
-      default:
         return {
           'fontSize': 16.0.sp,
           'iconSize': 20.0.sp,
-          'paddingH': 12.0.h,
-          'paddingV': 8.0.w,
+          'paddingH': 16.0.h,
+          'paddingV': 12.0.w,
           'spacing': 8.0.h,
         };
     }
   }
 
   Color _getBackgroundColor() {
-    if (widget.disabled || widget.loading) {
-      return AppColors.gray400;
-    }
-
-    if (!_isSolid) {
-      return Colors.transparent;
-    }
-
+    if (widget.disabled || widget.loading) return AppColors.gray400;
+    if (!_isSolid) return Colors.transparent;
     if (_isPressed) {
       switch (widget.variant) {
         case ButtonIconVariant.primarySolid:
@@ -105,7 +98,6 @@ class _ButtonIconState extends State<ButtonIcon> {
           return AppColors.primary;
       }
     }
-
     switch (widget.variant) {
       case ButtonIconVariant.primarySolid:
         return AppColors.primary;
@@ -119,12 +111,8 @@ class _ButtonIconState extends State<ButtonIcon> {
   }
 
   Color _getBorderColor() {
-    if (widget.disabled || widget.loading) {
-      return AppColors.gray400;
-    }
-
+    if (widget.disabled || widget.loading) return AppColors.gray400;
     if (!_isOutline) return Colors.transparent;
-
     if (_isPressed) {
       switch (widget.variant) {
         case ButtonIconVariant.primaryOutline:
@@ -137,7 +125,6 @@ class _ButtonIconState extends State<ButtonIcon> {
           return AppColors.primary;
       }
     }
-
     switch (widget.variant) {
       case ButtonIconVariant.primaryOutline:
         return AppColors.primary;
@@ -151,10 +138,7 @@ class _ButtonIconState extends State<ButtonIcon> {
   }
 
   Color _getTextColor() {
-    if (widget.disabled || widget.loading) {
-      return AppColors.textMuted;
-    }
-
+    if (widget.disabled || widget.loading) return AppColors.textMuted;
     if (_isOutline) {
       if (_isPressed) {
         switch (widget.variant) {
@@ -168,7 +152,6 @@ class _ButtonIconState extends State<ButtonIcon> {
             return AppColors.primary;
         }
       }
-
       switch (widget.variant) {
         case ButtonIconVariant.primaryOutline:
           return AppColors.primary;
@@ -180,7 +163,6 @@ class _ButtonIconState extends State<ButtonIcon> {
           return AppColors.primary;
       }
     }
-
     return AppColors.white;
   }
 
@@ -226,8 +208,8 @@ class _ButtonIconState extends State<ButtonIcon> {
               ),
               child: widget.loading
                   ? SizedBox(
-                      width: iconSize.w,
-                      height: iconSize.h,
+                      width: (iconSize * 1.2).w,
+                      height: (iconSize * 1.2).h,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.w,
                         valueColor: AlwaysStoppedAnimation<Color>(
@@ -276,7 +258,6 @@ class _ButtonIconState extends State<ButtonIcon> {
     if (widget.fullWidth) {
       return SizedBox(width: double.infinity, child: button);
     }
-
     return button;
   }
 }

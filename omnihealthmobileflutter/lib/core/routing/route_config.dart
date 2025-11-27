@@ -8,7 +8,20 @@ import 'package:omnihealthmobileflutter/presentation/screen/auth/login/cubits/lo
 import 'package:omnihealthmobileflutter/presentation/screen/auth/login/login_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/register/cubits/register_cubit.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/register/register_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_details/cubits/exercise_detail_cubit.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_details/exercise_detail_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/blocs/exercise_home_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/blocs/exercise_home_event.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/exercise_home_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
+
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_event.dart';
+
 import 'package:omnihealthmobileflutter/presentation/screen/home_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/health_profile_page.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/personal_profile_form_page.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/goal/goal_form_screen.dart';
 
 class RouteConfig {
   // ==================== ROUTE NAMES ====================
@@ -22,7 +35,12 @@ class RouteConfig {
   static const String home = '/home';
   static const String profile = '/profile';
   static const String settings = '/settings';
-  // static const String muscleHome = '/muscle-home';
+  static const String exerciseHome = '/exercise-home';
+
+  static const String exerciseDetail = '/exercise-detail';
+  static const String healthProfile = '/health-profile';
+  static const String healthProfileForm = '/health-profile-form';
+  static const String goalForm = '/goal-form';
 
   // ==================== BUILD AUTH PAGES ====================
   static Widget buildAuthPage(String? routeName) {
@@ -77,8 +95,46 @@ class RouteConfig {
       case settings:
         return _buildSettingsScreen(role, arguments);
 
-      // case muscleHome:
-      //   retunr _buildMuscleHomeScreen(role, arguments);
+      case exerciseHome:
+        return BlocProvider(
+          create: (_) => sl<ExerciseHomeBloc>()..add(LoadInitialData()),
+          child: const ExerciseHomeScreen(),
+        );
+
+      case exerciseDetail:
+        final exerciseId = arguments?['exerciseId'] as String?;
+        if (exerciseId == null) {
+          return _ErrorPage(message: 'Exercise ID is required');
+        }
+        return BlocProvider(
+          create: (_) => sl<ExerciseDetailCubit>(),
+          child: ExerciseDetailScreen(exerciseId: exerciseId),
+        );
+
+      case healthProfile:
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) =>
+                  sl<HealthProfileBloc>()
+                    ..add(const GetLatestHealthProfileEvent()),
+            ),
+            BlocProvider(create: (_) => sl<GoalBloc>()),
+          ],
+          child: const HealthProfilePage(),
+        );
+
+      case healthProfileForm:
+        final profileId = arguments?['profileId'] as String?;
+        return PersonalProfileFormPage(profileId: profileId);
+
+      case goalForm:
+        final goalId = arguments?['goalId'] as String?;
+        final goal = arguments?['goal'] as dynamic; // Or GoalEntity if imported
+        return BlocProvider(
+          create: (_) => sl<GoalBloc>(),
+          child: GoalFormScreen(goalId: goalId, existingGoal: goal),
+        );
 
       default:
         return _ErrorPage(message: 'Không tìm thấy trang: $routeName');
@@ -160,6 +216,22 @@ class RouteConfig {
 
   static void navigateToSettings(BuildContext context) {
     Navigator.of(context).pushNamed(settings);
+  }
+
+  static void navigateToExerciseHome(BuildContext context) {
+    Navigator.of(context).pushNamed(exerciseHome);
+  }
+
+  static Future<dynamic> navigateToGoalForm(
+    BuildContext context, {
+    required String userId,
+    String? goalId,
+    dynamic goal,
+  }) {
+    return Navigator.of(context).pushNamed(
+      goalForm,
+      arguments: {'userId': userId, 'goalId': goalId, 'goal': goal},
+    );
   }
 }
 
