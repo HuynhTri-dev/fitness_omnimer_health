@@ -4,7 +4,7 @@ import json
 import os
 
 # Model v3 paths
-MODEL_V3_PATH = "../model/src/v3/model"
+MODEL_V3_PATH = "../../model/src/v3/model"
 META_V3_PATH = os.path.join(MODEL_V3_PATH, "meta_v3.json")
 MODEL_V3_CKPT = os.path.join(MODEL_V3_PATH, "best_v3.pt")
 DECODING_RULES_PATH = os.path.join(MODEL_V3_PATH, "decoding_rules.json")

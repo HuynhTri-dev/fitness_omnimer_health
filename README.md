@@ -48,7 +48,7 @@
 
 <div align="center">
 
-![System Architecture](./assets/system_arch.png)
+![System Architecture](./docs/assets/system_arch.png)
 
 _Kiến trúc microservices với tích hợp AI và real-time data processing_
 

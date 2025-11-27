@@ -1,9 +1,8 @@
 import numpy as np
-from preprocess import cast_to_pre_schema, inv, cardio_like, sc
-from model import model, ex_cols
+from utils.preprocess_v1 import cast_to_pre_schema, inv, cardio_like, sc, pre
+from models.model_v1 import model, ex_cols
 import torch
 import pandas as pd
-from preprocess import pre
 
 def recommend(profile: dict, top_k: int = 5) -> dict:
     Xdf = cast_to_pre_schema(pd.DataFrame([profile]))

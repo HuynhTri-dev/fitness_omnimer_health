@@ -19,7 +19,7 @@ class WorkoutDecoder:
     def __init__(self, meta_v3_path: str = None):
         """Initialize decoder with workout goals configuration from meta_v3.json"""
         if meta_v3_path is None:
-            meta_v3_path = "../model/src/v3/model/meta_v3.json"
+            meta_v3_path = "../../model/src/v3/model/meta_v3.json"
 
         try:
             with open(meta_v3_path, 'r', encoding='utf-8') as f:

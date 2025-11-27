@@ -1,10 +1,10 @@
 
 from fastapi import FastAPI, HTTPException
-from recommend_schemas import RecommendRequest
-from recommend import recommend
-from recommend_v3 import recommend_v3, validate_profile_for_v3, get_goal_suggestions
-from model_v3 import load_model_v3
-from preprocess_v3 import load_preprocessor_v3
+from api.schemas import RecommendRequest
+from services.recommendation_v1 import recommend
+from services.recommendation_v3 import recommend_v3, validate_profile_for_v3, get_goal_suggestions
+from models.model_v3 import load_model_v3
+from utils.preprocess_v3 import load_preprocessor_v3
 import logging
 
 # Configure logging

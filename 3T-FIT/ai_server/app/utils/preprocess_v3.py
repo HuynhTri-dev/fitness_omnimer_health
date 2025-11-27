@@ -10,7 +10,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 
 # Model v3 paths
-MODEL_V3_PATH = "../model/src/v3/model"
+MODEL_V3_PATH = "../../model/src/v3/model"
 PREPROCESSOR_V3_PATH = os.path.join(MODEL_V3_PATH, "preprocessor_v3.joblib")
 META_V3_PATH = os.path.join(MODEL_V3_PATH, "meta_v3.json")
 

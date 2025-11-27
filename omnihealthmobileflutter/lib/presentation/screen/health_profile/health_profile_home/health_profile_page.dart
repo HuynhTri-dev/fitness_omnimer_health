@@ -15,8 +15,6 @@ import 'package:omnihealthmobileflutter/presentation/screen/health_profile/healt
 import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_state.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/personal_profile_form_page.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_event.dart';
 
 class HealthProfilePage extends StatefulWidget {
   const HealthProfilePage({super.key});
