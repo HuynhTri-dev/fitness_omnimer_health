@@ -83,3 +83,40 @@ Dựa trên `Output_Suitable`, hệ thống sẽ tự động xử lý và học
 | **0.75 – 0.85** | 🟢 **Hiệu quả tốt**                        | Đúng nhóm cơ, đúng mục tiêu, cường độ phù hợp. HR đạt 70–85% HRmax hoặc RPE hiệu quả.                                                        | **Giữ lại** trong chương trình. AI gán **trọng số ưu tiên cao** khi recommend.                                     |
 | **0.85 – 0.95** | 🔵 **Rất hiệu quả**                        | Cường độ và kỹ thuật tối ưu, HR/RPE lý tưởng. Có cải thiện rõ rệt theo thời gian.                                                            | Bài tập **“signature”** của user – AI recommend **thường xuyên** cho chu kỳ chính.                                 |
 | **0.95 – 1.00** | 🟣 **Tối ưu cá nhân hóa (Perfect Fit)**    | Hoàn toàn phù hợp thể trạng, mục tiêu, phản hồi. HR zone, RPE, recovery đều lý tưởng.                                                        | AI **“lock-in”** bài này làm **core exercise** trong kế hoạch tương lai.                                           |
+
+## Model Input & Output Details
+
+### WatchLog.model.ts
+
+**Input Fields:** `_id`, `userId`, `workoutId?`, `exerciseId?`, `date`, `nameDevice`, `heartRateRest?`, `heartRateAvg?`, `heartRateMax?`, `steps?`, `distance?`, `caloriesBurned?`, `activeMinutes?`, `vo2max?`, `sleepDuration?`, `sleepQuality?`, `stressLevel?`
+**Output:** Same as input, persisted in the `WatchLog` collection.
+
+### Exercise.model.ts
+
+**Input Fields:** `_id`, `name`, `description?`, `instructions?`, `equipments`, `bodyParts`, `mainMuscles?`, `secondaryMuscles?`, `exerciseTypes`, `exerciseCategories`, `location`, `difficulty?`, `imageUrls?`, `videoUrl?`, `met?`
+**Output:** Document stored in `Exercise` collection.
+
+### Goal.model.ts
+
+**Input Fields:** `_id`, `userId`, `goalType`, `startDate`, `endDate`, `repeat?`, `targetMetric[]` (each with `metricName`, `value`, `unit?`)
+**Output:** Document stored in `Goal` collection.
+
+### HealthProfile.model.ts
+
+**Input Fields:** `_id`, `userId`, `checkupDate`, `age`, `height?`, `weight?`, `waist?`, `neck?`, `hip?`, `whr?`, `bmi?`, `bmr?`, `bodyFatPercentage?`, `muscleMass?`, `maxPushUps?`, `maxWeightLifted?`, `activityLevel?`, `experienceLevel?`, `workoutFrequency?`, `restingHeartRate?`, `bloodPressure?` (`systolic`, `diastolic`), `cholesterol?` (`total`, `ldl`, `hdl`), `bloodSugar?`, `healthStatus?` (various arrays), `aiEvaluation?` (`summary`, `score?`, `riskLevel?`, `updatedAt?`, `modelVersion?`)
+**Output:** Document stored in `HealthProfile` collection.
+
+### User.model.ts
+
+**Input Fields:** `_id`, `fullname`, `email`, `passwordHashed`, `birthday?`, `gender?`, `roleIds`, `imageUrl?`
+**Output:** Document stored in `User` collection.
+
+### WorkoutTemplate.model.ts
+
+**Input Fields:** (refer to file for full schema – includes `_id`, `name`, `description?`, `exercises` array, `duration?`, `intensity?`, etc.)
+**Output:** Document stored in `WorkoutTemplate` collection.
+
+### RAG.entity.ts
+
+**Input Fields:** (entity representing Retrieval‑Augmented Generation – includes `question`, `context`, `answer`, `metadata` etc.)
+**Output:** Result of RAG processing, typically a generated answer with source references.
