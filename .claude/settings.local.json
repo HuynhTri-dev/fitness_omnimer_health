@@ -5,7 +5,9 @@
       "Bash(cat:*)",
       "Bash(del:*)",
       "Bash(nul:*)",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev)"
     ],
     "deny": [],
     "ask": []
