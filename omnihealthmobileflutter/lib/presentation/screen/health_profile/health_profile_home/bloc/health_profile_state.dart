@@ -76,3 +76,12 @@ class HealthProfileUpdateSuccess extends HealthProfileState {
 class HealthProfileDeleteSuccess extends HealthProfileState {
   const HealthProfileDeleteSuccess();
 }
+
+class HealthProfileEmpty extends HealthProfileState {
+  final List<GoalEntity> goals;
+
+  const HealthProfileEmpty({this.goals = const []});
+
+  @override
+  List<Object?> get props => [goals];
+}

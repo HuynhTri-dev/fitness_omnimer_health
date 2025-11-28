@@ -10,7 +10,7 @@ import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
 import 'package:omnihealthmobileflutter/domain/entities/auth/user_entity.dart';
-import 'package:omnihealthmobileflutter/injection_container.dart';
+
 import 'package:omnihealthmobileflutter/presentation/common/button/button_primary.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/cubits/info_account_cubit.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/cubits/info_account_state.dart';
@@ -18,26 +18,14 @@ import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/wi
 import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/widgets/info_account_form.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/widgets/info_account_read_only.dart';
 
-class InfoAccountScreen extends StatelessWidget {
+class InfoAccountScreen extends StatefulWidget {
   const InfoAccountScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<InfoAccountCubit>()..loadUserInfo(),
-      child: const _InfoAccountView(),
-    );
-  }
+  State<InfoAccountScreen> createState() => _InfoAccountScreenState();
 }
 
-class _InfoAccountView extends StatefulWidget {
-  const _InfoAccountView();
-
-  @override
-  State<_InfoAccountView> createState() => _InfoAccountViewState();
-}
-
-class _InfoAccountViewState extends State<_InfoAccountView> {
+class _InfoAccountScreenState extends State<InfoAccountScreen> {
   final _fullnameController = TextEditingController();
   final _birthdayController = TextEditingController();
   GenderEnum? _selectedGender;
@@ -158,7 +146,7 @@ class _InfoAccountViewState extends State<_InfoAccountView> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
-          "Thông tin tài khoản",
+          "Account",
           style: AppTypography.headingBoldStyle(
             fontSize: AppTypography.fontSizeLg.sp,
             color: AppColors.white,
@@ -187,7 +175,7 @@ class _InfoAccountViewState extends State<_InfoAccountView> {
                   Text(state.message),
                   const SizedBox(height: 16),
                   ButtonPrimary(
-                    title: "Thử lại",
+                    title: "Reload",
                     onPressed: () =>
                         context.read<InfoAccountCubit>().loadUserInfo(),
                     size: ButtonSize.small,
@@ -238,7 +226,7 @@ class _InfoAccountViewState extends State<_InfoAccountView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Thông tin cá nhân",
+                        "User info",
                         style: AppTypography.headingBoldStyle(
                           fontSize: 18.sp,
                           color: AppColors.textPrimary,
@@ -262,7 +250,7 @@ class _InfoAccountViewState extends State<_InfoAccountView> {
 
                 // Submit Button
                 ButtonPrimary(
-                  title: "Lưu thay đổi",
+                  title: "Save changes",
                   onPressed: isLoading ? null : _submit,
                   loading: isLoading,
                   fullWidth: true,

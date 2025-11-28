@@ -14,7 +14,7 @@ import 'package:omnihealthmobileflutter/presentation/screen/health_profile/healt
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/widgets/my_goal_section.dart';
 import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_state.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/personal_profile_form_page.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/personal_profile_form_page.dart';
 
 class HealthProfilePage extends StatefulWidget {
   const HealthProfilePage({super.key});
@@ -80,7 +80,8 @@ class _HealthProfilePageState extends State<HealthProfilePage> {
                   _currentProfile = state.profile;
                   _selectedDate = state.profile.checkupDate;
                 });
-              } else if (state is HealthProfileError) {
+              } else if (state is HealthProfileError ||
+                  state is HealthProfileEmpty) {
                 setState(() {
                   _currentProfile = null;
                 });

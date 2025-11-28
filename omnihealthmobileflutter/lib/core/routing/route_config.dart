@@ -14,18 +14,19 @@ import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_ho
 import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/blocs/exercise_home_event.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/exercise_home_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/cubits/info_account_cubit.dart';
 
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_event.dart';
 
 import 'package:omnihealthmobileflutter/presentation/screen/home_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/health_profile_page.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/personal_profile_form_page.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/personal_profile_form_page.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/goal/goal_form_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/info_account_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/more/more_screen.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/more/profile/change_password_screen.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/more/profile/verify_account_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/change_password/change_password_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/verify_account/verify_account_screen.dart';
 
 class RouteConfig {
   // ==================== ROUTE NAMES ====================
@@ -145,7 +146,10 @@ class RouteConfig {
         );
 
       case infoAccount:
-        return const InfoAccountScreen();
+        return BlocProvider(
+          create: (_) => sl<InfoAccountCubit>()..loadUserInfo(),
+          child: const InfoAccountScreen(),
+        );
 
       case changePassword:
         return const ChangePasswordScreen();

@@ -191,6 +191,14 @@ class AuthDataSourceImpl implements AuthDataSource {
         parser: (json) => UserAuthModel.fromJson(json as Map<String, dynamic>),
       );
 
+      if (response.success && response.data != null) {
+        final auth = response.data!;
+        await sharedPreferencesService.create(
+          StorageConstant.kUserInfoKey,
+          jsonEncode(auth.toJson()),
+        );
+      }
+
       return response;
     } catch (e) {
       return ApiResponse<UserAuthModel>.error("Get Auth: ${e.toString()}");

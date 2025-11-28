@@ -34,7 +34,7 @@ class InfoAccountReadOnly extends StatelessWidget {
             SizedBox(height: AppSpacing.md.h),
             _buildItem(
               icon: Icons.security_outlined,
-              label: "Vai trò",
+              label: "Roles",
               value: roles!.join(", "),
               isChip: true,
             ),

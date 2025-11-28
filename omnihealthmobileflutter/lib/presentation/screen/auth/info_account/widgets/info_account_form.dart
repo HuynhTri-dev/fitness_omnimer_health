@@ -30,8 +30,8 @@ class InfoAccountForm extends StatelessWidget {
       children: [
         CustomTextField(
           controller: fullnameController,
-          label: "Họ và tên",
-          placeholder: "Nhập họ và tên",
+          label: "Fullname",
+          placeholder: "Enter fullname",
           enabled: !isLoading,
           leftIcon: const Icon(Icons.person_outline, color: AppColors.primary),
         ),
@@ -41,7 +41,7 @@ class InfoAccountForm extends StatelessWidget {
           child: AbsorbPointer(
             child: CustomTextField(
               controller: birthdayController,
-              label: "Ngày sinh",
+              label: "Birthday",
               placeholder: "YYYY-MM-DD",
               enabled: !isLoading,
               leftIcon: const Icon(
@@ -66,7 +66,7 @@ class InfoAccountForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Giới tính",
+          "Gender",
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.w700,
@@ -85,7 +85,7 @@ class InfoAccountForm extends StatelessWidget {
             child: DropdownButton<GenderEnum>(
               value: selectedGender,
               isExpanded: true,
-              hint: const Text("Chọn giới tính"),
+              hint: const Text("Choose gender"),
               icon: const Icon(Icons.arrow_drop_down, color: AppColors.primary),
               items: GenderEnum.values.map((gender) {
                 return DropdownMenuItem(
@@ -102,7 +102,7 @@ class InfoAccountForm extends StatelessWidget {
                         color: AppColors.textSecondary,
                       ),
                       SizedBox(width: 8.w),
-                      Text(gender.name.toUpperCase()),
+                      Text(gender.displayName),
                     ],
                   ),
                 );

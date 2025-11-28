@@ -48,7 +48,7 @@ class UserModel {
       'email': email,
       'fullname': fullname,
       'birthday': birthday,
-      'gender': gender,
+      'gender': gender?.name,
       'roleNames': roleNames,
       'imageUrl': imageUrl,
       'image': image,

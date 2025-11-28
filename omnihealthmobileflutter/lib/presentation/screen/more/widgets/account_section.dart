@@ -5,9 +5,9 @@ import 'package:omnihealthmobileflutter/core/theme/app_radius.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/more/widgets/more_menu_item.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/more/profile/verify_account_screen.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/info_account_screen.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/more/profile/change_password_screen.dart';
+import 'package:omnihealthmobileflutter/core/routing/route_config.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/verify_account/verify_account_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/change_password/change_password_screen.dart';
 
 /// Account section widget for More screen
 class AccountSection extends StatefulWidget {
@@ -106,8 +106,7 @@ class _AccountSectionState extends State<AccountSection>
                   icon: Icons.info_outline,
                   title: 'Info Account',
                   subtitle: 'Update basic information',
-                  onTap: () =>
-                      _navigateToScreen(context, const InfoAccountScreen()),
+                  onTap: () => RouteConfig.navigateToInfoAccount(context),
                 ),
                 _buildDropdownItem(
                   icon: Icons.lock_outline,

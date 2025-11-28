@@ -71,7 +71,7 @@ import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_ho
 import 'package:omnihealthmobileflutter/services/secure_storage_service.dart';
 import 'package:omnihealthmobileflutter/services/shared_preferences_service.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_bloc.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/bloc/health_profile_form_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/bloc/health_profile_form_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/cubits/info_account_cubit.dart';
 

@@ -27,7 +27,10 @@ class InfoAccountSuccess extends InfoAccountState {
   final UserEntity user;
   final String message;
 
-  const InfoAccountSuccess(this.user, {this.message = "Cập nhật thành công"});
+  const InfoAccountSuccess(
+    this.user, {
+    this.message = "Update information successfully",
+  });
 
   @override
   List<Object?> get props => [user, message];

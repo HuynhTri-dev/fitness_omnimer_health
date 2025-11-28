@@ -2,8 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_profile/create_health_profile.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_profile/get_health_profile_by_id.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_profile/update_health_profile.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/bloc/health_profile_form_event.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/bloc/health_profile_form_state.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/bloc/health_profile_form_event.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/bloc/health_profile_form_state.dart';
 
 /// BLoC quản lý form tạo/cập nhật Health Profile
 /// - Nếu có profileId: Load profile và cho phép update

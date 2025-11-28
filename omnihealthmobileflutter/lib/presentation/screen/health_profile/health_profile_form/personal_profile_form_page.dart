@@ -8,13 +8,13 @@ import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/domain/entities/health_profile/health_profile_entity.dart';
 import 'package:omnihealthmobileflutter/injection_container.dart' as di;
 import 'package:omnihealthmobileflutter/presentation/common/button/button_primary.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/bloc/health_profile_form_bloc.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/bloc/health_profile_form_event.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/bloc/health_profile_form_state.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/widgets/body_measurements_section.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/widgets/fitness_section.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/widgets/health_status_section.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/widgets/metrics_section.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/bloc/health_profile_form_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/bloc/health_profile_form_event.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/bloc/health_profile_form_state.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/widgets/body_measurements_section.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/widgets/fitness_section.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/widgets/health_status_section.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/widgets/metrics_section.dart';
 
 /// Trang form tạo/cập nhật Health Profile
 /// - Nếu có profileId: Load và update profile

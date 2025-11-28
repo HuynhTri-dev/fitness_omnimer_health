@@ -66,19 +66,26 @@ class MyGoalSection extends StatelessWidget {
           );
         }
 
+        List<GoalEntity>? goals;
         if (state is HealthProfileLoaded) {
-          if (state.goals.isEmpty) {
+          goals = state.goals;
+        } else if (state is HealthProfileEmpty) {
+          goals = state.goals;
+        }
+
+        if (goals != null) {
+          if (goals.isEmpty) {
             return const GoalEmptyState();
           }
 
           return ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: state.goals.length,
+            itemCount: goals.length,
             separatorBuilder: (context, index) =>
                 SizedBox(height: AppSpacing.md.h),
             itemBuilder: (context, index) {
-              final goal = state.goals[index];
+              final goal = goals![index];
               return GoalCard(
                 goal: goal,
                 onViewDetail: () => _showGoalDetail(context, goal),
