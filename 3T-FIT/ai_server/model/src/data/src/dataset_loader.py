@@ -20,7 +20,7 @@ import os
 class DatasetLoader:
     """Utility class for loading and using the 3T-FIT dataset"""
 
-    def __init__(self, dataset_path: str = "../final_dataset.xlsx"):
+    def __init__(self, dataset_path: str = "../personal_final_dataset.xlsx"):
         """
         Initialize the dataset loader
 
@@ -222,7 +222,7 @@ class DatasetLoader:
 
         return stats
 
-    def save_training_data(self, output_dir: str = "../training_data"):
+    def save_training_data(self, output_dir: str = "../personal_training_data"):
         """
         Save processed data in ML-ready format
 

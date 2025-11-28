@@ -462,7 +462,7 @@ def main():
     """Main training function"""
     # Configuration
     config = {
-        'data_path': '../data/training_data/train_data.xlsx',
+        'data_path': '../data/personal_training_data/train_data.xlsx',
         'test_size': 0.2,
         'val_size': 0.2,
         'batch_size': 32,
@@ -517,7 +517,7 @@ def main():
         )
 
         # Save model
-        save_dir = './model_v4'
+        save_dir = './personal_model_v4'
         metadata = {
             'feature_names': data_dict['feature_names'],
             'input_dim': input_dim,

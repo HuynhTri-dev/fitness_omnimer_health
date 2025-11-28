@@ -286,6 +286,7 @@ class DataProcessor:
         logger.info("Calculating enhanced suitability scores...")
 
         df = df.copy()
+        n_samples = len(df)
 
         # 1. Psychological Component (40%) - based on mood and fatigue
         if 'mood' in df.columns and 'fatigue' in df.columns:
@@ -334,6 +335,35 @@ class DataProcessor:
 
         return df
 
+    def inject_noise(self, df: pd.DataFrame, noise_level: float = 0.15) -> pd.DataFrame:
+        """
+        Inject random noise into numerical features to augment data
+        and help model learn to handle variability.
+        """
+        logger.info(f"Injecting {noise_level*100:.1f}% random noise into numerical features...")
+
+        df = df.copy()
+        
+        # Filter features that exist in current dataframe
+        features_to_noise = [f for f in self.numerical_features if f in df.columns]
+
+        for col in features_to_noise:
+            if pd.api.types.is_numeric_dtype(df[col]):
+                # Calculate noise scale based on feature standard deviation
+                scale = df[col].std() * noise_level
+                if scale == 0:
+                    continue
+                    
+                noise = np.random.normal(loc=0, scale=scale, size=len(df))
+                df[col] += noise
+
+                # Enforce valid ranges
+                if col in self.valid_ranges:
+                    min_val, max_val = self.valid_ranges[col]
+                    df[col] = np.clip(df[col], min_val, max_val)
+
+        return df
+
     def process_datasets(self, kaggle_path: str, real_path: str) -> pd.DataFrame:
         """Main processing pipeline"""
         logger.info("Starting data processing pipeline...")
@@ -353,16 +383,19 @@ class DataProcessor:
         combined_df = pd.concat([kaggle_clean, real_clean], ignore_index=True)
         logger.info(f"Combined dataset shape: {combined_df.shape}")
 
-        # 5. Calculate derived features
+        # 5. Inject noise for data augmentation
+        combined_df = self.inject_noise(combined_df, noise_level=0.15)
+
+        # 6. Calculate derived features
         combined_df = self.calculate_derived_features(combined_df)
 
-        # 6. Calculate enhanced suitability scores
+        # 7. Calculate enhanced suitability scores
         combined_df = self.calculate_suitability_score(combined_df)
 
-        # 7. Encode categorical features
+        # 8. Encode categorical features
         combined_df = self.encode_categorical_features(combined_df)
 
-        # 8. Normalize numerical features
+        # 9. Normalize numerical features
         combined_df = self.normalize_features(combined_df)
 
         self.processed_data = combined_df
@@ -374,7 +407,6 @@ class DataProcessor:
         """Save processed dataset to Excel file"""
         if self.processed_data is None:
             raise ValueError("No processed data to save. Run process_datasets first.")
-
         try:
             # Save to Excel
             self.processed_data.to_excel(output_path, index=False)
@@ -445,7 +477,7 @@ def main():
     # Define file paths
     kaggle_path = "../kaggle_dataset.xlsx"
     real_path = "../real_dataset.xlsx"
-    output_path = "../final_dataset.xlsx"
+    output_path = "../personal_final_dataset.xlsx"
 
     try:
         # Process datasets

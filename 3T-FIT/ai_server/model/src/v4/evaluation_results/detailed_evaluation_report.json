@@ -1,6 +1,6 @@
 {
   "evaluation_metadata": {
-    "timestamp": "2025-11-28T00:11:33.629601",
+    "timestamp": "2025-11-28T20:53:09.828767",
     "model_version": "TwoBranchRecommendationModel",
     "dataset_size": 2040,
     "feature_count": 28,
@@ -93,8 +93,8 @@
     },
     "High_Intensity_Predictions_Percent": 36.911764705882355,
     "Low_Suitability_Predictions_Percent": 0.0,
-    "Intensity_Prediction_Variance": "6.6676517",
-    "Suitability_Prediction_Variance": "0.0053112935"
+    "Intensity_Prediction_Variance": "6.5999513",
+    "Suitability_Prediction_Variance": "0.0054926807"
   },
   "summary": {
     "overall_performance": {

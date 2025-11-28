@@ -52,7 +52,7 @@ class ModelEvaluator:
         self.model = model.to(device)
         self.device = device
         self.scaler_X = StandardScaler()
-        self.evaluation_results = {}
+        self.personal_evaluation_results = {}
 
     def load_model_and_scalers(self, model_dir: str):
         """Load trained model and preprocessing artifacts"""
@@ -436,7 +436,7 @@ class ModelEvaluator:
 
     def generate_evaluation_report(self, X: np.ndarray, y_true_intensity: np.ndarray,
                                  y_true_suitability: np.ndarray, y_pred_intensity: np.ndarray,
-                                 y_pred_suitability: np.ndarray, save_dir: str = './evaluation_results'):
+                                 y_pred_suitability: np.ndarray, save_dir: str = './personal_evaluation_results'):
         """Generate comprehensive evaluation report"""
 
         os.makedirs(save_dir, exist_ok=True)
@@ -480,7 +480,7 @@ class ModelEvaluator:
         )
 
         # Store results for later access
-        self.evaluation_results = report
+        self.personal_evaluation_results = report
 
         logger.info(f"Evaluation report generated and saved to {save_dir}")
 
@@ -634,8 +634,8 @@ def main():
     """Main evaluation function"""
     # Configuration
     config = {
-        'model_dir': './model_v4',
-        'test_data_path': '../data/training_data/test_data.xlsx',
+        'model_dir': './personal_model_v4',
+        'test_data_path': '../data/personal_training_data/test_data.xlsx',
         'device': 'cuda' if torch.cuda.is_available() else 'cpu'
     }
 
@@ -742,7 +742,7 @@ def main():
         evaluation_report = evaluator.generate_evaluation_report(
             X_test, y_true_intensity, y_true_suitability,
             y_pred_intensity, y_pred_suitability,
-            save_dir='./evaluation_results'
+            save_dir='./personal_evaluation_results'
         )
 
         # Print summary to console
@@ -765,7 +765,7 @@ def main():
         logger.info(f"  Suitability F1-Score: {evaluation_report['suitability_prediction_metrics']['F1_Score']:.3f}")
         logger.info(f"  Suitability AUC-ROC: {evaluation_report['suitability_prediction_metrics']['AUC_ROC']:.3f}")
 
-        logger.info(f"\nDetailed evaluation results saved to: ./evaluation_results")
+        logger.info(f"\nDetailed evaluation results saved to: ./personal_evaluation_results")
         logger.info("="*60)
 
         return evaluation_report
