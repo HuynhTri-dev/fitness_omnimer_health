@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:omnihealthmobileflutter/core/constants/enum_constant.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/presentation/common/input_fields/custom_text_field.dart';
 import 'package:omnihealthmobileflutter/presentation/common/input_fields/single_select_box.dart';
@@ -29,14 +28,18 @@ class FitnessSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Container(
       padding: EdgeInsets.all(AppSpacing.md.w),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textSecondary.withOpacity(0.08),
+            color: colorScheme.onSurface.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -50,22 +53,20 @@ class FitnessSection extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.fitness_center,
-                  color: AppColors.primary,
+                  color: colorScheme.primary,
                   size: 20.sp,
                 ),
               ),
               SizedBox(width: AppSpacing.sm.w),
               Text(
-                'Fitness & Physical Performance',
-                style: TextStyle(
-                  fontSize: 16.sp,
+                'Fitness & Physical',
+                style: textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
                 ),
               ),
             ],

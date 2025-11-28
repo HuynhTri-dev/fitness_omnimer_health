@@ -31,7 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -60,6 +59,7 @@ dependencies:
   curved_labeled_navigation_bar: ^2.0.6
   flutter_cube: ^0.1.1
   health: ^13.2.1
+  flutter_svg: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -91,6 +91,9 @@ flutter:
     - assets/models/mesh.obj
     - assets/models/mesh.mtl
     - assets/models/
+    - assets/Health_Connect.svg
+    - assets/healthkit_api.png
+    - assets/samsung_health.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

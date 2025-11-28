@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/domain/entities/goal_entity.dart';
 import 'package:omnihealthmobileflutter/presentation/common/input_fields/custom_text_field.dart';
@@ -22,13 +21,16 @@ class TargetMetricItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       margin: EdgeInsets.only(bottom: AppSpacing.md.h),
       padding: EdgeInsets.all(AppSpacing.md.w),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         children: [
@@ -44,7 +46,7 @@ class TargetMetricItem extends StatelessWidget {
               ),
               IconButton(
                 onPressed: onRemove,
-                icon: const Icon(Icons.delete_outline, color: AppColors.error),
+                icon: Icon(Icons.delete_outline, color: colorScheme.error),
               ),
             ],
           ),

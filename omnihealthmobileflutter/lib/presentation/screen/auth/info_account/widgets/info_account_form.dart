@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:omnihealthmobileflutter/core/constants/enum_constant.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_radius.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/presentation/common/input_fields/custom_text_field.dart';
@@ -33,7 +32,10 @@ class InfoAccountForm extends StatelessWidget {
           label: "Fullname",
           placeholder: "Enter fullname",
           enabled: !isLoading,
-          leftIcon: const Icon(Icons.person_outline, color: AppColors.primary),
+          leftIcon: Icon(
+            Icons.person_outline,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         SizedBox(height: AppSpacing.md.h),
         GestureDetector(
@@ -44,13 +46,13 @@ class InfoAccountForm extends StatelessWidget {
               label: "Birthday",
               placeholder: "YYYY-MM-DD",
               enabled: !isLoading,
-              leftIcon: const Icon(
+              leftIcon: Icon(
                 Icons.cake_outlined,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
-              rightIcon: const Icon(
+              rightIcon: Icon(
                 Icons.calendar_today,
-                color: AppColors.textSecondary,
+                color: Theme.of(context).textTheme.bodySmall?.color,
               ),
             ),
           ),
@@ -62,56 +64,62 @@ class InfoAccountForm extends StatelessWidget {
   }
 
   Widget _buildGenderDropdown() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Gender",
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        SizedBox(height: AppSpacing.xs.h),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(AppRadius.md.r),
-            border: Border.all(color: AppColors.gray200, width: 1.5),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<GenderEnum>(
-              value: selectedGender,
-              isExpanded: true,
-              hint: const Text("Choose gender"),
-              icon: const Icon(Icons.arrow_drop_down, color: AppColors.primary),
-              items: GenderEnum.values.map((gender) {
-                return DropdownMenuItem(
-                  value: gender,
-                  child: Row(
-                    children: [
-                      Icon(
-                        gender == GenderEnum.male
-                            ? Icons.male
-                            : gender == GenderEnum.female
-                            ? Icons.female
-                            : Icons.transgender,
-                        size: 20.w,
-                        color: AppColors.textSecondary,
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(gender.displayName),
-                    ],
-                  ),
-                );
-              }).toList(),
-              onChanged: isLoading ? null : onGenderChanged,
+    return Builder(
+      builder: (context) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        final textTheme = theme.textTheme;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Gender",
+              style: textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-        ),
-      ],
+            SizedBox(height: AppSpacing.xs.h),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                borderRadius: BorderRadius.circular(AppRadius.md.r),
+                border: Border.all(color: theme.dividerColor, width: 1.5),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<GenderEnum>(
+                  value: selectedGender,
+                  isExpanded: true,
+                  hint: const Text("Choose gender"),
+                  icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
+                  items: GenderEnum.values.map((gender) {
+                    return DropdownMenuItem(
+                      value: gender,
+                      child: Row(
+                        children: [
+                          Icon(
+                            gender == GenderEnum.male
+                                ? Icons.male
+                                : gender == GenderEnum.female
+                                ? Icons.female
+                                : Icons.transgender,
+                            size: 20.w,
+                            color: textTheme.bodySmall?.color,
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(gender.displayName),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: isLoading ? null : onGenderChanged,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/presentation/common/input_fields/custom_text_field.dart';
 import 'package:omnihealthmobileflutter/presentation/common/input_fields/multi_select_box.dart';
@@ -99,14 +98,18 @@ class HealthStatusSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Container(
       padding: EdgeInsets.all(AppSpacing.md.w),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textSecondary.withOpacity(0.08),
+            color: colorScheme.onSurface.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -120,22 +123,20 @@ class HealthStatusSection extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.favorite,
-                  color: AppColors.primary,
+                  color: colorScheme.primary,
                   size: 20.sp,
                 ),
               ),
               SizedBox(width: AppSpacing.sm.w),
               Text(
                 'Health Status',
-                style: TextStyle(
-                  fontSize: 16.sp,
+                style: textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
                 ),
               ),
             ],
@@ -147,11 +148,11 @@ class HealthStatusSection extends StatelessWidget {
             padding: EdgeInsets.all(AppSpacing.sm.w),
             decoration: BoxDecoration(
               color: hasMedicalData
-                  ? AppColors.success.withOpacity(0.1)
-                  : AppColors.warning.withOpacity(0.1),
+                  ? Colors.green.withOpacity(0.1)
+                  : Colors.orange.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: hasMedicalData ? AppColors.success : AppColors.warning,
+                color: hasMedicalData ? Colors.green : Colors.orange,
                 width: 1,
               ),
             ),
@@ -164,9 +165,7 @@ class HealthStatusSection extends StatelessWidget {
                       hasMedicalData
                           ? Icons.check_circle_outline
                           : Icons.warning_amber_rounded,
-                      color: hasMedicalData
-                          ? AppColors.success
-                          : AppColors.warning,
+                      color: hasMedicalData ? Colors.green : Colors.orange,
                       size: 20.sp,
                     ),
                     SizedBox(width: 8.w),
@@ -175,12 +174,9 @@ class HealthStatusSection extends StatelessWidget {
                         hasMedicalData
                             ? 'Medical data enabled'
                             : 'Requires medical device or expert',
-                        style: TextStyle(
-                          fontSize: 14.sp,
+                        style: textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: hasMedicalData
-                              ? AppColors.success
-                              : AppColors.warning,
+                          color: hasMedicalData ? Colors.green : Colors.orange,
                         ),
                       ),
                     ),
@@ -189,17 +185,13 @@ class HealthStatusSection extends StatelessWidget {
                 SizedBox(height: 8.h),
                 Text(
                   'Only enter this data if you have a measuring device or information from a medical professional.',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: textTheme.bodySmall,
                 ),
                 SizedBox(height: 8.h),
                 Row(
                   children: [
                     Checkbox(
                       value: hasMedicalData,
-                      activeColor: AppColors.primary,
                       onChanged: (value) {
                         onHasMedicalDataChanged(value ?? false);
                       },
@@ -211,10 +203,8 @@ class HealthStatusSection extends StatelessWidget {
                         },
                         child: Text(
                           'I have valid medical data',
-                          style: TextStyle(
-                            fontSize: 14.sp,
+                          style: textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: AppColors.textPrimary,
                           ),
                         ),
                       ),
@@ -242,10 +232,8 @@ class HealthStatusSection extends StatelessWidget {
                 // Blood Pressure subsection
                 Text(
                   'Blood Pressure',
-                  style: TextStyle(
-                    fontSize: 14.sp,
+                  style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
                   ),
                 ),
                 SizedBox(height: AppSpacing.sm.h),
@@ -273,10 +261,8 @@ class HealthStatusSection extends StatelessWidget {
                 // Cholesterol subsection
                 Text(
                   'Cholesterol',
-                  style: TextStyle(
-                    fontSize: 14.sp,
+                  style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
                   ),
                 ),
                 SizedBox(height: AppSpacing.sm.h),

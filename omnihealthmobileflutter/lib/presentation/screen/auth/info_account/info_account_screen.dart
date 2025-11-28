@@ -6,9 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:omnihealthmobileflutter/core/constants/enum_constant.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
 import 'package:omnihealthmobileflutter/domain/entities/auth/user_entity.dart';
 
 import 'package:omnihealthmobileflutter/presentation/common/button/button_primary.dart';
@@ -47,10 +45,7 @@ class _InfoAccountScreenState extends State<InfoAccountScreen> {
       _updateLocalState(state.user);
     } else if (state is InfoAccountSuccess) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(state.message),
-          backgroundColor: AppColors.success,
-        ),
+        SnackBar(content: Text(state.message), backgroundColor: Colors.green),
       );
       _updateLocalState(state.user);
       _selectedImage = null; // Reset selected image after upload
@@ -58,7 +53,7 @@ class _InfoAccountScreenState extends State<InfoAccountScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(state.message),
-          backgroundColor: AppColors.error,
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
@@ -100,18 +95,6 @@ class _InfoAccountScreenState extends State<InfoAccountScreen> {
       initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: AppColors.white,
-              onSurface: AppColors.textPrimary,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (picked != null) {
@@ -142,23 +125,17 @@ class _InfoAccountScreenState extends State<InfoAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
           "Account",
-          style: AppTypography.headingBoldStyle(
-            fontSize: AppTypography.fontSizeLg.sp,
-            color: AppColors.white,
-          ),
+          style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: AppColors.primary,
-        elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
       ),
       body: BlocConsumer<InfoAccountCubit, InfoAccountState>(
         listener: _onStateChanged,
@@ -212,11 +189,11 @@ class _InfoAccountScreenState extends State<InfoAccountScreen> {
                 Container(
                   padding: EdgeInsets.all(AppSpacing.md.w),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: colorScheme.surface,
                     borderRadius: BorderRadius.circular(12.r),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: colorScheme.shadow.withOpacity(0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -227,9 +204,8 @@ class _InfoAccountScreenState extends State<InfoAccountScreen> {
                     children: [
                       Text(
                         "User info",
-                        style: AppTypography.headingBoldStyle(
-                          fontSize: 18.sp,
-                          color: AppColors.textPrimary,
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       SizedBox(height: AppSpacing.lg.h),

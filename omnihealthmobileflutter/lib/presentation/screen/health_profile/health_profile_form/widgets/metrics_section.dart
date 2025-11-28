@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
 import 'package:omnihealthmobileflutter/presentation/common/input_fields/custom_text_field.dart';
 
 /// Widget cho phần Metrics (BMI, BMR, WHR, Body Fat, Muscle Mass)
@@ -28,14 +26,18 @@ class MetricsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Container(
       padding: EdgeInsets.all(AppSpacing.md.w),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textSecondary.withOpacity(0.08),
+            color: colorScheme.onSurface.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -49,22 +51,20 @@ class MetricsSection extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.analytics,
-                  color: AppColors.primary,
+                  color: colorScheme.primary,
                   size: 20.sp,
                 ),
               ),
               SizedBox(width: AppSpacing.sm.w),
               Text(
                 'Metrics',
-                style: TextStyle(
-                  fontSize: 16.sp,
+                style: textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
                 ),
               ),
             ],
@@ -78,7 +78,7 @@ class MetricsSection extends StatelessWidget {
               vertical: AppSpacing.xs.h,
             ),
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: theme.scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -87,15 +87,11 @@ class MetricsSection extends StatelessWidget {
                   value: calculateAutomatically,
                   onChanged: (value) =>
                       onCalculateAutomaticallyChanged(value ?? false),
-                  activeColor: AppColors.primary,
                 ),
                 Expanded(
                   child: Text(
                     'Calculate automatically from measurements',
-                    style: AppTypography.bodyRegularStyle(
-                      fontSize: AppTypography.fontSizeSm.sp,
-                      color: AppColors.textPrimary,
-                    ),
+                    style: textTheme.bodySmall,
                   ),
                 ),
               ],
@@ -113,7 +109,7 @@ class MetricsSection extends StatelessWidget {
               );
             },
             child: calculateAutomatically
-                ? _buildAutoCalculateMessage()
+                ? _buildAutoCalculateMessage(context)
                 : _buildManualInputFields(),
           ),
         ],
@@ -122,18 +118,25 @@ class MetricsSection extends StatelessWidget {
   }
 
   /// Message shown when auto-calculate is enabled
-  Widget _buildAutoCalculateMessage() {
+  Widget _buildAutoCalculateMessage(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Container(
       key: const ValueKey('auto_message'),
       padding: EdgeInsets.all(AppSpacing.md.w),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: colorScheme.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 1),
+        border: Border.all(
+          color: colorScheme.primary.withOpacity(0.3),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
-          Icon(Icons.auto_awesome, color: AppColors.primary, size: 24.sp),
+          Icon(Icons.auto_awesome, color: colorScheme.primary, size: 24.sp),
           SizedBox(width: AppSpacing.sm.w),
           Expanded(
             child: Column(
@@ -141,19 +144,15 @@ class MetricsSection extends StatelessWidget {
               children: [
                 Text(
                   'Auto-calculation enabled',
-                  style: TextStyle(
-                    fontSize: 14.sp,
+                  style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
+                    color: colorScheme.primary,
                   ),
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   'Metrics will be automatically calculated from your body measurements',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: textTheme.bodySmall,
                 ),
               ],
             ),

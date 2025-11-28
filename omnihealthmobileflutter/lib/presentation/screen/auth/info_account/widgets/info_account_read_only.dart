@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_radius.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
 
 class InfoAccountReadOnly extends StatelessWidget {
   final String? email;
@@ -13,26 +11,31 @@ class InfoAccountReadOnly extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       padding: EdgeInsets.all(AppSpacing.md.w),
       decoration: BoxDecoration(
-        color: AppColors.gray100,
+        color: colorScheme.surfaceVariant.withOpacity(0.3),
         borderRadius: BorderRadius.circular(AppRadius.md.r),
-        border: Border.all(color: AppColors.gray300),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildItem(
+            context: context,
             icon: Icons.email_outlined,
             label: "Email",
             value: email ?? "Chưa cập nhật",
           ),
           if (roles != null && roles!.isNotEmpty) ...[
             SizedBox(height: AppSpacing.md.h),
-            Divider(color: AppColors.gray300, height: 1.h),
+            Divider(color: theme.dividerColor, height: 1.h),
             SizedBox(height: AppSpacing.md.h),
             _buildItem(
+              context: context,
               icon: Icons.security_outlined,
               label: "Roles",
               value: roles!.join(", "),
@@ -45,26 +48,26 @@ class InfoAccountReadOnly extends StatelessWidget {
   }
 
   Widget _buildItem({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
     bool isChip = false,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20.w, color: AppColors.textSecondary),
+        Icon(icon, size: 20.w, color: textTheme.bodySmall?.color),
         SizedBox(width: AppSpacing.sm.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: AppTypography.caption.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
+              Text(label, style: textTheme.bodySmall),
               SizedBox(height: 4.h),
               isChip
                   ? Wrap(
@@ -77,16 +80,16 @@ class InfoAccountReadOnly extends StatelessWidget {
                             vertical: 4.h,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: colorScheme.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(AppRadius.sm.r),
                             border: Border.all(
-                              color: AppColors.primary.withOpacity(0.3),
+                              color: colorScheme.primary.withOpacity(0.3),
                             ),
                           ),
                           child: Text(
                             role,
-                            style: AppTypography.bodySmall.copyWith(
-                              color: AppColors.primary,
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.primary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -95,8 +98,7 @@ class InfoAccountReadOnly extends StatelessWidget {
                     )
                   : Text(
                       value,
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.textPrimary,
+                      style: textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                     ),

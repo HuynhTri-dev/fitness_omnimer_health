@@ -34,16 +34,7 @@ class _HealthProfilePageState extends State<HealthProfilePage> {
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
       builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: AppColors.textLight,
-              surface: AppColors.white,
-            ),
-          ),
-          child: child!,
-        );
+        return child!;
       },
     );
 
@@ -62,8 +53,10 @@ class _HealthProfilePageState extends State<HealthProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {

@@ -287,16 +287,7 @@ class _PersonalProfileFormViewState extends State<_PersonalProfileFormView> {
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
       builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: AppColors.textLight,
-              surface: AppColors.white,
-            ),
-          ),
-          child: child!,
-        );
+        return child!;
       },
     );
     if (picked != null && picked != _selectedDate) {
@@ -408,23 +399,13 @@ class _PersonalProfileFormViewState extends State<_PersonalProfileFormView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Personal Health Profile',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: const Text('Personal Health Profile'),
         actions: [
           GestureDetector(
             onTap: () => _selectDate(context),
@@ -434,19 +415,11 @@ class _PersonalProfileFormViewState extends State<_PersonalProfileFormView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text(
-                    'Checkup Date',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
+                  Text('Checkup Date', style: textTheme.bodySmall),
                   Text(
                     DateFormat('dd/MM/yyyy').format(_selectedDate),
-                    style: const TextStyle(
-                      fontSize: 13,
+                    style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
                     ),
                   ),
                 ],

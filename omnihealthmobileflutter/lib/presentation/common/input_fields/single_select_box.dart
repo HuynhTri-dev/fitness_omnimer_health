@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_radius.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
@@ -85,10 +84,12 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
   }
 
   Color _getBorderColor(bool isOpen) {
-    if (widget.disabled) return AppColors.gray300;
-    if (_internalError != null || widget.error != null) return AppColors.error;
-    if (_isFocused || isOpen) return AppColors.primary;
-    return AppColors.gray200;
+    final theme = Theme.of(context);
+    if (widget.disabled) return theme.disabledColor;
+    if (_internalError != null || widget.error != null)
+      return theme.colorScheme.error;
+    if (_isFocused || isOpen) return theme.primaryColor;
+    return theme.dividerColor;
   }
 
   void _validate(T? value) {
@@ -108,6 +109,7 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
   @override
   Widget build(BuildContext context) {
     final displayError = widget.error ?? _internalError;
+    final theme = Theme.of(context);
 
     return Focus(
       focusNode: _focusNode,
@@ -121,11 +123,12 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                 children: [
                   Text(
                     widget.label!,
-                    style: AppTypography.bodyBoldStyle(
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                       fontSize: AppTypography.fontSizeSm.sp,
                       color: displayError != null
-                          ? AppColors.error
-                          : AppColors.textPrimary,
+                          ? theme.colorScheme.error
+                          : theme.textTheme.bodyMedium?.color,
                     ),
                   ),
                   if (widget.required)
@@ -159,7 +162,7 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                           height: 40.h,
                           margin: EdgeInsets.only(right: AppSpacing.sm.w),
                           decoration: BoxDecoration(
-                            color: AppColors.background,
+                            color: theme.scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(AppRadius.sm.r),
                           ),
                           child: Center(child: widget.leftIcon),
@@ -167,9 +170,9 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                       Expanded(
                         child: Text(
                           widget.placeholder!,
-                          style: AppTypography.bodyRegularStyle(
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             fontSize: AppTypography.fontSizeBase.sp,
-                            color: AppColors.textMuted,
+                            color: theme.hintColor,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -183,9 +186,8 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                           value: item.value,
                           child: Text(
                             item.label,
-                            style: AppTypography.bodyRegularStyle(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               fontSize: AppTypography.fontSizeBase.sp,
-                              color: AppColors.textPrimary,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -204,7 +206,7 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                               height: 40.h,
                               margin: EdgeInsets.only(right: AppSpacing.sm.w),
                               decoration: BoxDecoration(
-                                color: AppColors.background,
+                                color: theme.scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(
                                   AppRadius.sm.r,
                                 ),
@@ -214,9 +216,8 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                           Expanded(
                             child: Text(
                               item.label,
-                              style: AppTypography.bodyRegularStyle(
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 fontSize: AppTypography.fontSizeBase.sp,
-                                color: AppColors.textPrimary,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -232,7 +233,9 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                       vertical: 4.h,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
+                      color:
+                          theme.inputDecorationTheme.fillColor ??
+                          theme.cardColor,
                       border: Border.all(
                         color: _getBorderColor(false),
                         width: 1.5,
@@ -241,14 +244,14 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                       boxShadow: _isFocused
                           ? [
                               BoxShadow(
-                                color: AppColors.primary.withOpacity(0.1),
+                                color: theme.primaryColor.withOpacity(0.1),
                                 blurRadius: 6,
                                 offset: const Offset(0, 3),
                               ),
                             ]
                           : [
                               BoxShadow(
-                                color: AppColors.black.withOpacity(0.02),
+                                color: theme.shadowColor.withOpacity(0.05),
                                 blurRadius: 2,
                                 offset: const Offset(0, 1),
                               ),
@@ -265,7 +268,7 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                   dropdownStyleData: DropdownStyleData(
                     maxHeight: widget.maxHeight,
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(AppRadius.lg.r),
                     ),
                     offset: const Offset(0, -4),
@@ -280,11 +283,12 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
                     selectedMenuItemBuilder: (context, child) {
                       return Container(
-                        color: AppColors.primary,
+                        color: theme.primaryColor,
                         child: DefaultTextStyle(
-                          style: AppTypography.bodyBoldStyle(
+                          style: theme.textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
                             fontSize: AppTypography.fontSizeBase.sp,
-                            color: AppColors.white,
+                            color: theme.colorScheme.onPrimary,
                           ),
                           child: child,
                         ),
@@ -301,16 +305,16 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
                               controller: _searchController,
                               decoration: InputDecoration(
                                 hintText: 'Tìm kiếm...',
-                                hintStyle: AppTypography.bodyRegularStyle(
+                                hintStyle: theme.textTheme.bodyMedium?.copyWith(
                                   fontSize: AppTypography.fontSizeBase.sp,
-                                  color: AppColors.textMuted,
+                                  color: theme.hintColor,
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(
                                     AppRadius.sm.r,
                                   ),
-                                  borderSide: const BorderSide(
-                                    color: AppColors.border,
+                                  borderSide: BorderSide(
+                                    color: theme.dividerColor,
                                   ),
                                 ),
                                 contentPadding: EdgeInsets.symmetric(
@@ -341,18 +345,18 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.error_outline,
                     size: 14,
-                    color: AppColors.error,
+                    color: theme.colorScheme.error,
                   ),
                   SizedBox(width: 4.w),
                   Expanded(
                     child: Text(
                       displayError,
-                      style: AppTypography.bodyRegularStyle(
+                      style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: AppTypography.fontSizeXs.sp,
-                        color: AppColors.error,
+                        color: theme.colorScheme.error,
                       ),
                     ),
                   ),
@@ -367,9 +371,9 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
               ),
               child: Text(
                 widget.helperText!,
-                style: AppTypography.bodyRegularStyle(
+                style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: AppTypography.fontSizeXs.sp,
-                  color: AppColors.textSecondary,
+                  color: theme.textTheme.bodySmall?.color,
                 ),
               ),
             ),
@@ -382,9 +386,9 @@ class _SingleSelectBoxState<T> extends State<SingleSelectBox<T>>
 class _ChevronDownIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Icon(
+    return Icon(
       Icons.keyboard_arrow_down,
-      color: AppColors.textSecondary,
+      color: Theme.of(context).textTheme.bodySmall?.color,
       size: 24,
     );
   }
