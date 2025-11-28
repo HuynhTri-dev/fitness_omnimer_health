@@ -161,191 +161,6 @@ Khi User yêu cầu gợi ý bài tập (Request Recommendation):
 | :-------------- | :-------------------------- | :------------------------------------------ | :---------------------------------------------------------------------------- |
 | **0.0 – 0.4**   | ❌ **Không phù hợp**        | Rủi ro chấn thương cao hoặc không hiệu quả. | **Loại bỏ** khỏi danh sách gợi ý.                                             |
 | **0.4 – 0.6**   | ⚠️ **Hỗ trợ / Thay thế**    | Tác động phụ trợ, không phải bài chính.     | Chỉ gợi ý trong phần **Warm-up** hoặc **Cool-down**.                          |
-| **0.6 – 0.75**  | � **Cần điều chỉnh**        | Đúng nhóm cơ nhưng cường độ chưa tối ưu.    | Gợi ý nhưng **tự động điều chỉnh** Reps/Sets (tăng/giảm) để đạt RPE mục tiêu. |
-| **0.75 – 0.85** | 🟢 **Hiệu quả (Good)**      | Phù hợp mục tiêu và thể trạng.              | **Ưu tiên hiển thị** trong Main Workout.                                      |
-| **0.85 – 1.00** | 🟣 **Tối ưu (Perfect Fit)** | "Signature workout" cho user này.           | **Lock-in**: Đưa vào Core Routine, đánh dấu "Recommended".                    |
-
----
-
-## 🔄 Cơ chế Feedback & Learning (Vòng lặp học)
-
-Hệ thống sẽ tự cập nhật (Retrain) dựa trên dữ liệu thực tế từ `WatchLog` sau khi tập:
-
-1.  **Thu thập dữ liệu thực:**
-
-    - Sau khi user tập, `WatchLog` ghi nhận: `HeartRateAvg`, `Calories`, `ActiveMinutes`.
-    - User input thủ công (nếu có): `Actual RPE`, `Feeling` (1-5).
-
-2.  **Tính toán Loss:**
-
-    - `Loss_Intensity` = `|Predicted_RPE - Actual_RPE|`
-    - `Actual_RPE` có thể ước tính từ HR: `RPE ≈ (HR_avg / HR_max) * 10`.
-
-3.  **Cập nhật Model:**
-
-# 3T-FIT AI Recommendation Engine: Two-Branch Architecture
-
-Hệ thống gợi ý bài tập của 3T-FIT sử dụng kiến trúc **Two-Branch Neural Network** (Mạng nơ-ron 2 nhánh) để giải quyết hai bài toán cốt lõi:
-
-1.  **Dự đoán Cường độ (Intensity Prediction):** Bài tập này sẽ nặng bao nhiêu đối với người dùng này?
-2.  **Dự đoán Độ phù hợp (Suitability Prediction):** Bài tập này có phù hợp với mục tiêu và tình trạng sức khỏe hiện tại không?
-
----
-
-## 🏗️ Kiến trúc Tổng quan
-
-```mermaid
-graph TD
-    subgraph Input Data
-        U[User Profile & Goals]
-        E[Exercise Metadata]
-        W[Recent WatchLogs]
-    end
-
-    subgraph "Branch A: Intensity Model"
-        A_Input[Input Vector A]
-        A_Dense[Dense Layers]
-        A_Out[Output: Predicted Intensity]
-    end
-
-    subgraph "Branch B: Suitability Model"
-        B_Input[Input Vector B]
-        B_Dense[Dense Layers]
-        B_Out[Output: Suitability Score (0-1)]
-    end
-
-    U --> A_Input
-    E --> A_Input
-    A_Input --> A_Dense --> A_Out
-
-    A_Out --> B_Input
-    E --> B_Input
-    W --> B_Input
-    U --> B_Input
-    B_Input --> B_Dense --> B_Out
-```
-
----
-
-## 🧠 Chi tiết Kỹ thuật (Technical Specifications)
-
-### 1. Data Preprocessing & Feature Engineering
-
-Trước khi đưa vào model, dữ liệu thô cần được xử lý thành các vector đặc trưng (Feature Vectors).
-
-#### **A. User Features (Thông tin người dùng)**
-
-Nguồn: `User.model.ts`, `HealthProfile.model.ts`, `Goal.model.ts`
-
-| Feature Name       | Source Field                          | Preprocessing / Formula                                         |
-| :----------------- | :------------------------------------ | :-------------------------------------------------------------- |
-| `age_norm`         | `HealthProfile.age`                   | `(age - 10) / (80 - 10)` (MinMax Scaling)                       |
-| `bmi_norm`         | `HealthProfile.bmi`                   | `(bmi - 15) / (40 - 15)`                                        |
-| `experience_score` | `HealthProfile.experienceLevel`       | Map Enum: Beginner=0.2, Intermediate=0.5, Advanced=0.8, Pro=1.0 |
-| `activity_level`   | `HealthProfile.activityLevel`         | Normalized 0-1                                                  |
-| `vo2max_norm`      | `WatchLog.vo2max` (avg)               | `(vo2max - 20) / (60 - 20)`                                     |
-| `goal_type_ohe`    | `Goal.goalType`                       | One-Hot Encoding (e.g., [1, 0, 0] for WeightLoss)               |
-| `injury_history`   | `HealthProfile.healthStatus.injuries` | Multi-hot encoding các vùng cơ thể bị chấn thương               |
-
-#### **B. Exercise Features (Thông tin bài tập)**
-
-Nguồn: `Exercise.model.ts`
-
-| Feature Name       | Source Field           | Preprocessing / Formula                                |
-| :----------------- | :--------------------- | :----------------------------------------------------- |
-| `difficulty_score` | `Exercise.difficulty`  | Map Enum: Beginner=0.3, Intermediate=0.6, Advanced=0.9 |
-| `met_value`        | `Exercise.met`         | Normalized `(met - 1) / (15 - 1)`                      |
-| `muscle_group_ohe` | `Exercise.mainMuscles` | Multi-hot encoding (e.g., Chest=1, Legs=0...)          |
-| `equipment_req`    | `Exercise.equipments`  | Binary vector (0/1) cho các thiết bị có sẵn            |
-
-#### **C. Derived Intensity Features (Hệ số Cường độ Tính toán)**
-
-Các chỉ số này được tính toán dựa trên lịch sử tập luyện hoặc parameters đầu vào của bài tập (nếu đang đánh giá một workout template).
-
-1.  **Resistance Intensity (Cường độ Kháng lực):**
-
-    - Công thức: `RI = (Reps * Weight) / Estimated_1RM`
-    - _Estimated_1RM (Epley Formula):_ `Weight * (1 + Reps/30)`
-    - Nếu chưa có lịch sử 1RM, dùng `Weight / BodyWeight` làm proxy.
-
-2.  **Cardio Intensity (Cường độ Tim mạch):**
-
-    - Công thức: `CI = (Distance / Time) / User_MaxPace`
-    - _User_MaxPace:_ Lấy từ `WatchLog` tốt nhất hoặc ước tính qua `VO2Max`.
-
-3.  **Volume Load (Thể tích tập):**
-
-    - Công thức: `VL = Sets * Reps * Weight`
-    - Chuẩn hóa: `VL_norm = VL / User_Avg_Volume_For_Muscle_Group`
-
-4.  **Rest Density (Mật độ nghỉ):**
-    - Công thức: `RD = RestTime / (RestTime + WorkTime)`
-
----
-
-### 2. Model Architecture Details
-
-#### **Branch A: Intensity Prediction Model**
-
-_Mục tiêu: Dự đoán mức độ gắng sức (RPE - Rating of Perceived Exertion) mà người dùng sẽ cảm thấy._
-
-- **Input Layer:** `User Features` + `Exercise Features` + `Derived Intensity Features` (Size: ~50 dimensions)
-- **Hidden Layers:**
-  - Dense(64, activation='relu', kernel_regularizer='l2')
-  - Dropout(0.2)
-  - Dense(32, activation='relu')
-- **Output Layer:**
-  - Dense(1, activation='linear') -> **Predicted_RPE** (Scale 1-10)
-
-#### **Branch B: Suitability Prediction Model**
-
-_Mục tiêu: Đánh giá độ phù hợp (0-1) của bài tập tại thời điểm hiện tại._
-
-- **Input Layer:**
-  - `Predicted_RPE` (Output từ Branch A)
-  - `User Health Status` (Stress, Sleep Quality, Recovery Score từ WatchLog)
-  - `Exercise Constraints` (Chấn thương vs. BodyPart của bài tập)
-- **Hidden Layers:**
-  - Dense(128, activation='relu')
-  - Dense(64, activation='relu')
-- **Output Layer:**
-  - Dense(1, activation='sigmoid') -> **Suitability_Score** (0.0 - 1.0)
-
----
-
-### 3. Quy trình Xử lý & Tích hợp (Integration Flow)
-
-Khi User yêu cầu gợi ý bài tập (Request Recommendation):
-
-1.  **Data Fetching:**
-
-    - Lấy `HealthProfile` & `Goal` mới nhất.
-    - Lấy `WatchLog` 7 ngày gần nhất để tính `Recovery Score` (dựa trên Sleep, Stress, HRV).
-    - Lấy danh sách `Exercise` khả dụng (lọc theo Equipment có sẵn).
-
-2.  **Batch Prediction (Branch A):**
-
-    - Với mỗi bài tập candidate, tạo input vector và chạy qua **Branch A**.
-    - Kết quả: Danh sách các bài tập kèm `Predicted_RPE`.
-
-3.  **Suitability Scoring (Branch B):**
-
-    - Lấy `Predicted_RPE` kết hợp với `Recovery Score` hiện tại.
-    - _Logic cứng (Hard Rules):_ Nếu bài tập tác động vào vùng chấn thương (`painLocations`), gán `Suitability = 0`.
-    - Chạy qua **Branch B** để lấy `Suitability_Score`.
-
-4.  **Ranking & Filtering:**
-    - Sắp xếp theo `Suitability_Score` giảm dần.
-    - Áp dụng **Bảng Đánh giá & Hành động** (xem bên dưới) để chọn top bài tập.
-
----
-
-## 📊 Bảng Đánh giá & Hành động (Suitability Score Interpretation)
-
-| Score Range     | Nhãn / Đánh giá             | Ý nghĩa                                     | Hành động của Hệ thống                                                        |
-| :-------------- | :-------------------------- | :------------------------------------------ | :---------------------------------------------------------------------------- |
-| **0.0 – 0.4**   | ❌ **Không phù hợp**        | Rủi ro chấn thương cao hoặc không hiệu quả. | **Loại bỏ** khỏi danh sách gợi ý.                                             |
-| **0.4 – 0.6**   | ⚠️ **Hỗ trợ / Thay thế**    | Tác động phụ trợ, không phải bài chính.     | Chỉ gợi ý trong phần **Warm-up** hoặc **Cool-down**.                          |
 | **0.6 – 0.75**  | **Cần điều chỉnh**          | Đúng nhóm cơ nhưng cường độ chưa tối ưu.    | Gợi ý nhưng **tự động điều chỉnh** Reps/Sets (tăng/giảm) để đạt RPE mục tiêu. |
 | **0.75 – 0.85** | 🟢 **Hiệu quả (Good)**      | Phù hợp mục tiêu và thể trạng.              | **Ưu tiên hiển thị** trong Main Workout.                                      |
 | **0.85 – 1.00** | 🟣 **Tối ưu (Perfect Fit)** | "Signature workout" cho user này.           | **Lock-in**: Đưa vào Core Routine, đánh dấu "Recommended".                    |
@@ -410,7 +225,8 @@ Mô tả cấu trúc JSON cho việc giao tiếp giữa Client (Mobile App) và 
       "exerciseId": "64f8a...",
       "exerciseName": "Bench Press"
     }
-  ]
+  ],
+  "k": 5
 }
 ```
 
@@ -447,22 +263,19 @@ Mô tả cấu trúc JSON cho việc giao tiếp giữa Client (Mobile App) và 
       ]
     },
     {
-      "name": "Push Up",
+      "name": "Treadmill",
       "sets": [
         {
-          "reps": 15,
-          "kg": 0,
-          "minRest": 60
-        },
+          "distance": 0.78
+        }
+      ]
+    },
+    {
+      "name": "High Knee Skips",
+      "sets": [
         {
-          "reps": 15,
-          "kg": 0,
-          "minRest": 60
-        },
-        {
-          "reps": 15,
-          "kg": 0,
-          "minRest": 60
+          "duration": 60,
+          "restAfterSetSeconds": 60
         }
       ]
     }
@@ -484,43 +297,30 @@ Backend sẽ tổng hợp dữ liệu từ 3 nguồn chính:
 
 ```json
 workoutDetail: {
-      type: [
+  "type": [
+    {
+      "exerciseId": "",
+      "sets": [
         {
-          exerciseId: {
-            type: Schema.Types.ObjectId,
-            ref: "Exercise",
-            required: true,
-          },
-          type: {
-            type: String,
-            enum: WorkoutDetailTypeTuple,
-            required: true,
-          },
-          sets: {
-            type: [
-              {
-                setOrder: { type: Number, required: true },
-                reps: { type: Number },
-                weight: { type: Number },
-                duration: { type: Number },
-                distance: { type: Number },
-                restAfterSetSeconds: { type: Number, default: 0 },
-                notes: { type: String },
-                done: { type: Boolean, default: false },
-              },
-            ],
-            default: [],
-          },
-          durationMin: { type: Number },
-          deviceData: {
-            heartRateAvg: Number,
-            heartRateMax: Number,
-            caloriesBurned: Number,
-          },
-        },
-      ],
-      default: [],
+          "setOrder": 1,
+          "reps": 3,
+          "weight": 60,
+          "duration": 60,
+          "distance": 60,
+          "restAfterSetSeconds": 60,
+          "notes": "",
+          "done": true
+        }
+      ]
     }
+  ],
+  "durationMin": 60,
+  "deviceData": {
+    "heartRateAvg": 60,
+    "heartRateMax": 60,
+    "caloriesBurned": 60
+  }
+}
 ```
 
 - **WorkoutFeedback** (`src/domain/models/Workout/WorkoutFeedback.model.ts`): Cảm nhận chủ quan của người dùng (Suitability rating, Pain/Injury notes, Goal achieved).
