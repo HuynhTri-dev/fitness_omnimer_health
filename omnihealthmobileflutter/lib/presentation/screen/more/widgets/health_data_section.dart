@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_radius.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/more/widgets/more_menu_item.dart';
+
+import 'package:omnihealthmobileflutter/presentation/screen/health_connect/health_connect_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// Health & Data section widget for More screen
@@ -117,15 +119,22 @@ class _HealthDataSectionState extends State<HealthDataSection>
                     });
                   },
                 ),
+                // Replace the old Health Connect dropdown with the new widget
                 _buildDropdownItem(
                   assetPath: 'assets/Health_Connect.svg',
                   title: 'Health Connect',
-                  subtitle: 'Google\'s Health Connect',
+                  subtitle: 'Google\'s health data platform',
                   value: _isHealthConnectEnabled,
                   onChanged: (value) {
                     setState(() {
                       _isHealthConnectEnabled = value;
                     });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HealthConnectScreen(),
+                      ),
+                    );
                   },
                 ),
                 _buildDropdownItem(
