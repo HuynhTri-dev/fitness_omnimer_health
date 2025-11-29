@@ -35,7 +35,8 @@ class _ExerciseItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: exercise.exerciseImageUrl != null &&
+                child:
+                    exercise.exerciseImageUrl != null &&
                         exercise.exerciseImageUrl!.isNotEmpty
                     ? Image.network(
                         exercise.exerciseImageUrl!,
@@ -57,9 +58,10 @@ class _ExerciseItem extends StatelessWidget {
                               height: 20.w,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                value: loadingProgress.expectedTotalBytes != null
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
                                     ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
+                                          loadingProgress.expectedTotalBytes!
                                     : null,
                               ),
                             ),
@@ -101,6 +103,25 @@ class _ExerciseItem extends StatelessWidget {
                 ),
               ),
 
+              // Type badge
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6.r),
+                ),
+                child: Text(
+                  _getTypeLabel(exercise.type),
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+
+              SizedBox(width: 8.w),
+
               // Delete Button
               IconButton(
                 icon: Icon(
@@ -115,58 +136,15 @@ class _ExerciseItem extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
 
           // Divider
           Divider(height: 1, color: Colors.grey.withOpacity(0.2)),
 
           SizedBox(height: 12.h),
 
-          // Sets Header
-          Row(
-            children: [
-              SizedBox(
-                width: 36.w,
-                child: Center(
-                  child: Text(
-                    'SET',
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'WEIGHT',
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'REPS',
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 32.w),
-            ],
-          ),
+          // Sets Header - Dynamic based on type
+          _buildSetsHeader(context),
 
           SizedBox(height: 8.h),
 
@@ -182,6 +160,7 @@ class _ExerciseItem extends StatelessWidget {
                 set: set,
                 exerciseIndex: exerciseIndex,
                 setIndex: setIndex,
+                exerciseType: exercise.type,
               );
             },
           ),
@@ -250,6 +229,129 @@ class _ExerciseItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _getTypeLabel(String type) {
+    switch (type) {
+      case 'reps':
+        return 'Reps';
+      case 'time':
+        return 'Time';
+      case 'distance':
+        return 'Distance';
+      case 'mixed':
+        return 'Mixed';
+      default:
+        return 'Reps';
+    }
+  }
+
+  Widget _buildSetsHeader(BuildContext context) {
+    final headerStyle = TextStyle(
+      fontSize: 10.sp,
+      fontWeight: FontWeight.w600,
+      color: Colors.grey[500],
+    );
+
+    switch (exercise.type) {
+      case 'reps':
+        return Row(
+          children: [
+            SizedBox(
+              width: 36.w,
+              child: Center(child: Text('SET', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Center(child: Text('WEIGHT', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Center(child: Text('REPS', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Center(child: Text('REST', style: headerStyle)),
+            ),
+            SizedBox(width: 32.w),
+          ],
+        );
+      case 'time':
+        return Row(
+          children: [
+            SizedBox(
+              width: 36.w,
+              child: Center(child: Text('SET', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Center(child: Text('REPS', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Center(child: Text('DURATION', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Center(child: Text('REST', style: headerStyle)),
+            ),
+            SizedBox(width: 32.w),
+          ],
+        );
+      case 'distance':
+        return Row(
+          children: [
+            SizedBox(
+              width: 36.w,
+              child: Center(child: Text('SET', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              flex: 2,
+              child: Center(child: Text('DISTANCE', style: headerStyle)),
+            ),
+            SizedBox(width: 32.w),
+          ],
+        );
+      case 'mixed':
+        // Mixed type has its own labeled fields, no header needed
+        return Row(
+          children: [
+            SizedBox(
+              width: 36.w,
+              child: Center(child: Text('SET', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Center(
+                child: Text(
+                  'CUSTOM FIELDS',
+                  style: headerStyle,
+                ),
+              ),
+            ),
+            SizedBox(width: 32.w),
+          ],
+        );
+      default:
+        return Row(
+          children: [
+            SizedBox(
+              width: 36.w,
+              child: Center(child: Text('SET', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Center(child: Text('WEIGHT', style: headerStyle)),
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Center(child: Text('REPS', style: headerStyle)),
+            ),
+            SizedBox(width: 32.w),
+          ],
+        );
+    }
   }
 
   void _showDeleteConfirmation(BuildContext context) {

@@ -152,7 +152,8 @@ class WorkoutTemplateFormCubit extends Cubit<WorkoutTemplateFormState> {
       exerciseId: exercise.id,
       exerciseName: exercise.name,
       exerciseImageUrl: exercise.imageUrl.isNotEmpty ? exercise.imageUrl : null,
-      type: 'reps', // Default to 'reps' type (matches backend enum: reps, time, distance, mixed)
+      type:
+          'reps', // Default to 'reps' type (matches backend enum: reps, time, distance, mixed)
       sets: [const WorkoutSetFormData(setOrder: 1, reps: null, weight: null)],
     );
 
@@ -195,6 +196,41 @@ class WorkoutTemplateFormCubit extends Cubit<WorkoutTemplateFormState> {
       state.exercises,
     );
     updatedExercises.removeAt(exerciseIndex);
+    emit(state.copyWith(exercises: updatedExercises));
+  }
+
+  /// Update exercise type (reps, time, distance, mixed)
+  void updateExerciseType(int exerciseIndex, String newType) {
+    final updatedExercises = List<WorkoutExerciseFormData>.from(
+      state.exercises,
+    );
+    final exercise = updatedExercises[exerciseIndex];
+
+    // Reset sets with default values based on new type
+    final resetSets = exercise.sets.map((set) {
+      return WorkoutSetFormData(
+        setOrder: set.setOrder,
+        reps: (newType == 'reps' || newType == 'time' || newType == 'mixed')
+            ? set.reps
+            : null,
+        weight: (newType == 'reps' || newType == 'mixed') ? set.weight : null,
+        duration: (newType == 'time' || newType == 'mixed')
+            ? set.duration
+            : null,
+        distance: (newType == 'distance' || newType == 'mixed')
+            ? set.distance
+            : null,
+        restAfterSetSeconds: (newType != 'distance')
+            ? set.restAfterSetSeconds
+            : null,
+      );
+    }).toList();
+
+    updatedExercises[exerciseIndex] = exercise.copyWith(
+      type: newType,
+      sets: resetSets,
+    );
+
     emit(state.copyWith(exercises: updatedExercises));
   }
 
