@@ -191,6 +191,8 @@ class RouteConfig {
         return BlocProvider(
           create: (_) => sl<WorkoutTemplateAICubit>()..loadInitialData(),
           child: const WorkoutTemplateAIScreen(),
+        );
+
       case workoutSession:
         final template = arguments?['template'] as WorkoutTemplateEntity?;
         if (template == null) {
@@ -308,6 +310,8 @@ class RouteConfig {
 
   static void navigateToWorkoutTemplateAI(BuildContext context) {
     Navigator.of(context).pushNamed(workoutTemplateAI);
+  }
+
   static Future<dynamic> navigateToWorkoutSession(
     BuildContext context, {
     required WorkoutTemplateEntity template,

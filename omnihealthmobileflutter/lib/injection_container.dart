@@ -252,10 +252,6 @@ Future<void> init() async {
     () => AIRepositoryImpl(remoteDataSource: sl()),
   );
 
-  sl.registerLazySingleton<AIRepositoryAbs>(
-    () => AIRepositoryImpl(remoteDataSource: sl()),
-  );
-
   // ======================
   // Use case
   // ======================
@@ -385,10 +381,6 @@ Future<void> init() async {
     () => RecommendWorkoutUseCase(sl()),
   );
 
-  sl.registerLazySingleton<RecommendWorkoutUseCase>(
-    () => RecommendWorkoutUseCase(sl()),
-  );
-
   // ======================
   // Blocs / Cubits
   // ======================
@@ -498,6 +490,8 @@ Future<void> init() async {
   // Report BLoC
   sl.registerFactory(
     () => ReportBloc(getWorkoutLogsUseCase: sl(), workoutLogRepository: sl()),
+  );
+
   sl.registerFactory(
     () => WorkoutTemplateAICubit(
       getAllBodyPartsUseCase: sl(),
