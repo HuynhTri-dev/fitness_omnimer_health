@@ -104,9 +104,6 @@ import 'package:omnihealthmobileflutter/domain/usecases/workout/delete_workout_t
 import 'package:omnihealthmobileflutter/domain/usecases/workout/get_weekly_workout_stats_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/create_workout_template_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/update_workout_template_usecase.dart';
-import 'package:omnihealthmobileflutter/domain/usecases/workout/save_workout_log_usecase.dart';
-import 'package:omnihealthmobileflutter/domain/usecases/workout/get_workout_logs_usecase.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/report/blocs/report_bloc.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/ai/recommend_workout_usecase.dart';
 import 'package:health/health.dart';
 import 'package:logger/logger.dart';
@@ -252,6 +249,10 @@ Future<void> init() async {
     () => AIRepositoryImpl(remoteDataSource: sl()),
   );
 
+  sl.registerLazySingleton<AIRepositoryAbs>(
+    () => AIRepositoryImpl(remoteDataSource: sl()),
+  );
+
   // ======================
   // Use case
   // ======================
@@ -375,6 +376,10 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetWorkoutLogsUseCase>(
     () => GetWorkoutLogsUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<RecommendWorkoutUseCase>(
+    () => RecommendWorkoutUseCase(sl()),
   );
 
   sl.registerLazySingleton<RecommendWorkoutUseCase>(
