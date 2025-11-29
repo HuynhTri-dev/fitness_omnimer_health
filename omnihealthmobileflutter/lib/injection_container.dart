@@ -15,7 +15,6 @@ import 'package:omnihealthmobileflutter/data/datasources/goal_remote_datasource.
 import 'package:omnihealthmobileflutter/data/datasources/workout_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/verification_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/ai_remote_datasource.dart';
-
 import 'package:omnihealthmobileflutter/data/repositories/auth_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/verification_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/body_part_repository_impl.dart';
@@ -99,8 +98,7 @@ import 'package:omnihealthmobileflutter/data/repositories/workout_template_repos
 import 'package:omnihealthmobileflutter/data/repositories/workout_stats_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/workout_log_repository_impl.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/workout_log_repository_abs.dart';
-import 'package:omnihealthmobileflutter/domain/usecases/workout/get_workout_logs_usecase.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/report/blocs/report_bloc.dart';
+
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/check_health_connect_availability.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/request_health_permissions.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/get_today_health_data.dart';
@@ -197,6 +195,8 @@ Future<void> init() async {
 
   sl.registerLazySingleton<VerificationDataSource>(
     () => VerificationDataSourceImpl(apiClient: sl()),
+  );
+
   sl.registerLazySingleton<AIRemoteDataSource>(
     () => AIRemoteDataSourceImpl(apiClient: sl()),
   );
@@ -262,12 +262,9 @@ Future<void> init() async {
     () => WorkoutLogRepositoryImpl(workoutDataSource: sl()),
   );
 
-  sl.registerLazySingleton<HealthKitConnectRepository>(
-    () => HealthKitConnectRepositoryImpl(sl(), sl(), sl(), sl()),
-  );
-
   sl.registerLazySingleton<VerificationRepositoryAbs>(
     () => VerificationRepositoryImpl(dataSource: sl()),
+  );
   sl.registerLazySingleton<AIRepositoryAbs>(
     () => AIRepositoryImpl(remoteDataSource: sl()),
   );
@@ -534,8 +531,6 @@ Future<void> init() async {
       deleteWorkoutTemplateUseCase: sl(),
     ),
   );
-  // HealthKit Connect BLoC
-  sl.registerFactory(() => HealthKitConnectBloc(repository: sl()));
 
   // Report BLoC
   sl.registerFactory(

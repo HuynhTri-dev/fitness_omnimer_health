@@ -142,7 +142,10 @@ export class UserRepository extends BaseRepository<IUser> {
    */
   async getPasswordHashById(id: string): Promise<string | null> {
     try {
-      const user = await this.model.findById(id).select("passwordHashed").lean();
+      const user = await this.model
+        .findById(id)
+        .select("passwordHashed")
+        .lean();
       return user?.passwordHashed ?? null;
     } catch (e) {
       throw e;
@@ -166,6 +169,7 @@ export class UserRepository extends BaseRepository<IUser> {
     } catch (e) {
       throw e;
     }
+  }
   /**
    * 🔹 Count total users
    */
