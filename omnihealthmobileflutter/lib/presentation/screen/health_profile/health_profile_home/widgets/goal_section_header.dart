@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_radius.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
 
 class GoalSectionHeader extends StatelessWidget {
   final VoidCallback onAddTap;
@@ -12,14 +10,15 @@ class GoalSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Row(
       children: [
         Text(
           'My Goal',
-          style: AppTypography.bodyBoldStyle(
-            fontSize: AppTypography.fontSizeLg.sp,
-            color: AppColors.textPrimary,
-          ),
+          style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         SizedBox(width: AppSpacing.md.w),
         GestureDetector(
@@ -28,10 +27,10 @@ class GoalSectionHeader extends StatelessWidget {
             width: 24.w,
             height: 24.w,
             decoration: BoxDecoration(
-              color: AppColors.primary,
+              color: colorScheme.primary,
               borderRadius: BorderRadius.circular(AppRadius.sm.r),
             ),
-            child: Icon(Icons.add, color: AppColors.textLight, size: 16.sp),
+            child: Icon(Icons.add, color: colorScheme.onPrimary, size: 16.sp),
           ),
         ),
       ],

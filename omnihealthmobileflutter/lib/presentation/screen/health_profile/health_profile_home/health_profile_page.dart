@@ -14,9 +14,7 @@ import 'package:omnihealthmobileflutter/presentation/screen/health_profile/healt
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/widgets/my_goal_section.dart';
 import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_state.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/personal_profile_form_page.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_event.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/personal_profile_form_page.dart';
 
 class HealthProfilePage extends StatefulWidget {
   const HealthProfilePage({super.key});
@@ -36,16 +34,7 @@ class _HealthProfilePageState extends State<HealthProfilePage> {
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
       builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: AppColors.textLight,
-              surface: AppColors.white,
-            ),
-          ),
-          child: child!,
-        );
+        return child!;
       },
     );
 
@@ -64,8 +53,10 @@ class _HealthProfilePageState extends State<HealthProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
@@ -82,7 +73,8 @@ class _HealthProfilePageState extends State<HealthProfilePage> {
                   _currentProfile = state.profile;
                   _selectedDate = state.profile.checkupDate;
                 });
-              } else if (state is HealthProfileError) {
+              } else if (state is HealthProfileError ||
+                  state is HealthProfileEmpty) {
                 setState(() {
                   _currentProfile = null;
                 });

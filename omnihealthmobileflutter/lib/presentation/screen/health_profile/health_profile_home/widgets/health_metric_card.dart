@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 
 class HealthMetricCard extends StatelessWidget {
   final String label;
@@ -15,12 +14,11 @@ class HealthMetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-        ),
+        Text(label, style: textTheme.bodySmall),
         const SizedBox(height: 4),
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -28,20 +26,14 @@ class HealthMetricCard extends StatelessWidget {
           children: [
             Text(
               value ?? '-',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
+              style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             if (unit != null && value != null) ...[
               const SizedBox(width: 2),
               Text(
                 unit!,
-                style: const TextStyle(
-                  fontSize: 12,
+                style: textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: AppColors.textSecondary,
                 ),
               ),
             ],

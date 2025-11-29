@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/domain/entities/goal_entity.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/goal/widgets/section_title.dart';
@@ -32,7 +31,10 @@ class TargetMetricsSection extends StatelessWidget {
             const SectionTitle(title: 'Target Metrics'),
             IconButton(
               onPressed: onAddMetric,
-              icon: const Icon(Icons.add_circle, color: AppColors.primary),
+              icon: Icon(
+                Icons.add_circle,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ],
         ),

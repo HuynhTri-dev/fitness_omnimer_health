@@ -1,5 +1,6 @@
 import 'package:omnihealthmobileflutter/domain/entities/auth/auth_entity.dart';
 import 'package:omnihealthmobileflutter/core/constants/enum_constant.dart';
+import 'package:omnihealthmobileflutter/domain/entities/auth/user_entity.dart';
 
 class UserAuthModel {
   final String id;
@@ -46,7 +47,7 @@ class UserAuthModel {
       'fullname': fullname,
       'email': email,
       'imageUrl': imageUrl,
-      'gender': gender,
+      'gender': gender?.name,
       'birthday': birthday,
       'roleName': roleName,
     };
@@ -62,6 +63,18 @@ class UserAuthModel {
       gender: gender,
       birthday: birthday != null ? DateTime.tryParse(birthday!) : null,
       roleName: roleName,
+    );
+  }
+
+  UserEntity toUserEntity() {
+    return UserEntity(
+      birthday: birthday,
+      email: email,
+      fullname: fullname,
+      gender: gender,
+      id: id,
+      imageUrl: imageUrl,
+      roleNames: roleName,
     );
   }
 

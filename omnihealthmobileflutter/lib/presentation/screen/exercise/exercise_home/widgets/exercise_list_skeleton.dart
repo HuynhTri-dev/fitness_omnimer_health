@@ -21,11 +21,19 @@ class _ExerciseCardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
+<<<<<<< HEAD
       baseColor: AppColors.gray200,
       highlightColor: AppColors.gray100,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.surface,
+=======
+      baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+      highlightColor: Theme.of(context).colorScheme.surface,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+>>>>>>> develop
           borderRadius: AppRadius.radiusLg,
           boxShadow: [
             BoxShadow(
@@ -44,7 +52,11 @@ class _ExerciseCardSkeleton extends StatelessWidget {
               width: 85.w,
               height: 85.w,
               decoration: BoxDecoration(
+<<<<<<< HEAD
                 color: AppColors.gray200,
+=======
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+>>>>>>> develop
                 borderRadius: AppRadius.radiusMd,
               ),
             ),
@@ -60,7 +72,13 @@ class _ExerciseCardSkeleton extends StatelessWidget {
                     width: double.infinity,
                     height: 18.h,
                     decoration: BoxDecoration(
+<<<<<<< HEAD
                       color: AppColors.gray200,
+=======
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
+>>>>>>> develop
                       borderRadius: BorderRadius.circular(AppRadius.sm.r),
                     ),
                   ),
@@ -71,7 +89,13 @@ class _ExerciseCardSkeleton extends StatelessWidget {
                     width: 150.w,
                     height: 12.h,
                     decoration: BoxDecoration(
+<<<<<<< HEAD
                       color: AppColors.gray200,
+=======
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
+>>>>>>> develop
                       borderRadius: BorderRadius.circular(AppRadius.sm.r),
                     ),
                   ),
@@ -88,7 +112,13 @@ class _ExerciseCardSkeleton extends StatelessWidget {
                               width: 60.w,
                               height: 10.h,
                               decoration: BoxDecoration(
+<<<<<<< HEAD
                                 color: AppColors.gray200,
+=======
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+>>>>>>> develop
                                 borderRadius: BorderRadius.circular(
                                   AppRadius.sm.r,
                                 ),
@@ -99,7 +129,13 @@ class _ExerciseCardSkeleton extends StatelessWidget {
                               width: 80.w,
                               height: 12.h,
                               decoration: BoxDecoration(
+<<<<<<< HEAD
                                 color: AppColors.gray200,
+=======
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+>>>>>>> develop
                                 borderRadius: BorderRadius.circular(
                                   AppRadius.sm.r,
                                 ),
@@ -117,7 +153,13 @@ class _ExerciseCardSkeleton extends StatelessWidget {
                               width: 50.w,
                               height: 10.h,
                               decoration: BoxDecoration(
+<<<<<<< HEAD
                                 color: AppColors.gray200,
+=======
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+>>>>>>> develop
                                 borderRadius: BorderRadius.circular(
                                   AppRadius.sm.r,
                                 ),
@@ -128,7 +170,13 @@ class _ExerciseCardSkeleton extends StatelessWidget {
                               width: 70.w,
                               height: 12.h,
                               decoration: BoxDecoration(
+<<<<<<< HEAD
                                 color: AppColors.gray200,
+=======
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+>>>>>>> develop
                                 borderRadius: BorderRadius.circular(
                                   AppRadius.sm.r,
                                 ),

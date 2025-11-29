@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/constants/enum_constant.dart';
 import 'package:omnihealthmobileflutter/domain/entities/health_profile/health_profile_entity.dart';
 import 'package:intl/intl.dart';
@@ -31,28 +30,33 @@ class AdvanceTabView extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.hourglass_empty, color: AppColors.primary),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'AI is analyzing your health data. Please come back later.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
+            Builder(
+              builder: (context) {
+                final theme = Theme.of(context);
+                final colorScheme = theme.colorScheme;
+                final textTheme = theme.textTheme;
+
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: theme.dividerColor),
                   ),
-                ],
-              ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.hourglass_empty, color: colorScheme.primary),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'AI is analyzing your health data. Please come back later.',
+                          style: textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 24),
           ],
@@ -125,150 +129,177 @@ class AdvanceTabView extends StatelessWidget {
     final riskColor = _getRiskColor(aiEval.riskLevel);
     final riskLabel = _getRiskLabel(aiEval.riskLevel);
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary.withOpacity(0.05), AppColors.white],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.primary.withOpacity(0.2),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with Score and Risk Level
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Score Badge
-              if (aiEval.score != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _getScoreColor(aiEval.score!),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.star, color: Colors.white, size: 18),
-                      const SizedBox(width: 6),
-                      Text(
-                        '${aiEval.score}/100',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              // Risk Level Badge
-              if (aiEval.riskLevel != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: riskColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: riskColor, width: 1.5),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _getRiskIcon(aiEval.riskLevel),
-                        color: riskColor,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        riskLabel,
-                        style: TextStyle(
-                          color: riskColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+    return Builder(
+      builder: (context) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        final textTheme = theme.textTheme;
+
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                colorScheme.primary.withOpacity(0.05),
+                colorScheme.surface,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: colorScheme.primary.withOpacity(0.2),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: colorScheme.primary.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
             ],
           ),
-          const SizedBox(height: 16),
-
-          // AI Summary
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.auto_awesome, color: AppColors.primary, size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    aiEval.summary,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      height: 1.5,
-                      color: AppColors.textPrimary,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with Score and Risk Level
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Score Badge
+                  if (aiEval.score != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _getScoreColor(aiEval.score!),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.star, color: Colors.white, size: 18),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${aiEval.score}/100',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  // Risk Level Badge
+                  if (aiEval.riskLevel != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: riskColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: riskColor, width: 1.5),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            _getRiskIcon(aiEval.riskLevel),
+                            color: riskColor,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            riskLabel,
+                            style: TextStyle(
+                              color: riskColor,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // AI Summary
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: theme.scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      color: colorScheme.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        aiEval.summary,
+                        style: textTheme.bodyMedium?.copyWith(height: 1.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Metadata
+              if (aiEval.updatedAt != null || aiEval.modelVersion != null) ...[
+                const SizedBox(height: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (aiEval.updatedAt != null)
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.access_time,
+                            size: 14,
+                            color: textTheme.bodySmall?.color,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Updated ${DateFormat('MMM dd, yyyy').format(aiEval.updatedAt!)}',
+                            style: textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    if (aiEval.modelVersion != null) ...[
+                      if (aiEval.updatedAt != null) const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.memory,
+                            size: 14,
+                            color: textTheme.bodySmall?.color,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'v${aiEval.modelVersion}',
+                            style: textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
                 ),
               ],
-            ),
+            ],
           ),
-
-          // Metadata
-          if (aiEval.updatedAt != null || aiEval.modelVersion != null) ...[
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                if (aiEval.updatedAt != null) ...[
-                  Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Updated ${DateFormat('MMM dd, yyyy').format(aiEval.updatedAt!)}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                ],
-                if (aiEval.modelVersion != null) ...[
-                  const SizedBox(width: 12),
-                  Icon(Icons.memory, size: 14, color: Colors.grey[600]),
-                  const SizedBox(width: 4),
-                  Text(
-                    'v${aiEval.modelVersion}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -318,38 +349,41 @@ class AdvanceTabView extends StatelessWidget {
   }
 
   Widget _buildInfoCard(List<Widget> children) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
+    return Builder(
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(children: children),
       ),
-      child: Column(children: children),
     );
   }
 
   Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+    return Builder(
+      builder: (context) {
+        final textTheme = Theme.of(context).textTheme;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label, style: textTheme.bodyMedium),
+              Flexible(
+                child: Text(
+                  value,
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+            ],
           ),
-          Flexible(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.right,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

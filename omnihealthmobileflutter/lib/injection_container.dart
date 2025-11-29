@@ -9,8 +9,10 @@ import 'package:omnihealthmobileflutter/data/datasources/exercise_rating_datasou
 import 'package:omnihealthmobileflutter/data/datasources/exercise_type_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/musce_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/role_datasource.dart';
+import 'package:omnihealthmobileflutter/data/datasources/watch_log_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/health_profile_remote_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/goal_remote_datasource.dart';
+
 import 'package:omnihealthmobileflutter/data/repositories/auth_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/body_part_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/equipment_repository_impl.dart';
@@ -38,6 +40,7 @@ import 'package:omnihealthmobileflutter/domain/usecases/auth/login_usecase.dart'
 import 'package:omnihealthmobileflutter/domain/usecases/auth/logout_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/auth/refresh_token_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/auth/register_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/auth/update_user_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_body_parts_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_equipments_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_exercise_categories_usecase.dart';
@@ -70,8 +73,21 @@ import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_ho
 import 'package:omnihealthmobileflutter/services/secure_storage_service.dart';
 import 'package:omnihealthmobileflutter/services/shared_preferences_service.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_bloc.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/bloc/health_profile_form_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/bloc/health_profile_form_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/cubits/info_account_cubit.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_connect/bloc/health_connect_bloc.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/health_connect_repository.dart';
+import 'package:omnihealthmobileflutter/data/repositories/health_connect_repository_impl.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/health_connect/check_health_connect_availability.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/health_connect/request_health_permissions.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/health_connect/get_today_health_data.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/health_connect/get_health_data_range.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/health_connect/sync_health_data_to_backend.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/health_connect/start_workout_session.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/health_connect/stop_workout_session.dart';
+import 'package:health/health.dart';
+import 'package:logger/logger.dart';
 
 final sl = GetIt.instance;
 
@@ -80,6 +96,8 @@ Future<void> init() async {
   // Core
   // ======================
   sl.registerLazySingleton<ApiClient>(() => ApiClient(secureStorage: sl()));
+  sl.registerLazySingleton<Logger>(() => Logger());
+  sl.registerLazySingleton<Health>(() => Health());
 
   // ======================
   // Services
@@ -122,6 +140,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<ExerciseRatingDataSource>(
     () => ExerciseRatingDataSourceImpl(apiClient: sl()),
+  );
+  sl.registerLazySingleton<WatchLogDataSource>(
+    () => WatchLogDataSourceImpl(apiClient: sl()),
   );
 
   sl.registerLazySingleton<HealthProfileRemoteDataSource>(
@@ -174,6 +195,10 @@ Future<void> init() async {
     () => GoalRepositoryImpl(remoteDataSource: sl()),
   );
 
+  sl.registerLazySingleton<HealthConnectRepository>(
+    () => HealthConnectRepositoryImpl(sl(), sl(), sl(), sl()),
+  );
+
   // ======================
   // Use case
   // ======================
@@ -184,6 +209,7 @@ Future<void> init() async {
     () => RefreshTokenUseCase(sl()),
   );
   sl.registerLazySingleton<RegisterUseCase>(() => RegisterUseCase(sl()));
+  sl.registerLazySingleton<UpdateUserUseCase>(() => UpdateUserUseCase(sl()));
   sl.registerLazySingleton<GetRolesForSelectBoxUseCase>(
     () => GetRolesForSelectBoxUseCase(sl()),
   );
@@ -245,6 +271,29 @@ Future<void> init() async {
   sl.registerLazySingleton<UpdateGoalUseCase>(() => UpdateGoalUseCase(sl()));
   sl.registerLazySingleton<DeleteGoalUseCase>(() => DeleteGoalUseCase(sl()));
   sl.registerLazySingleton<GetGoalByIdUseCase>(() => GetGoalByIdUseCase(sl()));
+
+  // Health Connect Use Cases
+  sl.registerLazySingleton<CheckHealthConnectAvailabilityUseCase>(
+    () => CheckHealthConnectAvailabilityUseCase(sl()),
+  );
+  sl.registerLazySingleton<RequestHealthPermissionsUseCase>(
+    () => RequestHealthPermissionsUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetTodayHealthDataUseCase>(
+    () => GetTodayHealthDataUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetHealthDataRangeUseCase>(
+    () => GetHealthDataRangeUseCase(sl()),
+  );
+  sl.registerLazySingleton<SyncHealthDataToBackendUseCase>(
+    () => SyncHealthDataToBackendUseCase(sl()),
+  );
+  sl.registerLazySingleton<StartWorkoutSessionUseCase>(
+    () => StartWorkoutSessionUseCase(sl()),
+  );
+  sl.registerLazySingleton<StopWorkoutSessionUseCase>(
+    () => StopWorkoutSessionUseCase(sl()),
+  );
 
   // ======================
   // Blocs / Cubits
@@ -314,6 +363,28 @@ Future<void> init() async {
       updateGoalUseCase: sl(),
       deleteGoalUseCase: sl(),
       getGoalByIdUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => InfoAccountCubit(
+      sharedPreferencesService: sl(),
+      updateUserUseCase: sl(),
+      authenticationBloc: sl(),
+    ),
+  );
+
+  // Health Connect BLoC
+  sl.registerFactory(
+    () => HealthConnectBloc(
+      repository: sl(),
+      checkAvailability: sl(),
+      requestPermissions: sl(),
+      getTodayHealthData: sl(),
+      getHealthDataRange: sl(),
+      syncDataToBackend: sl(),
+      startWorkoutSession: sl(),
+      stopWorkoutSession: sl(),
     ),
   );
 }

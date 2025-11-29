@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:omnihealthmobileflutter/domain/entities/health_profile/health_profile_entity.dart';
+import 'package:omnihealthmobileflutter/domain/entities/goal_entity.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/base_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_profile/create_health_profile.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_profile/delete_health_profile.dart';
@@ -67,10 +68,11 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
         if (state is HealthProfileLoaded) {
           final currentState = state as HealthProfileLoaded;
           emit(currentState.copyWith(goals: response.data));
+        } else if (state is HealthProfileEmpty) {
+          emit(HealthProfileEmpty(goals: response.data!));
         } else {
-          // If no profile loaded yet, we need to wait or emit a different state
-          // For now, we'll just silently succeed - the goals will be loaded
-          // when the profile loads via the listener in health_profile_page.dart
+          // If no profile loaded yet, emit Empty with goals
+          emit(HealthProfileEmpty(goals: response.data!));
         }
       }
     } catch (e) {
@@ -82,11 +84,24 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
     GetHealthProfileByDateEvent event,
     Emitter<HealthProfileState> emit,
   ) async {
-    await _executeUseCase<HealthProfile>(
-      () => _getHealthProfileByDateUseCase(event.date),
-      emit,
-      (data) => HealthProfileLoaded(data),
-    );
+    List<GoalEntity> currentGoals = [];
+    if (state is HealthProfileLoaded) {
+      currentGoals = (state as HealthProfileLoaded).goals;
+    } else if (state is HealthProfileEmpty) {
+      currentGoals = (state as HealthProfileEmpty).goals;
+    }
+
+    try {
+      final response = await _getHealthProfileByDateUseCase(event.date);
+
+      if (response.success && response.data != null) {
+        emit(HealthProfileLoaded(response.data!, goals: currentGoals));
+      } else {
+        emit(HealthProfileEmpty(goals: currentGoals));
+      }
+    } catch (e) {
+      emit(HealthProfileError(_extractErrorMessage(e)));
+    }
   }
 
   Future<void> _onGetHealthProfiles(

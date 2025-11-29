@@ -14,14 +14,19 @@ import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_ho
 import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/blocs/exercise_home_event.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/exercise/exercise_home/exercise_home_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/cubits/info_account_cubit.dart';
 
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/bloc/health_profile_event.dart';
 
 import 'package:omnihealthmobileflutter/presentation/screen/home_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_home/health_profile_page.dart';
-import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_from/personal_profile_form_page.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/health_profile/health_profile_form/personal_profile_form_page.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/goal/goal_form_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/info_account_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/more/more_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/change_password/change_password_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/verify_account/verify_account_screen.dart';
 
 class RouteConfig {
   // ==================== ROUTE NAMES ====================
@@ -41,6 +46,10 @@ class RouteConfig {
   static const String healthProfile = '/health-profile';
   static const String healthProfileForm = '/health-profile-form';
   static const String goalForm = '/goal-form';
+
+  static const String infoAccount = '/info-account';
+  static const String changePassword = '/change-password';
+  static const String verifyAccount = '/verify-account';
 
   // ==================== BUILD AUTH PAGES ====================
   static Widget buildAuthPage(String? routeName) {
@@ -90,10 +99,10 @@ class RouteConfig {
         return _buildMainScreenByRole(role)!;
 
       case profile:
-        return _buildProfileScreen(role, arguments);
+        return const MoreScreen();
 
       case settings:
-        return _buildSettingsScreen(role, arguments);
+        return const MoreScreen();
 
       case exerciseHome:
         return BlocProvider(
@@ -136,6 +145,18 @@ class RouteConfig {
           child: GoalFormScreen(goalId: goalId, existingGoal: goal),
         );
 
+      case infoAccount:
+        return BlocProvider(
+          create: (_) => sl<InfoAccountCubit>()..loadUserInfo(),
+          child: const InfoAccountScreen(),
+        );
+
+      case changePassword:
+        return const ChangePasswordScreen();
+
+      case verifyAccount:
+        return const VerifyAccountScreen();
+
       default:
         return _ErrorPage(message: 'Không tìm thấy trang: $routeName');
     }
@@ -148,7 +169,6 @@ class RouteConfig {
 
     // switch (normalizedRole) {
     //   case 'admin':
-
     // return const MainScreen(); // Placeholder
 
     //   case 'coach':
@@ -160,30 +180,6 @@ class RouteConfig {
     // }
 
     return const HomeScreen();
-  }
-
-  // ==================== COMMON SCREENS ====================
-  // static Widget _buildMuscleHomeScreen(
-  //   List<String>? role,
-  //   Map<String, dynamic>? arguments,
-  // ) {
-  //   Navigator.of(context).pushNamedAndRemoveUntil(login, (route) => false);
-  // }
-
-  static Widget _buildProfileScreen(
-    List<String>? role,
-    Map<String, dynamic>? arguments,
-  ) {
-    // TODO: Implement profile screen với custom layout theo role
-    return const Scaffold(body: Center(child: Text('Profile Screen')));
-  }
-
-  static Widget _buildSettingsScreen(
-    List<String>? role,
-    Map<String, dynamic>? arguments,
-  ) {
-    // TODO: Implement settings screen
-    return const Scaffold(body: Center(child: Text('Settings Screen')));
   }
 
   // ==================== NAVIGATION HELPERS ====================
@@ -232,6 +228,18 @@ class RouteConfig {
       goalForm,
       arguments: {'userId': userId, 'goalId': goalId, 'goal': goal},
     );
+  }
+
+  static void navigateToInfoAccount(BuildContext context) {
+    Navigator.of(context).pushNamed(infoAccount);
+  }
+
+  static void navigateToChangePassword(BuildContext context) {
+    Navigator.of(context).pushNamed(changePassword);
+  }
+
+  static void navigateToVerifyAccount(BuildContext context) {
+    Navigator.of(context).pushNamed(verifyAccount);
   }
 }
 

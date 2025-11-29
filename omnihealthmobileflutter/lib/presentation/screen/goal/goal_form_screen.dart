@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
 import 'package:omnihealthmobileflutter/core/constants/enum_constant.dart';
 import 'package:omnihealthmobileflutter/domain/entities/goal_entity.dart';
 import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_bloc.dart';
@@ -149,7 +147,10 @@ class _GoalFormScreenState extends State<GoalFormScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: AppColors.error),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ),
     );
   }
 
@@ -179,22 +180,11 @@ class _GoalFormScreenState extends State<GoalFormScreen> {
   @override
   Widget build(BuildContext context) {
     final isUpdate = widget.goalId != null || widget.existingGoal != null;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(
-          isUpdate ? 'Update Goal' : 'Create New Goal',
-          style: AppTypography.h4,
-        ),
-        centerTitle: true,
-        backgroundColor: AppColors.surface,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(title: Text(isUpdate ? 'Update Goal' : 'Create New Goal')),
       body: BlocListener<GoalBloc, GoalState>(
         listener: (context, state) {
           if (state is GoalOperationSuccess) {

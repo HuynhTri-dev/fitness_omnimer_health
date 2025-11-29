@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:omnihealthmobileflutter/core/routing/route_config.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_colors.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_typography.dart';
 import 'package:omnihealthmobileflutter/domain/entities/goal_entity.dart';
 import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_state.dart';
@@ -66,19 +64,26 @@ class MyGoalSection extends StatelessWidget {
           );
         }
 
+        List<GoalEntity>? goals;
         if (state is HealthProfileLoaded) {
-          if (state.goals.isEmpty) {
+          goals = state.goals;
+        } else if (state is HealthProfileEmpty) {
+          goals = state.goals;
+        }
+
+        if (goals != null) {
+          if (goals.isEmpty) {
             return const GoalEmptyState();
           }
 
           return ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: state.goals.length,
+            itemCount: goals.length,
             separatorBuilder: (context, index) =>
                 SizedBox(height: AppSpacing.md.h),
             itemBuilder: (context, index) {
-              final goal = state.goals[index];
+              final goal = goals![index];
               return GoalCard(
                 goal: goal,
                 onViewDetail: () => _showGoalDetail(context, goal),
@@ -95,12 +100,13 @@ class MyGoalSection extends StatelessWidget {
         }
 
         if (state is HealthProfileError) {
-          return Center(
-            child: Text(
-              'Error: ${state.message}',
-              style: AppTypography.bodyRegularStyle(
-                fontSize: AppTypography.fontSizeSm.sp,
-                color: AppColors.error,
+          return Builder(
+            builder: (context) => Center(
+              child: Text(
+                'Error: ${state.message}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
               ),
             ),
           );
@@ -163,31 +169,28 @@ class MyGoalSection extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context, GoalEntity goal) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
           'Delete Goal',
-          style: AppTypography.headingBoldStyle(
-            fontSize: AppTypography.fontSizeLg.sp,
-            color: AppColors.textPrimary,
-          ),
+          style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         content: Text(
           'Are you sure you want to delete this goal?',
-          style: AppTypography.bodyRegularStyle(
-            fontSize: AppTypography.fontSizeBase.sp,
-            color: AppColors.textSecondary,
-          ),
+          style: textTheme.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               'Cancel',
-              style: AppTypography.bodyBoldStyle(
-                fontSize: AppTypography.fontSizeBase.sp,
-                color: AppColors.textSecondary,
+              style: textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -200,9 +203,9 @@ class MyGoalSection extends StatelessWidget {
             },
             child: Text(
               'Delete',
-              style: AppTypography.bodyBoldStyle(
-                fontSize: AppTypography.fontSizeBase.sp,
-                color: AppColors.error,
+              style: textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.error,
               ),
             ),
           ),
