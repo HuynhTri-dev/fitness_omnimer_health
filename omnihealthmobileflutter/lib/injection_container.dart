@@ -101,6 +101,9 @@ import 'package:omnihealthmobileflutter/domain/usecases/workout/create_workout_t
 import 'package:omnihealthmobileflutter/domain/usecases/workout/update_workout_template_usecase.dart';
 import 'package:health/health.dart';
 import 'package:logger/logger.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/healthkit_connect_abs.dart';
+import 'package:omnihealthmobileflutter/data/repositories/healthkit_connect_impl.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/healthkit_connect/bloc/healthkit_connect_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -222,6 +225,8 @@ Future<void> init() async {
 
   sl.registerLazySingleton<WorkoutStatsRepositoryAbs>(
     () => WorkoutStatsRepositoryImpl(workoutDataSource: sl()),
+  sl.registerLazySingleton<HealthKitConnectRepository>(
+    () => HealthKitConnectRepositoryImpl(sl(), sl(), sl(), sl()),
   );
 
   // ======================
@@ -445,4 +450,6 @@ Future<void> init() async {
       deleteWorkoutTemplateUseCase: sl(),
     ),
   );
+  // HealthKit Connect BLoC
+  sl.registerFactory(() => HealthKitConnectBloc(repository: sl()));
 }
