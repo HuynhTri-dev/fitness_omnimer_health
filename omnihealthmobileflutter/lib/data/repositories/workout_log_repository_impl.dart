@@ -35,6 +35,32 @@ class WorkoutLogRepositoryImpl implements WorkoutLogRepositoryAbs {
   }
 
   @override
+  Future<ApiResponse<WorkoutLogEntity>> createWorkoutFromTemplate(
+    String templateId,
+  ) async {
+    try {
+      final response = await workoutDataSource.createWorkoutFromTemplate(
+        templateId,
+      );
+
+      final entity = response.data?.toEntity();
+
+      return ApiResponse<WorkoutLogEntity>(
+        success: response.success,
+        message: response.message,
+        data: entity,
+        error: response.error,
+      );
+    } catch (e) {
+      logger.e('[WorkoutLogRepository] createWorkoutFromTemplate error: $e');
+      return ApiResponse<WorkoutLogEntity>.error(
+        "Không thể tạo workout từ template: ${e.toString()}",
+        error: e,
+      );
+    }
+  }
+
+  @override
   Future<ApiResponse<List<WorkoutLogEntity>>> getUserWorkoutLogs() async {
     try {
       final response = await workoutDataSource.getUserWorkoutLogs();
@@ -95,6 +121,81 @@ class WorkoutLogRepositoryImpl implements WorkoutLogRepositoryAbs {
       logger.e('[WorkoutLogRepository] deleteWorkoutLog error: $e');
       return ApiResponse<bool>.error(
         "Không thể xóa workout log: ${e.toString()}",
+        error: e,
+      );
+    }
+  }
+
+  @override
+  Future<ApiResponse<WorkoutLogEntity>> completeSet(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await workoutDataSource.completeSet(id, data);
+
+      final entity = response.data?.toEntity();
+
+      return ApiResponse<WorkoutLogEntity>(
+        success: response.success,
+        message: response.message,
+        data: entity,
+        error: response.error,
+      );
+    } catch (e) {
+      logger.e('[WorkoutLogRepository] completeSet error: $e');
+      return ApiResponse<WorkoutLogEntity>.error(
+        "Không thể hoàn thành set: ${e.toString()}",
+        error: e,
+      );
+    }
+  }
+
+  @override
+  Future<ApiResponse<WorkoutLogEntity>> completeExercise(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await workoutDataSource.completeExercise(id, data);
+
+      final entity = response.data?.toEntity();
+
+      return ApiResponse<WorkoutLogEntity>(
+        success: response.success,
+        message: response.message,
+        data: entity,
+        error: response.error,
+      );
+    } catch (e) {
+      logger.e('[WorkoutLogRepository] completeExercise error: $e');
+      return ApiResponse<WorkoutLogEntity>.error(
+        "Không thể hoàn thành bài tập: ${e.toString()}",
+        error: e,
+      );
+    }
+  }
+
+  @override
+  Future<ApiResponse<WorkoutLogEntity>> finishWorkout(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await workoutDataSource.finishWorkout(id, data);
+
+      final entity = response.data?.toEntity();
+
+      return ApiResponse<WorkoutLogEntity>(
+        success: response.success,
+        message: response.message,
+        data: entity,
+        error: response.error,
+      );
+    } catch (e) {
+      logger.e('[WorkoutLogRepository] finishWorkout error: $e');
+      return ApiResponse<WorkoutLogEntity>.error(
+        "Không thể kết thúc workout: ${e.toString()}",
         error: e,
       );
     }

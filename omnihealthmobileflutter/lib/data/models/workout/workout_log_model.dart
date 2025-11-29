@@ -45,7 +45,8 @@ class WorkoutLogSetModel {
       if (weight != null) 'weight': weight,
       if (duration != null) 'duration': duration,
       if (distance != null) 'distance': distance,
-      if (restAfterSetSeconds != null) 'restAfterSetSeconds': restAfterSetSeconds,
+      if (restAfterSetSeconds != null)
+        'restAfterSetSeconds': restAfterSetSeconds,
       'done': isCompleted,
     };
   }
@@ -77,6 +78,7 @@ class WorkoutLogSetModel {
 
 /// Model for an exercise in workout log
 class WorkoutLogExerciseModel {
+  final String? id; // Workout Detail ID (subdocument ID)
   final String exerciseId;
   final String exerciseName;
   final String? exerciseImageUrl;
@@ -85,6 +87,7 @@ class WorkoutLogExerciseModel {
   final bool isCompleted;
 
   WorkoutLogExerciseModel({
+    this.id,
     required this.exerciseId,
     required this.exerciseName,
     this.exerciseImageUrl,
@@ -113,6 +116,7 @@ class WorkoutLogExerciseModel {
     }
 
     return WorkoutLogExerciseModel(
+      id: json['_id'], // Capture the subdocument ID
       exerciseId: exId,
       exerciseName: exName,
       exerciseImageUrl: exImageUrl ?? json['exerciseImageUrl'],
@@ -139,6 +143,7 @@ class WorkoutLogExerciseModel {
 
   WorkoutLogExerciseEntity toEntity() {
     return WorkoutLogExerciseEntity(
+      id: id,
       exerciseId: exerciseId,
       exerciseName: exerciseName,
       exerciseImageUrl: exerciseImageUrl,
@@ -150,6 +155,7 @@ class WorkoutLogExerciseModel {
 
   factory WorkoutLogExerciseModel.fromEntity(WorkoutLogExerciseEntity entity) {
     return WorkoutLogExerciseModel(
+      id: entity.id,
       exerciseId: entity.exerciseId,
       exerciseName: entity.exerciseName,
       exerciseImageUrl: entity.exerciseImageUrl,

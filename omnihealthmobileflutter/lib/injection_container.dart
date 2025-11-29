@@ -115,6 +115,9 @@ import 'package:omnihealthmobileflutter/domain/usecases/workout/create_workout_t
 import 'package:omnihealthmobileflutter/domain/usecases/workout/update_workout_template_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/save_workout_log_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/get_workout_logs_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/complete_workout_set_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/complete_workout_exercise_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/finish_workout_usecase.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/report/blocs/report_bloc.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/ai/recommend_workout_usecase.dart';
 import 'package:health/health.dart';
@@ -410,6 +413,15 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetWorkoutLogsUseCase>(
     () => GetWorkoutLogsUseCase(sl()),
+  );
+  sl.registerLazySingleton<CompleteWorkoutSetUseCase>(
+    () => CompleteWorkoutSetUseCase(sl()),
+  );
+  sl.registerLazySingleton<CompleteWorkoutExerciseUseCase>(
+    () => CompleteWorkoutExerciseUseCase(sl()),
+  );
+  sl.registerLazySingleton<FinishWorkoutUseCase>(
+    () => FinishWorkoutUseCase(sl()),
   );
 
   sl.registerLazySingleton<RecommendWorkoutUseCase>(

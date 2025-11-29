@@ -101,6 +101,7 @@ class ActiveSetEntity extends Equatable {
 
 /// Entity representing an exercise being performed during an active workout
 class ActiveExerciseEntity extends Equatable {
+  final String? id; // Workout Detail ID (from server)
   final String exerciseId;
   final String exerciseName;
   final String? exerciseImageUrl;
@@ -109,6 +110,7 @@ class ActiveExerciseEntity extends Equatable {
   final bool isExpanded;
 
   const ActiveExerciseEntity({
+    this.id,
     required this.exerciseId,
     required this.exerciseName,
     this.exerciseImageUrl,
@@ -127,6 +129,7 @@ class ActiveExerciseEntity extends Equatable {
   bool get isCompleted => sets.isNotEmpty && sets.every((s) => s.isCompleted);
 
   ActiveExerciseEntity copyWith({
+    String? id,
     String? exerciseId,
     String? exerciseName,
     String? exerciseImageUrl,
@@ -135,6 +138,7 @@ class ActiveExerciseEntity extends Equatable {
     bool? isExpanded,
   }) {
     return ActiveExerciseEntity(
+      id: id ?? this.id,
       exerciseId: exerciseId ?? this.exerciseId,
       exerciseName: exerciseName ?? this.exerciseName,
       exerciseImageUrl: exerciseImageUrl ?? this.exerciseImageUrl,
@@ -161,6 +165,7 @@ class ActiveExerciseEntity extends Equatable {
 
   @override
   List<Object?> get props => [
+    id,
     exerciseId,
     exerciseName,
     exerciseImageUrl,
@@ -172,6 +177,7 @@ class ActiveExerciseEntity extends Equatable {
 
 /// Entity representing an active workout session
 class ActiveWorkoutSessionEntity extends Equatable {
+  final String? workoutId; // ID from server
   final String? templateId;
   final String workoutName;
   final List<ActiveExerciseEntity> exercises;
@@ -181,6 +187,7 @@ class ActiveWorkoutSessionEntity extends Equatable {
   final bool isPaused;
 
   const ActiveWorkoutSessionEntity({
+    this.workoutId,
     this.templateId,
     required this.workoutName,
     required this.exercises,
@@ -212,6 +219,7 @@ class ActiveWorkoutSessionEntity extends Equatable {
   double get progress => totalSets > 0 ? totalCompletedSets / totalSets : 0.0;
 
   ActiveWorkoutSessionEntity copyWith({
+    String? workoutId,
     String? templateId,
     String? workoutName,
     List<ActiveExerciseEntity>? exercises,
@@ -221,6 +229,7 @@ class ActiveWorkoutSessionEntity extends Equatable {
     bool? isPaused,
   }) {
     return ActiveWorkoutSessionEntity(
+      workoutId: workoutId ?? this.workoutId,
       templateId: templateId ?? this.templateId,
       workoutName: workoutName ?? this.workoutName,
       exercises: exercises ?? this.exercises,
@@ -247,6 +256,7 @@ class ActiveWorkoutSessionEntity extends Equatable {
 
   @override
   List<Object?> get props => [
+    workoutId,
     templateId,
     workoutName,
     exercises,

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:omnihealthmobileflutter/domain/entities/workout/active_workout_session_entity.dart';
 import 'package:omnihealthmobileflutter/domain/entities/workout/workout_template_entity.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/health_connect_repository.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/workout_log_repository_abs.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/save_workout_log_usecase.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_session/cubits/workout_session_state.dart';
 import 'package:omnihealthmobileflutter/utils/logger.dart';
@@ -10,13 +12,67 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
   Timer? _timer;
   Timer? _restTimer;
   final SaveWorkoutLogUseCase? saveWorkoutLogUseCase;
+  final WorkoutLogRepositoryAbs? workoutLogRepository;
+  final HealthConnectRepository? healthConnectRepository;
 
-  WorkoutSessionCubit({this.saveWorkoutLogUseCase})
-    : super(const WorkoutSessionState());
+  WorkoutSessionCubit({
+    this.saveWorkoutLogUseCase,
+    this.workoutLogRepository,
+    this.healthConnectRepository,
+  }) : super(const WorkoutSessionState());
 
   /// Start a workout session from a template
-  void startWorkout(WorkoutTemplateEntity template) {
-    final session = ActiveWorkoutSessionEntity.fromTemplate(template);
+  Future<void> startWorkout(WorkoutTemplateEntity template) async {
+    var session = ActiveWorkoutSessionEntity.fromTemplate(template);
+
+    // Create workout on server if repository is available
+    if (workoutLogRepository != null) {
+      try {
+        final response = await workoutLogRepository!.createWorkoutFromTemplate(
+          template.id,
+        );
+        if (response.success && response.data != null) {
+          final createdWorkout = response.data!;
+
+          // Map server IDs to local session exercises
+          // We assume the order is preserved
+          List<ActiveExerciseEntity> updatedExercises = [];
+
+          if (createdWorkout.exercises.length == session.exercises.length) {
+            for (int i = 0; i < session.exercises.length; i++) {
+              final localEx = session.exercises[i];
+              final serverEx = createdWorkout.exercises[i];
+
+              // Verify matching exerciseId to be safe
+              if (localEx.exerciseId == serverEx.exerciseId) {
+                updatedExercises.add(localEx.copyWith(id: serverEx.id));
+              } else {
+                updatedExercises.add(localEx);
+                logger.w('[WorkoutSessionCubit] Exercise mismatch at index $i');
+              }
+            }
+          } else {
+            updatedExercises = session.exercises;
+            logger.w('[WorkoutSessionCubit] Exercise count mismatch');
+          }
+
+          session = session.copyWith(
+            workoutId: createdWorkout.id,
+            exercises: updatedExercises,
+          );
+
+          logger.i(
+            '[WorkoutSessionCubit] Created workout on server: ${createdWorkout.id}',
+          );
+        } else {
+          logger.e(
+            '[WorkoutSessionCubit] Failed to create workout on server: ${response.message}',
+          );
+        }
+      } catch (e) {
+        logger.e('[WorkoutSessionCubit] Error creating workout on server: $e');
+      }
+    }
 
     // Find the first uncompleted set
     final (exerciseIndex, setIndex) = _findFirstUncompletedSet(session);
@@ -29,6 +85,7 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
         currentSetIndex: setIndex,
         elapsedTime: Duration.zero,
         isTimerRunning: true,
+        exerciseStartTime: DateTime.now(), // Track start time of first exercise
       ),
     );
 
@@ -52,10 +109,23 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
   void _updateCurrentSet() {
     if (state.session == null) return;
 
-    final (exerciseIndex, setIndex) = _findFirstUncompletedSet(state.session!);
+    final oldExerciseIndex = state.currentExerciseIndex;
+    final (newExerciseIndex, newSetIndex) = _findFirstUncompletedSet(
+      state.session!,
+    );
+
+    // Check if we finished an exercise (moved to next or all done)
+    if (oldExerciseIndex != null &&
+        (newExerciseIndex == null || newExerciseIndex != oldExerciseIndex)) {
+      // Check if the old exercise is actually completed
+      final oldExercise = state.session!.exercises[oldExerciseIndex];
+      if (oldExercise.isCompleted) {
+        _finishExercise(oldExerciseIndex);
+      }
+    }
 
     // Check if all sets are completed
-    if (exerciseIndex == null && setIndex == null) {
+    if (newExerciseIndex == null && newSetIndex == null) {
       // All sets completed - stop the timer
       emit(
         state.copyWith(
@@ -66,10 +136,17 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
         ),
       );
     } else {
+      // If starting a new exercise, update start time
+      DateTime? newStartTime = state.exerciseStartTime;
+      if (newExerciseIndex != oldExerciseIndex) {
+        newStartTime = DateTime.now();
+      }
+
       emit(
         state.copyWith(
-          currentExerciseIndex: exerciseIndex,
-          currentSetIndex: setIndex,
+          currentExerciseIndex: newExerciseIndex,
+          currentSetIndex: newSetIndex,
+          exerciseStartTime: newStartTime,
         ),
       );
     }
@@ -357,23 +434,43 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
     _restTimer?.cancel();
 
     // Save workout log to database
-    if (state.session != null && saveWorkoutLogUseCase != null) {
+    if (state.session != null) {
       try {
-        logger.i('[WorkoutSessionCubit] Saving workout log...');
-        final response = await saveWorkoutLogUseCase!(
-          state.session!,
-          state.elapsedTime,
-        );
-
-        if (response.success) {
-          logger.i('[WorkoutSessionCubit] Workout log saved successfully');
-        } else {
-          logger.e(
-            '[WorkoutSessionCubit] Failed to save workout log: ${response.message}',
+        if (state.session!.workoutId != null && workoutLogRepository != null) {
+          // Online flow: Finish existing workout
+          logger.i(
+            '[WorkoutSessionCubit] Finishing workout ${state.session!.workoutId} on server...',
           );
+          final response = await workoutLogRepository!.finishWorkout(
+            state.session!.workoutId!,
+            {}, // Summary is calculated on server now
+          );
+
+          if (response.success) {
+            logger.i('[WorkoutSessionCubit] Workout finished successfully');
+          } else {
+            logger.e(
+              '[WorkoutSessionCubit] Failed to finish workout: ${response.message}',
+            );
+          }
+        } else if (saveWorkoutLogUseCase != null) {
+          // Offline/Legacy flow: Create new log
+          logger.i('[WorkoutSessionCubit] Saving workout log (legacy)...');
+          final response = await saveWorkoutLogUseCase!(
+            state.session!,
+            state.elapsedTime,
+          );
+
+          if (response.success) {
+            logger.i('[WorkoutSessionCubit] Workout log saved successfully');
+          } else {
+            logger.e(
+              '[WorkoutSessionCubit] Failed to save workout log: ${response.message}',
+            );
+          }
         }
       } catch (e) {
-        logger.e('[WorkoutSessionCubit] Error saving workout log: $e');
+        logger.e('[WorkoutSessionCubit] Error saving/finishing workout: $e');
       }
     }
 
@@ -395,6 +492,67 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
     if (state.session == null) return;
 
     emit(state.copyWith(session: state.session!.copyWith(workoutName: name)));
+  }
+
+  /// Finish an exercise: Sync health data and call API
+  Future<void> _finishExercise(int exerciseIndex) async {
+    if (state.session == null || state.session!.workoutId == null) return;
+
+    final exercise = state.session!.exercises[exerciseIndex];
+    final startTime = state.exerciseStartTime;
+    final endTime = DateTime.now();
+
+    if (startTime == null) {
+      logger.w(
+        '[WorkoutSessionCubit] Exercise start time is null, skipping sync',
+      );
+      return;
+    }
+
+    // 1. Force Sync Health Data
+    if (healthConnectRepository != null) {
+      try {
+        logger.i(
+          '[WorkoutSessionCubit] Syncing health data for range: $startTime - $endTime',
+        );
+        await healthConnectRepository!.syncHealthDataForRange(
+          startTime,
+          endTime,
+        );
+      } catch (e) {
+        logger.e('[WorkoutSessionCubit] Error syncing health data: $e');
+      }
+    }
+
+    // 2. Call API to complete exercise
+    if (workoutLogRepository != null) {
+      try {
+        logger.i(
+          '[WorkoutSessionCubit] Completing exercise ${exercise.exerciseId} on server',
+        );
+
+        if (exercise.id == null) {
+          logger.w(
+            '[WorkoutSessionCubit] Exercise ID (workoutDetailId) is missing, cannot complete on server',
+          );
+          return;
+        }
+
+        await workoutLogRepository!
+            .completeExercise(state.session!.workoutId!, {
+              'workoutDetailId': exercise.id,
+              'startTime': startTime.toIso8601String(),
+              'endTime': endTime.toIso8601String(),
+            });
+      } catch (e) {
+        logger.e(
+          '[WorkoutSessionCubit] Error completing exercise on server: $e',
+        );
+      }
+    }
+
+    // Reset start time for next exercise (will be set when next set starts or implicitly now)
+    // Actually, _updateCurrentSet handles moving to next, so we should update startTime there.
   }
 
   @override

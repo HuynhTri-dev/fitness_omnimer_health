@@ -51,6 +51,9 @@ abstract class HealthConnectRepository {
     List<HealthConnectWorkoutData>? workoutData,
   });
 
+  /// Sync health data for a specific time range to backend
+  Future<bool> syncHealthDataForRange(DateTime startTime, DateTime endTime);
+
   /// Get last sync timestamp
   Future<DateTime?> getLastSyncTimestamp();
 

@@ -8,6 +8,7 @@ import {
 } from "../../models";
 import {
   HealthProfileRepository,
+  WatchLogRepository,
   WorkoutRepository,
   WorkoutTemplateRepository,
 } from "../../repositories";
@@ -23,15 +24,18 @@ export class WorkoutService {
   private readonly workoutRepo: WorkoutRepository;
   private readonly workoutTemplateRepo: WorkoutTemplateRepository;
   private readonly healthProfileRepo: HealthProfileRepository;
+  private readonly watchLogRepo: WatchLogRepository;
 
   constructor(
     workoutRepo: WorkoutRepository,
     workoutTemplateRepo: WorkoutTemplateRepository,
-    healthProfileRepo: HealthProfileRepository
+    healthProfileRepo: HealthProfileRepository,
+    watchLogRepo: WatchLogRepository
   ) {
     this.workoutRepo = workoutRepo;
     this.workoutTemplateRepo = workoutTemplateRepo;
     this.healthProfileRepo = healthProfileRepo;
+    this.watchLogRepo = watchLogRepo;
   }
 
   // ======================================================
@@ -432,52 +436,90 @@ export class WorkoutService {
    * @throws {HttpError} - Nếu không tìm thấy bài tập hoặc không có thay đổi.
    */
   async completeExercise(
+    userId: string,
     workoutId: string,
     workoutDetailId: string,
-    durationMin: number,
+    startTime: Date,
+    endTime: Date,
     deviceData?: IWorkoutDeviceData
   ) {
     try {
+      // 1. Tính toán durationMin
+      const durationMs =
+        new Date(endTime).getTime() - new Date(startTime).getTime();
+      const durationMin = durationMs / 60000;
+
       let finalDeviceData = deviceData;
-      if (!deviceData) {
-        /**
-         * Nếu không có dữ liệu thiết bị, ta vẫn gọi hàm lấy MET và cân nặng người dùng
-         * để đảm bảo quy trình tính toán calo được thực hiện đầy đủ.
-         * result: {
-         * met: number; // MET của bài tập
-         * weight: number; // Cân nặng người dùng (kg)
-         * }
-         */
-        const metaInfo =
-          await this.workoutRepo.getExerciseMetAndUserWeightAndDetail(
-            workoutId,
-            workoutDetailId
-          );
 
-        if (!metaInfo) {
-          throw new HttpError(
-            404,
-            "Không tìm thấy thông tin bài tập hoặc người dùng"
-          );
-        }
-
-        const { met, weight, detail } = metaInfo;
-
-        console.log("MET và Weight lấy được:", met, weight, detail);
-
-        const caloriesBurned = calculateCaloriesByMET(
-          met,
-          weight,
-          durationMin,
-          detail
+      if (!finalDeviceData) {
+        // 2. Thử lấy dữ liệu từ WatchLog (Server-side Aggregation)
+        const logs = await this.watchLogRepo.findLogsByTimeRange(
+          userId,
+          new Date(startTime),
+          new Date(endTime)
         );
 
-        console.log("caloriesBurned:", caloriesBurned);
+        if (logs && logs.length > 0) {
+          console.log(`Found ${logs.length} watch logs for aggregation.`);
 
-        finalDeviceData = {
-          caloriesBurned,
-        };
+          // Aggregate Data
+          const totalCalories = logs.reduce(
+            (sum, log) => sum + (log.caloriesBurned || 0),
+            0
+          );
+
+          // Heart Rate Avg: Trung bình cộng đơn giản (có thể cải tiến thành weighted average)
+          const validHrLogs = logs.filter(
+            (l) => l.heartRateAvg && l.heartRateAvg > 0
+          );
+          const avgHR =
+            validHrLogs.length > 0
+              ? validHrLogs.reduce(
+                  (sum, log) => sum + (log.heartRateAvg || 0),
+                  0
+                ) / validHrLogs.length
+              : 0;
+
+          // Heart Rate Max: Lấy max của các max
+          const maxHR = Math.max(...logs.map((log) => log.heartRateMax || 0));
+
+          finalDeviceData = {
+            caloriesBurned: totalCalories,
+            heartRateAvg: Math.round(avgHR),
+            heartRateMax: maxHR > 0 ? maxHR : undefined,
+          };
+        } else {
+          // 3. Fallback: Nếu không có WatchLog, dùng công thức MET
+          console.log("No watch logs found. Using MET calculation fallback.");
+
+          const metaInfo =
+            await this.workoutRepo.getExerciseMetAndUserWeightAndDetail(
+              workoutId,
+              workoutDetailId
+            );
+
+          if (!metaInfo) {
+            throw new HttpError(
+              404,
+              "Không tìm thấy thông tin bài tập hoặc người dùng"
+            );
+          }
+
+          const { met, weight, detail } = metaInfo;
+
+          const caloriesBurned = calculateCaloriesByMET(
+            met,
+            weight,
+            durationMin,
+            detail
+          );
+
+          finalDeviceData = {
+            caloriesBurned,
+          };
+        }
       }
+
       const result = await this.workoutRepo.updateExerciseInfo(
         workoutId,
         workoutDetailId,
@@ -489,7 +531,8 @@ export class WorkoutService {
         throw new HttpError(404, "Buổi tập hoặc bài tập không tồn tại");
 
       if (result.modifiedCount === 0)
-        throw new HttpError(400, "Không có thay đổi nào được thực hiện");
+        // Có thể không lỗi nếu dữ liệu y hệt, nhưng cứ báo warning hoặc success
+        console.warn("Không có thay đổi nào được thực hiện trong DB");
 
       return true;
     } catch (err: any) {

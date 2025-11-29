@@ -12,6 +12,7 @@ class WorkoutSessionState extends Equatable {
   final Duration elapsedTime;
   final bool isTimerRunning;
 
+  final DateTime? exerciseStartTime;
   // Rest timer state
   final bool isResting;
   final int restTimeRemaining; // in seconds
@@ -26,6 +27,7 @@ class WorkoutSessionState extends Equatable {
     this.currentSetIndex,
     this.elapsedTime = Duration.zero,
     this.isTimerRunning = false,
+    this.exerciseStartTime,
     this.isResting = false,
     this.restTimeRemaining = 0,
     this.restExerciseIndex,
@@ -41,6 +43,7 @@ class WorkoutSessionState extends Equatable {
     Duration? elapsedTime,
     bool? isTimerRunning,
     bool clearCurrentSet = false,
+    DateTime? exerciseStartTime,
     bool? isResting,
     int? restTimeRemaining,
     int? restExerciseIndex,
@@ -57,6 +60,7 @@ class WorkoutSessionState extends Equatable {
           : (currentSetIndex ?? this.currentSetIndex),
       elapsedTime: elapsedTime ?? this.elapsedTime,
       isTimerRunning: isTimerRunning ?? this.isTimerRunning,
+      exerciseStartTime: exerciseStartTime ?? this.exerciseStartTime,
       isResting: clearRest ? false : (isResting ?? this.isResting),
       restTimeRemaining: clearRest
           ? 0
@@ -123,6 +127,7 @@ class WorkoutSessionState extends Equatable {
     currentSetIndex,
     elapsedTime,
     isTimerRunning,
+    exerciseStartTime,
     isResting,
     restTimeRemaining,
     restExerciseIndex,

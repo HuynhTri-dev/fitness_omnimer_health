@@ -34,6 +34,7 @@ class WorkoutLogSetEntity extends Equatable {
 
 /// Entity for an exercise in workout log
 class WorkoutLogExerciseEntity extends Equatable {
+  final String? id; // Workout Detail ID
   final String exerciseId;
   final String exerciseName;
   final String? exerciseImageUrl;
@@ -42,6 +43,7 @@ class WorkoutLogExerciseEntity extends Equatable {
   final bool isCompleted;
 
   const WorkoutLogExerciseEntity({
+    this.id,
     required this.exerciseId,
     required this.exerciseName,
     this.exerciseImageUrl,
@@ -55,6 +57,7 @@ class WorkoutLogExerciseEntity extends Equatable {
 
   @override
   List<Object?> get props => [
+    id,
     exerciseId,
     exerciseName,
     exerciseImageUrl,

@@ -237,6 +237,25 @@ class WorkoutDataSource {
     }
   }
 
+  /// Create workout from template
+  Future<ApiResponse<WorkoutLogModel>> createWorkoutFromTemplate(
+    String templateId,
+  ) async {
+    try {
+      final response = await apiClient.post<WorkoutLogModel>(
+        Endpoints.createWorkoutFromTemplate(templateId),
+        parser: (data) =>
+            WorkoutLogModel.fromJson(data as Map<String, dynamic>),
+      );
+      return response;
+    } catch (e) {
+      logger.e('[createWorkoutFromTemplate] Error: $e');
+      return ApiResponse<WorkoutLogModel>.error(
+        "Failed to create workout from template: ${e.toString()}",
+      );
+    }
+  }
+
   /// Get user workout logs
   Future<ApiResponse<List<WorkoutLogModel>>> getUserWorkoutLogs() async {
     try {
@@ -298,6 +317,72 @@ class WorkoutDataSource {
       logger.e('[deleteWorkoutLog] Error: $e');
       return ApiResponse<bool>.error(
         "Failed to delete workout log: ${e.toString()}",
+      );
+    }
+  }
+
+  /// Complete a set in a workout
+  Future<ApiResponse<WorkoutLogModel>> completeSet(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await apiClient.patch<WorkoutLogModel>(
+        Endpoints.completeWorkoutSet(id),
+        data: data,
+        parser: (data) =>
+            WorkoutLogModel.fromJson(data as Map<String, dynamic>),
+      );
+
+      return response;
+    } catch (e) {
+      logger.e('[completeSet] Error: $e');
+      return ApiResponse<WorkoutLogModel>.error(
+        "Failed to complete set: ${e.toString()}",
+      );
+    }
+  }
+
+  /// Complete an exercise in a workout
+  Future<ApiResponse<WorkoutLogModel>> completeExercise(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await apiClient.patch<WorkoutLogModel>(
+        Endpoints.completeWorkoutExercise(id),
+        data: data,
+        parser: (data) =>
+            WorkoutLogModel.fromJson(data as Map<String, dynamic>),
+      );
+
+      return response;
+    } catch (e) {
+      logger.e('[completeExercise] Error: $e');
+      return ApiResponse<WorkoutLogModel>.error(
+        "Failed to complete exercise: ${e.toString()}",
+      );
+    }
+  }
+
+  /// Finish a workout
+  Future<ApiResponse<WorkoutLogModel>> finishWorkout(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await apiClient.patch<WorkoutLogModel>(
+        Endpoints.finishWorkout(id),
+        data: data,
+        parser: (data) =>
+            WorkoutLogModel.fromJson(data as Map<String, dynamic>),
+      );
+
+      return response;
+    } catch (e) {
+      logger.e('[finishWorkout] Error: $e');
+      return ApiResponse<WorkoutLogModel>.error(
+        "Failed to finish workout: ${e.toString()}",
       );
     }
   }

@@ -274,6 +274,23 @@ class HealthConnectRepositoryImpl implements HealthConnectRepository {
   }
 
   @override
+  Future<bool> syncHealthDataForRange(
+    DateTime startTime,
+    DateTime endTime,
+  ) async {
+    try {
+      final healthData = await getHealthData(
+        startDate: startTime,
+        endDate: endTime,
+      );
+      return await syncHealthDataToBackend(healthData: healthData);
+    } catch (e) {
+      _logger.e('Error syncing health data for range: $e');
+      return false;
+    }
+  }
+
+  @override
   Future<DateTime?> getLastSyncTimestamp() async {
     try {
       final timestamp = await _sharedPreferencesService.get<String>(
