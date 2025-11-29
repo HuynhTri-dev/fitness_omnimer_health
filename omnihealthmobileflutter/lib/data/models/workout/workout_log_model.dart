@@ -2,6 +2,7 @@ import 'package:omnihealthmobileflutter/domain/entities/workout/workout_log_enti
 
 /// Model for a completed set in workout log
 class WorkoutLogSetModel {
+  final String? id;
   final int setOrder;
   final int? reps;
   final double? weight;
@@ -12,6 +13,7 @@ class WorkoutLogSetModel {
   final DateTime? completedAt;
 
   WorkoutLogSetModel({
+    this.id,
     required this.setOrder,
     this.reps,
     this.weight,
@@ -24,6 +26,7 @@ class WorkoutLogSetModel {
 
   factory WorkoutLogSetModel.fromJson(Map<String, dynamic> json) {
     return WorkoutLogSetModel(
+      id: json['_id'],
       setOrder: json['setOrder'] ?? 0,
       reps: json['reps'],
       weight: json['weight']?.toDouble(),
@@ -40,6 +43,7 @@ class WorkoutLogSetModel {
 
   Map<String, dynamic> toJson() {
     return {
+      if (id != null) '_id': id,
       'setOrder': setOrder,
       if (reps != null) 'reps': reps,
       if (weight != null) 'weight': weight,
@@ -53,6 +57,7 @@ class WorkoutLogSetModel {
 
   WorkoutLogSetEntity toEntity() {
     return WorkoutLogSetEntity(
+      id: id,
       setOrder: setOrder,
       reps: reps,
       weight: weight,
@@ -65,6 +70,7 @@ class WorkoutLogSetModel {
 
   factory WorkoutLogSetModel.fromEntity(WorkoutLogSetEntity entity) {
     return WorkoutLogSetModel(
+      id: entity.id,
       setOrder: entity.setOrder,
       reps: entity.reps,
       weight: entity.weight,

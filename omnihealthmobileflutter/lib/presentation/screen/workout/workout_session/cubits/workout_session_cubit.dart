@@ -45,7 +45,24 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
 
               // Verify matching exerciseId to be safe
               if (localEx.exerciseId == serverEx.exerciseId) {
-                updatedExercises.add(localEx.copyWith(id: serverEx.id));
+                // Map sets IDs
+                List<ActiveSetEntity> updatedSets = [];
+                if (localEx.sets.length == serverEx.sets.length) {
+                  for (int j = 0; j < localEx.sets.length; j++) {
+                    updatedSets.add(
+                      localEx.sets[j].copyWith(id: serverEx.sets[j].id),
+                    );
+                  }
+                } else {
+                  updatedSets = localEx.sets;
+                  logger.w(
+                    '[WorkoutSessionCubit] Set count mismatch at exercise $i',
+                  );
+                }
+
+                updatedExercises.add(
+                  localEx.copyWith(id: serverEx.id, sets: updatedSets),
+                );
               } else {
                 updatedExercises.add(localEx);
                 logger.w('[WorkoutSessionCubit] Exercise mismatch at index $i');
@@ -64,6 +81,12 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
           logger.i(
             '[WorkoutSessionCubit] Created workout on server: ${createdWorkout.id}',
           );
+
+          // Call Start Workout API
+          if (createdWorkout.id != null) {
+            await workoutLogRepository!.startWorkout(createdWorkout.id!);
+            logger.i('[WorkoutSessionCubit] Started workout on server');
+          }
         } else {
           logger.e(
             '[WorkoutSessionCubit] Failed to create workout on server: ${response.message}',
@@ -76,6 +99,19 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
 
     // Find the first uncompleted set
     final (exerciseIndex, setIndex) = _findFirstUncompletedSet(session);
+
+    // Start Health Connect Session
+    if (healthConnectRepository != null) {
+      try {
+        await healthConnectRepository!.startWorkoutSession(
+          workoutType: template.name,
+        );
+      } catch (e) {
+        logger.e(
+          '[WorkoutSessionCubit] Error starting Health Connect session: $e',
+        );
+      }
+    }
 
     emit(
       state.copyWith(
@@ -119,7 +155,12 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
         (newExerciseIndex == null || newExerciseIndex != oldExerciseIndex)) {
       // Check if the old exercise is actually completed
       final oldExercise = state.session!.exercises[oldExerciseIndex];
+
+      // User Request: When done all reps of an exerciseId, run completeExercise and health connect data
       if (oldExercise.isCompleted) {
+        logger.i(
+          '[WorkoutSessionCubit] Exercise ${oldExercise.exerciseId} completed (all reps done). Triggering sync and completion.',
+        );
         _finishExercise(oldExerciseIndex);
       }
     }
@@ -140,6 +181,9 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
       DateTime? newStartTime = state.exerciseStartTime;
       if (newExerciseIndex != oldExerciseIndex) {
         newStartTime = DateTime.now();
+        logger.i(
+          '[WorkoutSessionCubit] Starting new exercise index: $newExerciseIndex at $newStartTime',
+        );
       }
 
       emit(
@@ -242,6 +286,25 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
 
     // Update current set indicator
     _updateCurrentSet();
+
+    // Call API to complete set if completing
+    if (isCompleting &&
+        workoutLogRepository != null &&
+        state.session?.workoutId != null) {
+      final exerciseId = exercise.id;
+      final setId = currentSet.id;
+
+      if (exerciseId != null && setId != null) {
+        workoutLogRepository!.completeSet(state.session!.workoutId!, {
+          'workoutDetailId': exerciseId,
+          'workoutSetId': setId,
+        });
+      } else {
+        logger.w(
+          '[WorkoutSessionCubit] Cannot complete set on server: Missing IDs (detail: $exerciseId, set: $setId)',
+        );
+      }
+    }
   }
 
   /// Check if there's a next uncompleted set after the given position
@@ -432,6 +495,19 @@ class WorkoutSessionCubit extends Cubit<WorkoutSessionState> {
   Future<void> finishWorkout() async {
     _timer?.cancel();
     _restTimer?.cancel();
+
+    // Stop Health Connect Session
+    if (healthConnectRepository != null && state.session?.workoutId != null) {
+      try {
+        await healthConnectRepository!.stopWorkoutSession(
+          state.session!.workoutId!,
+        );
+      } catch (e) {
+        logger.e(
+          '[WorkoutSessionCubit] Error stopping Health Connect session: $e',
+        );
+      }
+    }
 
     // Save workout log to database
     if (state.session != null) {

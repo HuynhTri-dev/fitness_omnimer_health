@@ -200,4 +200,26 @@ class WorkoutLogRepositoryImpl implements WorkoutLogRepositoryAbs {
       );
     }
   }
+
+  @override
+  Future<ApiResponse<WorkoutLogEntity>> startWorkout(String id) async {
+    try {
+      final response = await workoutDataSource.startWorkout(id);
+
+      final entity = response.data?.toEntity();
+
+      return ApiResponse<WorkoutLogEntity>(
+        success: response.success,
+        message: response.message,
+        data: entity,
+        error: response.error,
+      );
+    } catch (e) {
+      logger.e('[WorkoutLogRepository] startWorkout error: $e');
+      return ApiResponse<WorkoutLogEntity>.error(
+        "Không thể bắt đầu workout: ${e.toString()}",
+        error: e,
+      );
+    }
+  }
 }

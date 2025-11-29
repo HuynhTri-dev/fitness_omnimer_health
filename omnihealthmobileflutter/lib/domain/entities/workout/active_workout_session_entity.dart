@@ -3,6 +3,7 @@ import 'package:omnihealthmobileflutter/domain/entities/workout/workout_template
 
 /// Entity representing a set being performed during an active workout
 class ActiveSetEntity extends Equatable {
+  final String? id; // Set ID from server
   final int setOrder;
   final int? targetReps;
   final double? targetWeight;
@@ -20,6 +21,7 @@ class ActiveSetEntity extends Equatable {
   final DateTime? completedAt;
 
   const ActiveSetEntity({
+    this.id,
     required this.setOrder,
     this.targetReps,
     this.targetWeight,
@@ -35,6 +37,7 @@ class ActiveSetEntity extends Equatable {
   });
 
   ActiveSetEntity copyWith({
+    String? id,
     int? setOrder,
     int? targetReps,
     double? targetWeight,
@@ -49,6 +52,7 @@ class ActiveSetEntity extends Equatable {
     DateTime? completedAt,
   }) {
     return ActiveSetEntity(
+      id: id ?? this.id,
       setOrder: setOrder ?? this.setOrder,
       targetReps: targetReps ?? this.targetReps,
       targetWeight: targetWeight ?? this.targetWeight,
@@ -84,6 +88,7 @@ class ActiveSetEntity extends Equatable {
 
   @override
   List<Object?> get props => [
+    id,
     setOrder,
     targetReps,
     targetWeight,

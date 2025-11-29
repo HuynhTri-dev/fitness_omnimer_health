@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 /// Entity for a completed set in workout log
 class WorkoutLogSetEntity extends Equatable {
+  final String? id;
   final int setOrder;
   final int? reps;
   final double? weight;
@@ -11,6 +12,7 @@ class WorkoutLogSetEntity extends Equatable {
   final DateTime? completedAt;
 
   const WorkoutLogSetEntity({
+    this.id,
     required this.setOrder,
     this.reps,
     this.weight,
@@ -22,6 +24,7 @@ class WorkoutLogSetEntity extends Equatable {
 
   @override
   List<Object?> get props => [
+    id,
     setOrder,
     reps,
     weight,

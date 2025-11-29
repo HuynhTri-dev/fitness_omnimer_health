@@ -386,4 +386,22 @@ class WorkoutDataSource {
       );
     }
   }
+
+  /// Start a workout
+  Future<ApiResponse<WorkoutLogModel>> startWorkout(String id) async {
+    try {
+      final response = await apiClient.patch<WorkoutLogModel>(
+        Endpoints.startWorkout(id),
+        parser: (data) =>
+            WorkoutLogModel.fromJson(data as Map<String, dynamic>),
+      );
+
+      return response;
+    } catch (e) {
+      logger.e('[startWorkout] Error: $e');
+      return ApiResponse<WorkoutLogModel>.error(
+        "Failed to start workout: ${e.toString()}",
+      );
+    }
+  }
 }

@@ -39,4 +39,7 @@ abstract class WorkoutLogRepositoryAbs {
     String id,
     Map<String, dynamic> data,
   );
+
+  /// Start a workout
+  Future<ApiResponse<WorkoutLogEntity>> startWorkout(String id);
 }

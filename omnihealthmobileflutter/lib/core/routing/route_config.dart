@@ -36,6 +36,8 @@ import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_sess
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_session/cubits/workout_session_cubit.dart';
 import 'package:omnihealthmobileflutter/domain/entities/workout/workout_template_entity.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/save_workout_log_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/workout_log_repository_abs.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/health_connect_repository.dart';
 
 class RouteConfig {
   // ==================== ROUTE NAMES ====================
@@ -201,6 +203,8 @@ class RouteConfig {
         return BlocProvider(
           create: (_) => WorkoutSessionCubit(
             saveWorkoutLogUseCase: sl<SaveWorkoutLogUseCase>(),
+            workoutLogRepository: sl<WorkoutLogRepositoryAbs>(),
+            healthConnectRepository: sl<HealthConnectRepository>(),
           ),
           child: WorkoutSessionScreen(template: template),
         );
