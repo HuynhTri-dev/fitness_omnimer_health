@@ -219,6 +219,10 @@ Future<void> init() async {
     () => HealthConnectRepositoryImpl(sl(), sl(), sl(), sl()),
   );
 
+  sl.registerLazySingleton<HealthKitConnectRepository>(
+    () => HealthKitConnectRepositoryImpl(sl(), sl(), sl(), sl()),
+  );
+
   // Workout Repositories
   sl.registerLazySingleton<WorkoutTemplateRepositoryAbs>(
     () => WorkoutTemplateRepositoryImpl(workoutDataSource: sl()),
@@ -438,6 +442,9 @@ Future<void> init() async {
       stopWorkoutSession: sl(),
     ),
   );
+
+  // HealthKit Connect BLoC
+  sl.registerFactory(() => HealthKitConnectBloc(repository: sl()));
 
   // Workout Home BLoC
   sl.registerFactory(
