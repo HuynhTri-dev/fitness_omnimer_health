@@ -83,8 +83,10 @@ import 'package:omnihealthmobileflutter/domain/abstracts/health_connect_reposito
 import 'package:omnihealthmobileflutter/data/repositories/health_connect_repository_impl.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/workout_template_repository_abs.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/workout_stats_repository_abs.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/workout_log_repository_abs.dart';
 import 'package:omnihealthmobileflutter/data/repositories/workout_template_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/workout_stats_repository_impl.dart';
+import 'package:omnihealthmobileflutter/data/repositories/workout_log_repository_impl.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/check_health_connect_availability.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/request_health_permissions.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/get_today_health_data.dart';
@@ -99,6 +101,7 @@ import 'package:omnihealthmobileflutter/domain/usecases/workout/delete_workout_t
 import 'package:omnihealthmobileflutter/domain/usecases/workout/get_weekly_workout_stats_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/create_workout_template_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/update_workout_template_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/save_workout_log_usecase.dart';
 import 'package:health/health.dart';
 import 'package:logger/logger.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/healthkit_connect_abs.dart';
@@ -230,6 +233,9 @@ Future<void> init() async {
   sl.registerLazySingleton<WorkoutStatsRepositoryAbs>(
     () => WorkoutStatsRepositoryImpl(workoutDataSource: sl()),
   );
+  sl.registerLazySingleton<WorkoutLogRepositoryAbs>(
+    () => WorkoutLogRepositoryImpl(workoutDataSource: sl()),
+  );
 
   // ======================
   // Use case
@@ -348,6 +354,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<UpdateWorkoutTemplateUseCase>(
     () => UpdateWorkoutTemplateUseCase(sl()),
+  );
+  sl.registerLazySingleton<SaveWorkoutLogUseCase>(
+    () => SaveWorkoutLogUseCase(repository: sl()),
   );
 
   // ======================
