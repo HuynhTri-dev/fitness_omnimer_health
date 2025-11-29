@@ -12,6 +12,7 @@ import 'package:omnihealthmobileflutter/data/datasources/role_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/watch_log_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/health_profile_remote_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/goal_remote_datasource.dart';
+import 'package:omnihealthmobileflutter/data/datasources/workout_datasource.dart';
 
 import 'package:omnihealthmobileflutter/data/repositories/auth_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/body_part_repository_impl.dart';
@@ -77,8 +78,13 @@ import 'package:omnihealthmobileflutter/presentation/screen/health_profile/healt
 import 'package:omnihealthmobileflutter/presentation/screen/goal/bloc/goal_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/cubits/info_account_cubit.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/health_connect/bloc/health_connect_bloc.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_home/blocs/workout_home_bloc.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/health_connect_repository.dart';
 import 'package:omnihealthmobileflutter/data/repositories/health_connect_repository_impl.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/workout_template_repository_abs.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/workout_stats_repository_abs.dart';
+import 'package:omnihealthmobileflutter/data/repositories/workout_template_repository_impl.dart';
+import 'package:omnihealthmobileflutter/data/repositories/workout_stats_repository_impl.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/check_health_connect_availability.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/request_health_permissions.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/get_today_health_data.dart';
@@ -86,6 +92,13 @@ import 'package:omnihealthmobileflutter/domain/usecases/health_connect/get_healt
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/sync_health_data_to_backend.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/start_workout_session.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/health_connect/stop_workout_session.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/get_workout_templates_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/get_user_workout_templates_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/get_workout_template_by_id_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/delete_workout_template_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/get_weekly_workout_stats_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/create_workout_template_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/update_workout_template_usecase.dart';
 import 'package:health/health.dart';
 import 'package:logger/logger.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/healthkit_connect_abs.dart';
@@ -156,6 +169,10 @@ Future<void> init() async {
     () => GoalRemoteDataSourceImpl(apiClient: sl()),
   );
 
+  sl.registerLazySingleton<WorkoutDataSource>(
+    () => WorkoutDataSource(apiClient: sl()),
+  );
+
   // ======================
   // Repositories
   // ======================
@@ -202,6 +219,12 @@ Future<void> init() async {
     () => HealthConnectRepositoryImpl(sl(), sl(), sl(), sl()),
   );
 
+  sl.registerLazySingleton<WorkoutTemplateRepositoryAbs>(
+    () => WorkoutTemplateRepositoryImpl(workoutDataSource: sl()),
+  );
+
+  sl.registerLazySingleton<WorkoutStatsRepositoryAbs>(
+    () => WorkoutStatsRepositoryImpl(workoutDataSource: sl()),
   sl.registerLazySingleton<HealthKitConnectRepository>(
     () => HealthKitConnectRepositoryImpl(sl(), sl(), sl(), sl()),
   );
@@ -302,6 +325,29 @@ Future<void> init() async {
     () => StopWorkoutSessionUseCase(sl()),
   );
 
+  // Workout Template Use Cases
+  sl.registerLazySingleton<GetWorkoutTemplatesUseCase>(
+    () => GetWorkoutTemplatesUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetUserWorkoutTemplatesUseCase>(
+    () => GetUserWorkoutTemplatesUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetWorkoutTemplateByIdUseCase>(
+    () => GetWorkoutTemplateByIdUseCase(sl()),
+  );
+  sl.registerLazySingleton<DeleteWorkoutTemplateUseCase>(
+    () => DeleteWorkoutTemplateUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetWeeklyWorkoutStatsUseCase>(
+    () => GetWeeklyWorkoutStatsUseCase(sl()),
+  );
+  sl.registerLazySingleton<CreateWorkoutTemplateUseCase>(
+    () => CreateWorkoutTemplateUseCase(sl()),
+  );
+  sl.registerLazySingleton<UpdateWorkoutTemplateUseCase>(
+    () => UpdateWorkoutTemplateUseCase(sl()),
+  );
+
   // ======================
   // Blocs / Cubits
   // ======================
@@ -395,6 +441,15 @@ Future<void> init() async {
     ),
   );
 
+  // Workout Home BLoC
+  sl.registerFactory(
+    () => WorkoutHomeBloc(
+      getWeeklyWorkoutStatsUseCase: sl(),
+      getWorkoutTemplatesUseCase: sl(),
+      getUserWorkoutTemplatesUseCase: sl(),
+      deleteWorkoutTemplateUseCase: sl(),
+    ),
+  );
   // HealthKit Connect BLoC
   sl.registerFactory(() => HealthKitConnectBloc(repository: sl()));
 }
