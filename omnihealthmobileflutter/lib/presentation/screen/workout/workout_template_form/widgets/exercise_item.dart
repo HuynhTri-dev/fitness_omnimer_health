@@ -31,22 +31,46 @@ class _ExerciseItem extends StatelessWidget {
                 width: 50.w,
                 height: 50.w,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(8.r),
-                  image: exercise.exerciseImageUrl != null
-                      ? DecorationImage(
-                          image: NetworkImage(exercise.exerciseImageUrl!),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
                 ),
-                child: exercise.exerciseImageUrl == null
-                    ? Icon(
-                        Icons.fitness_center,
-                        color: Colors.grey[600],
-                        size: 24.sp,
+                clipBehavior: Clip.antiAlias,
+                child: exercise.exerciseImageUrl != null &&
+                        exercise.exerciseImageUrl!.isNotEmpty
+                    ? Image.network(
+                        exercise.exerciseImageUrl!,
+                        fit: BoxFit.cover,
+                        width: 50.w,
+                        height: 50.w,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.fitness_center,
+                            color: Colors.grey[500],
+                            size: 24.sp,
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: SizedBox(
+                              width: 20.w,
+                              height: 20.w,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
                       )
-                    : null,
+                    : Icon(
+                        Icons.fitness_center,
+                        color: Colors.grey[500],
+                        size: 24.sp,
+                      ),
               ),
 
               SizedBox(width: 12.w),
@@ -93,36 +117,54 @@ class _ExerciseItem extends StatelessWidget {
 
           SizedBox(height: 16.h),
 
+          // Divider
+          Divider(height: 1, color: Colors.grey.withOpacity(0.2)),
+
+          SizedBox(height: 12.h),
+
           // Sets Header
           Row(
             children: [
               SizedBox(
-                width: 40.w,
-                child: Text('', style: TextStyle(fontSize: 12.sp)),
-              ),
-              Expanded(
+                width: 36.w,
                 child: Center(
                   child: Text(
-                    'KG',
+                    'SET',
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 10.sp,
                       fontWeight: FontWeight.w600,
+                      color: Colors.grey[500],
                     ),
                   ),
                 ),
               ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'WEIGHT',
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),
               Expanded(
                 child: Center(
                   child: Text(
                     'REPS',
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 10.sp,
                       fontWeight: FontWeight.w600,
+                      color: Colors.grey[500],
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: 40.w),
+              SizedBox(width: 32.w),
             ],
           ),
 

@@ -219,6 +219,14 @@ Future<void> init() async {
     () => HealthConnectRepositoryImpl(sl(), sl(), sl(), sl()),
   );
 
+  // Workout Repositories
+  sl.registerLazySingleton<WorkoutTemplateRepositoryAbs>(
+    () => WorkoutTemplateRepositoryImpl(workoutDataSource: sl()),
+  );
+  sl.registerLazySingleton<WorkoutStatsRepositoryAbs>(
+    () => WorkoutStatsRepositoryImpl(workoutDataSource: sl()),
+  );
+
   // ======================
   // Use case
   // ======================
@@ -428,6 +436,16 @@ Future<void> init() async {
       syncDataToBackend: sl(),
       startWorkoutSession: sl(),
       stopWorkoutSession: sl(),
+    ),
+  );
+
+  // Workout Home BLoC
+  sl.registerFactory(
+    () => WorkoutHomeBloc(
+      getWeeklyWorkoutStatsUseCase: sl(),
+      getWorkoutTemplatesUseCase: sl(),
+      getUserWorkoutTemplatesUseCase: sl(),
+      deleteWorkoutTemplateUseCase: sl(),
     ),
   );
 }

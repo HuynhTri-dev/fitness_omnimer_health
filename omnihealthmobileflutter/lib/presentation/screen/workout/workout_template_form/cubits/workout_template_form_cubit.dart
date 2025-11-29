@@ -137,26 +137,22 @@ class WorkoutTemplateFormCubit extends Cubit<WorkoutTemplateFormState> {
 
   /// Add exercise to template from entity
   void addExercise(ExerciseListEntity exercise) {
-    String? imageUrl;
-    // Check if exercise has images (assuming ExerciseListEntity might have different property)
-    // Adjust based on actual entity structure
-    try {
-      // Try to get first image if available
-      final dynamic images = (exercise as dynamic).imageUrls;
-      if (images != null && images is List && images.isNotEmpty) {
-        imageUrl = images[0] as String?;
-      }
-    } catch (e) {
-      // Fallback if property doesn't exist
-      imageUrl = null;
+    // Check if exercise already exists
+    if (state.exercises.any((e) => e.exerciseId == exercise.id)) {
+      emit(
+        state.copyWith(
+          status: WorkoutTemplateFormStatus.error,
+          errorMessage: 'Exercise already added',
+        ),
+      );
+      return;
     }
 
     final newExercise = WorkoutExerciseFormData(
       exerciseId: exercise.id,
       exerciseName: exercise.name,
-      exerciseImageUrl: imageUrl,
-      type:
-          'reps', // Default to 'reps' type (matches backend enum: reps, time, distance, mixed)
+      exerciseImageUrl: exercise.imageUrl.isNotEmpty ? exercise.imageUrl : null,
+      type: 'reps', // Default to 'reps' type (matches backend enum: reps, time, distance, mixed)
       sets: [const WorkoutSetFormData(setOrder: 1, reps: null, weight: null)],
     );
 
