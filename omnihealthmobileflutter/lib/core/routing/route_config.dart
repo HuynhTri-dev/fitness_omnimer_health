@@ -30,6 +30,8 @@ import 'package:omnihealthmobileflutter/presentation/screen/auth/verify_account/
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_form/workout_template_form_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_detail/workout_template_detail_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_detail/cubits/workout_template_detail_cubit.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_ai/workout_template_ai_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_ai/cubit/workout_template_ai_cubit.dart';
 
 class RouteConfig {
   // ==================== ROUTE NAMES ====================
@@ -55,6 +57,7 @@ class RouteConfig {
   static const String verifyAccount = '/verify-account';
   static const String workoutTemplateForm = '/workout-template-form';
   static const String workoutTemplateDetail = '/workout-template-detail';
+  static const String workoutTemplateAI = '/workout-template-ai';
 
   // ==================== BUILD AUTH PAGES ====================
   static Widget buildAuthPage(String? routeName) {
@@ -179,6 +182,12 @@ class RouteConfig {
           child: WorkoutTemplateDetailScreen(templateId: templateId),
         );
 
+      case workoutTemplateAI:
+        return BlocProvider(
+          create: (_) => sl<WorkoutTemplateAICubit>()..loadInitialData(),
+          child: const WorkoutTemplateAIScreen(),
+        );
+
       default:
         return _ErrorPage(message: 'Không tìm thấy trang: $routeName');
     }
@@ -268,20 +277,22 @@ class RouteConfig {
     BuildContext context, {
     required String templateId,
   }) {
-    return Navigator.of(context).pushNamed(
-      workoutTemplateDetail,
-      arguments: {'templateId': templateId},
-    );
+    return Navigator.of(
+      context,
+    ).pushNamed(workoutTemplateDetail, arguments: {'templateId': templateId});
   }
 
   static Future<dynamic> navigateToWorkoutTemplateForm(
     BuildContext context, {
     String? templateId,
   }) {
-    return Navigator.of(context).pushNamed(
-      workoutTemplateForm,
-      arguments: {'templateId': templateId},
-    );
+    return Navigator.of(
+      context,
+    ).pushNamed(workoutTemplateForm, arguments: {'templateId': templateId});
+  }
+
+  static void navigateToWorkoutTemplateAI(BuildContext context) {
+    Navigator.of(context).pushNamed(workoutTemplateAI);
   }
 }
 
