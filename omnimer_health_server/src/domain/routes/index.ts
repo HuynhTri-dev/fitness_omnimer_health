@@ -18,6 +18,8 @@ import workoutRoute from "./workout.route";
 import workoutFeedbackRoute from "./workout-feedback.route";
 import watchLogRoute from "./watch-log.route";
 import AIRoute from "./ai.route";
+import chartRoute from "./chart.route";
+import adminChartRoute from "./admin-chart.route";
 
 function setupRoutes(app: Express) {
   // System
@@ -45,5 +47,9 @@ function setupRoutes(app: Express) {
   app.use("/api/v1/watch-log", watchLogRoute);
   // AI
   app.use("/api/v1/ai", AIRoute);
+  // Charts
+  app.use("/api/v1/chart", chartRoute);
+  // Admin Charts
+  app.use("/api/v1/admin-chart", adminChartRoute);
 }
 export default setupRoutes;

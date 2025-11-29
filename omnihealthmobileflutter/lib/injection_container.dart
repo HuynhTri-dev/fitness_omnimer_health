@@ -14,6 +14,7 @@ import 'package:omnihealthmobileflutter/data/datasources/health_profile_remote_d
 import 'package:omnihealthmobileflutter/data/datasources/goal_remote_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/workout_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/verification_datasource.dart';
+import 'package:omnihealthmobileflutter/data/datasources/ai_remote_datasource.dart';
 
 import 'package:omnihealthmobileflutter/data/repositories/auth_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/verification_repository_impl.dart';
@@ -114,12 +115,17 @@ import 'package:omnihealthmobileflutter/domain/usecases/workout/delete_workout_t
 import 'package:omnihealthmobileflutter/domain/usecases/workout/get_weekly_workout_stats_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/create_workout_template_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/update_workout_template_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/save_workout_log_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/get_workout_logs_usecase.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/report/blocs/report_bloc.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/ai/recommend_workout_usecase.dart';
 import 'package:health/health.dart';
 import 'package:logger/logger.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/healthkit_connect_abs.dart';
 import 'package:omnihealthmobileflutter/data/repositories/healthkit_connect_impl.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/healthkit_connect/bloc/healthkit_connect_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/change_password/cubits/change_password_cubit.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_ai/cubit/workout_template_ai_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -191,6 +197,8 @@ Future<void> init() async {
 
   sl.registerLazySingleton<VerificationDataSource>(
     () => VerificationDataSourceImpl(apiClient: sl()),
+  sl.registerLazySingleton<AIRemoteDataSource>(
+    () => AIRemoteDataSourceImpl(apiClient: sl()),
   );
 
   // ======================
@@ -239,14 +247,17 @@ Future<void> init() async {
     () => HealthConnectRepositoryImpl(sl(), sl(), sl(), sl()),
   );
 
+  sl.registerLazySingleton<HealthKitConnectRepository>(
+    () => HealthKitConnectRepositoryImpl(sl(), sl(), sl(), sl()),
+  );
+
+  // Workout Repositories
   sl.registerLazySingleton<WorkoutTemplateRepositoryAbs>(
     () => WorkoutTemplateRepositoryImpl(workoutDataSource: sl()),
   );
-
   sl.registerLazySingleton<WorkoutStatsRepositoryAbs>(
     () => WorkoutStatsRepositoryImpl(workoutDataSource: sl()),
   );
-
   sl.registerLazySingleton<WorkoutLogRepositoryAbs>(
     () => WorkoutLogRepositoryImpl(workoutDataSource: sl()),
   );
@@ -257,6 +268,8 @@ Future<void> init() async {
 
   sl.registerLazySingleton<VerificationRepositoryAbs>(
     () => VerificationRepositoryImpl(dataSource: sl()),
+  sl.registerLazySingleton<AIRepositoryAbs>(
+    () => AIRepositoryImpl(remoteDataSource: sl()),
   );
 
   // ======================
@@ -395,8 +408,15 @@ Future<void> init() async {
   sl.registerLazySingleton<UpdateWorkoutTemplateUseCase>(
     () => UpdateWorkoutTemplateUseCase(sl()),
   );
+  sl.registerLazySingleton<SaveWorkoutLogUseCase>(
+    () => SaveWorkoutLogUseCase(repository: sl()),
+  );
   sl.registerLazySingleton<GetWorkoutLogsUseCase>(
     () => GetWorkoutLogsUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<RecommendWorkoutUseCase>(
+    () => RecommendWorkoutUseCase(sl()),
   );
 
   // ======================
@@ -502,6 +522,9 @@ Future<void> init() async {
     ),
   );
 
+  // HealthKit Connect BLoC
+  sl.registerFactory(() => HealthKitConnectBloc(repository: sl()));
+
   // Workout Home BLoC
   sl.registerFactory(
     () => WorkoutHomeBloc(
@@ -521,4 +544,14 @@ Future<void> init() async {
 
   // Change Password Cubit
   sl.registerFactory(() => ChangePasswordCubit(changePasswordUseCase: sl()));
+  sl.registerFactory(
+    () => WorkoutTemplateAICubit(
+      getAllBodyPartsUseCase: sl(),
+      getAllEquipmentsUseCase: sl(),
+      getAllExerciseCategoriesUseCase: sl(),
+      getAllExerciseTypesUseCase: sl(),
+      getAllMusclesUseCase: sl(),
+      recommendWorkoutUseCase: sl(),
+    ),
+  );
 }
