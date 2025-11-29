@@ -30,6 +30,10 @@ import 'package:omnihealthmobileflutter/presentation/screen/auth/verify_account/
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_form/workout_template_form_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_detail/workout_template_detail_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_detail/cubits/workout_template_detail_cubit.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_session/workout_session_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_session/cubits/workout_session_cubit.dart';
+import 'package:omnihealthmobileflutter/domain/entities/workout/workout_template_entity.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/save_workout_log_usecase.dart';
 
 class RouteConfig {
   // ==================== ROUTE NAMES ====================
@@ -55,6 +59,7 @@ class RouteConfig {
   static const String verifyAccount = '/verify-account';
   static const String workoutTemplateForm = '/workout-template-form';
   static const String workoutTemplateDetail = '/workout-template-detail';
+  static const String workoutSession = '/workout-session';
 
   // ==================== BUILD AUTH PAGES ====================
   static Widget buildAuthPage(String? routeName) {
@@ -179,6 +184,18 @@ class RouteConfig {
           child: WorkoutTemplateDetailScreen(templateId: templateId),
         );
 
+      case workoutSession:
+        final template = arguments?['template'] as WorkoutTemplateEntity?;
+        if (template == null) {
+          return _ErrorPage(message: 'Workout template is required');
+        }
+        return BlocProvider(
+          create: (_) => WorkoutSessionCubit(
+            saveWorkoutLogUseCase: sl<SaveWorkoutLogUseCase>(),
+          ),
+          child: WorkoutSessionScreen(template: template),
+        );
+
       default:
         return _ErrorPage(message: 'Không tìm thấy trang: $routeName');
     }
@@ -268,20 +285,27 @@ class RouteConfig {
     BuildContext context, {
     required String templateId,
   }) {
-    return Navigator.of(context).pushNamed(
-      workoutTemplateDetail,
-      arguments: {'templateId': templateId},
-    );
+    return Navigator.of(
+      context,
+    ).pushNamed(workoutTemplateDetail, arguments: {'templateId': templateId});
   }
 
   static Future<dynamic> navigateToWorkoutTemplateForm(
     BuildContext context, {
     String? templateId,
   }) {
-    return Navigator.of(context).pushNamed(
-      workoutTemplateForm,
-      arguments: {'templateId': templateId},
-    );
+    return Navigator.of(
+      context,
+    ).pushNamed(workoutTemplateForm, arguments: {'templateId': templateId});
+  }
+
+  static Future<dynamic> navigateToWorkoutSession(
+    BuildContext context, {
+    required WorkoutTemplateEntity template,
+  }) {
+    return Navigator.of(
+      context,
+    ).pushNamed(workoutSession, arguments: {'template': template});
   }
 }
 
