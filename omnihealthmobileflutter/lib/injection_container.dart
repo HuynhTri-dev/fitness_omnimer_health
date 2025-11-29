@@ -127,6 +127,14 @@ import 'package:omnihealthmobileflutter/data/repositories/healthkit_connect_impl
 import 'package:omnihealthmobileflutter/presentation/screen/healthkit_connect/bloc/healthkit_connect_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/change_password/cubits/change_password_cubit.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_ai/cubit/workout_template_ai_cubit.dart';
+import 'package:omnihealthmobileflutter/data/datasources/chart_datasource.dart';
+import 'package:omnihealthmobileflutter/data/repositories/chart_repository_impl.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/chart_repository_abs.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/chart/get_workout_frequency_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/chart/get_calories_burned_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/chart/get_muscle_distribution_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/chart/get_goal_progress_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/chart/get_weight_progress_usecase.dart';
 
 final sl = GetIt.instance;
 
@@ -204,6 +212,10 @@ Future<void> init() async {
     () => AIRemoteDataSourceImpl(apiClient: sl()),
   );
 
+  sl.registerLazySingleton<ChartDataSource>(
+    () => ChartDataSource(apiClient: sl()),
+  );
+
   // ======================
   // Repositories
   // ======================
@@ -270,6 +282,10 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<AIRepositoryAbs>(
     () => AIRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  sl.registerLazySingleton<ChartRepositoryAbs>(
+    () => ChartRepositoryImpl(chartDataSource: sl()),
   );
 
   // ======================
@@ -428,6 +444,26 @@ Future<void> init() async {
     () => RecommendWorkoutUseCase(sl()),
   );
 
+  sl.registerLazySingleton<GetWorkoutFrequencyUseCase>(
+    () => GetWorkoutFrequencyUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<GetCaloriesBurnedUseCase>(
+    () => GetCaloriesBurnedUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<GetMuscleDistributionUseCase>(
+    () => GetMuscleDistributionUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<GetGoalProgressUseCase>(
+    () => GetGoalProgressUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<GetWeightProgressUseCase>(
+    () => GetWeightProgressUseCase(sl()),
+  );
+
   // ======================
   // Blocs / Cubits
   // ======================
@@ -541,6 +577,7 @@ Future<void> init() async {
       getWorkoutTemplatesUseCase: sl(),
       getUserWorkoutTemplatesUseCase: sl(),
       deleteWorkoutTemplateUseCase: sl(),
+      getWorkoutFrequencyUseCase: sl(),
     ),
   );
 

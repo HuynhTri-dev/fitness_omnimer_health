@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:omnihealthmobileflutter/core/routing/route_config.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
-import 'package:omnihealthmobileflutter/domain/entities/workout/workout_stats_entity.dart';
+import 'package:omnihealthmobileflutter/domain/entities/chart/workout_frequency_entity.dart';
 import 'package:omnihealthmobileflutter/domain/entities/workout/workout_template_entity.dart';
 import 'package:omnihealthmobileflutter/presentation/common/auth/user_header_widget.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_home/blocs/workout_home_bloc.dart';
@@ -106,8 +106,10 @@ class _WorkoutHomeViewState extends State<_WorkoutHomeView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Weekly Workout Chart
-                          if (state.weeklyStats != null)
-                            _WeeklyWorkoutChart(stats: state.weeklyStats!),
+                          if (state.workoutFrequency != null)
+                            _WeeklyWorkoutChart(
+                              frequencyData: state.workoutFrequency!,
+                            ),
 
                           SizedBox(height: AppSpacing.md.h),
 
@@ -159,11 +161,12 @@ class _WorkoutHomeViewState extends State<_WorkoutHomeView> {
                                 return _WorkoutTemplateCard(
                                   template: template,
                                   onTap: () async {
-                                    final result = await RouteConfig.navigateToWorkoutTemplateDetail(
-                                      context,
-                                      templateId: template.id,
-                                    );
-                                    
+                                    final result =
+                                        await RouteConfig.navigateToWorkoutTemplateDetail(
+                                          context,
+                                          templateId: template.id,
+                                        );
+
                                     // Reload if there were changes
                                     if (result == true && context.mounted) {
                                       context.read<WorkoutHomeBloc>().add(

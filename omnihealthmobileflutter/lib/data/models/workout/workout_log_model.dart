@@ -203,49 +203,28 @@ class WorkoutLogModel {
   });
 
   factory WorkoutLogModel.fromJson(Map<String, dynamic> json) {
-    // Handle templateId from different formats
-    String? templateId;
-    if (json['workoutTemplateId'] != null) {
-      templateId = json['workoutTemplateId'] is String
-          ? json['workoutTemplateId']
-          : (json['workoutTemplateId'] as Map<String, dynamic>?)?['_id'];
-    } else if (json['templateId'] != null) {
-      templateId = json['templateId'] is String
-          ? json['templateId']
-          : (json['templateId'] as Map<String, dynamic>?)?['_id'];
-    }
-
-    // Handle exercises from workoutDetail (server) or exercises (legacy)
-    final exercisesData = json['workoutDetail'] ?? json['exercises'] ?? [];
-
-    // Handle startedAt from timeStart (server) or startedAt (legacy)
-    DateTime startedAt;
-    if (json['timeStart'] != null) {
-      startedAt = DateTime.parse(json['timeStart']);
-    } else if (json['startedAt'] != null) {
-      startedAt = DateTime.parse(json['startedAt']);
-    } else {
-      startedAt = DateTime.now();
-    }
-
-    // Get duration from summary or direct field
+    // Calculate duration if not provided
     int durationSeconds = 0;
-    if (json['summary'] != null && json['summary']['totalDuration'] != null) {
-      durationSeconds = json['summary']['totalDuration'];
-    } else {
-      durationSeconds = json['durationSeconds'] ?? 0;
+    if (json['durationSeconds'] != null) {
+      durationSeconds = json['durationSeconds'];
+    } else if (json['startedAt'] != null && json['finishedAt'] != null) {
+      final started = DateTime.parse(json['startedAt']);
+      final finished = DateTime.parse(json['finishedAt']);
+      durationSeconds = finished.difference(started).inSeconds;
     }
 
     return WorkoutLogModel(
       id: json['_id'],
-      templateId: templateId,
-      workoutName: json['workoutName'] ?? json['name'] ?? '',
+      templateId: json['templateId'],
+      workoutName: json['workoutName'] ?? '',
       exercises:
-          (exercisesData as List?)
+          (json['exercises'] as List?)
               ?.map((e) => WorkoutLogExerciseModel.fromJson(e))
               .toList() ??
           [],
-      startedAt: startedAt,
+      startedAt: json['startedAt'] != null
+          ? DateTime.parse(json['startedAt'])
+          : DateTime.now(),
       finishedAt: json['finishedAt'] != null
           ? DateTime.parse(json['finishedAt'])
           : null,

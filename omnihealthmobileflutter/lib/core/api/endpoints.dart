@@ -152,4 +152,11 @@ class Endpoints {
 
   // ================== AI RECOMMENDATIONS ==================
   static const String getAiRecommendations = "/v1/ai/recommend";
+
+  // ================== CHART ==================
+  static const String getWorkoutFrequency = "/v1/chart/workout-frequency";
+  static const String getCaloriesBurned = "/v1/chart/calories-burned";
+  static const String getMuscleDistribution = "/v1/chart/muscle-distribution";
+  static const String getGoalProgress = "/v1/chart/goal-progress";
+  static const String getWeightProgress = "/v1/chart/weight-progress";
 }

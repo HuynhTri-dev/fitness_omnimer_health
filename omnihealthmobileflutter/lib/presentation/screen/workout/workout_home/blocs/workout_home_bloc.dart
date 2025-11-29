@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:omnihealthmobileflutter/core/api/api_response.dart';
+import 'package:omnihealthmobileflutter/domain/entities/chart/workout_frequency_entity.dart';
 import 'package:omnihealthmobileflutter/domain/entities/workout/workout_stats_entity.dart';
 import 'package:omnihealthmobileflutter/domain/entities/workout/workout_template_entity.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/base_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/chart/get_workout_frequency_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/delete_workout_template_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/get_user_workout_templates_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/workout/get_weekly_workout_stats_usecase.dart';
@@ -17,12 +19,14 @@ class WorkoutHomeBloc extends Bloc<WorkoutHomeEvent, WorkoutHomeState> {
   final GetWorkoutTemplatesUseCase getWorkoutTemplatesUseCase;
   final GetUserWorkoutTemplatesUseCase getUserWorkoutTemplatesUseCase;
   final DeleteWorkoutTemplateUseCase deleteWorkoutTemplateUseCase;
+  final GetWorkoutFrequencyUseCase getWorkoutFrequencyUseCase;
 
   WorkoutHomeBloc({
     required this.getWeeklyWorkoutStatsUseCase,
     required this.getWorkoutTemplatesUseCase,
     required this.getUserWorkoutTemplatesUseCase,
     required this.deleteWorkoutTemplateUseCase,
+    required this.getWorkoutFrequencyUseCase,
   }) : super(const WorkoutHomeState()) {
     on<LoadInitialWorkoutData>(_onLoadInitialData);
     on<LoadWorkoutTemplates>(_onLoadWorkoutTemplates);
@@ -39,15 +43,18 @@ class WorkoutHomeBloc extends Bloc<WorkoutHomeEvent, WorkoutHomeState> {
     emit(state.copyWith(status: WorkoutHomeStatus.loading));
 
     try {
-      // Load stats and templates in parallel
+      // Load stats, templates, and frequency in parallel
       final results = await Future.wait([
         getWeeklyWorkoutStatsUseCase(NoParams()),
         getUserWorkoutTemplatesUseCase(NoParams()),
+        getWorkoutFrequencyUseCase(NoParams()),
       ]);
 
       final statsResponse = results[0] as ApiResponse<WorkoutStatsEntity>;
       final templatesResponse =
           results[1] as ApiResponse<List<WorkoutTemplateEntity>>;
+      final frequencyResponse =
+          results[2] as ApiResponse<List<WorkoutFrequencyEntity>>;
 
       logger.i(
         '[WorkoutHomeBloc] Templates response success: ${templatesResponse.success}',
@@ -64,12 +71,15 @@ class WorkoutHomeBloc extends Bloc<WorkoutHomeEvent, WorkoutHomeState> {
         }
       }
 
-      if (statsResponse.success && templatesResponse.success) {
+      if (statsResponse.success &&
+          templatesResponse.success &&
+          frequencyResponse.success) {
         emit(
           state.copyWith(
             status: WorkoutHomeStatus.loaded,
             weeklyStats: statsResponse.data,
             templates: templatesResponse.data ?? [],
+            workoutFrequency: frequencyResponse.data ?? [],
           ),
         );
         logger.i(
@@ -162,22 +172,28 @@ class WorkoutHomeBloc extends Bloc<WorkoutHomeEvent, WorkoutHomeState> {
       final results = await Future.wait([
         getWeeklyWorkoutStatsUseCase(NoParams()),
         getUserWorkoutTemplatesUseCase(NoParams()),
+        getWorkoutFrequencyUseCase(NoParams()),
       ]);
 
       final statsResponse = results[0] as ApiResponse<WorkoutStatsEntity>;
       final templatesResponse =
           results[1] as ApiResponse<List<WorkoutTemplateEntity>>;
+      final frequencyResponse =
+          results[2] as ApiResponse<List<WorkoutFrequencyEntity>>;
 
       logger.i(
         '[WorkoutHomeBloc] Refresh - Templates count: ${templatesResponse.data?.length ?? 0}',
       );
 
-      if (statsResponse.success && templatesResponse.success) {
+      if (statsResponse.success &&
+          templatesResponse.success &&
+          frequencyResponse.success) {
         emit(
           state.copyWith(
             status: WorkoutHomeStatus.loaded,
             weeklyStats: statsResponse.data,
             templates: templatesResponse.data ?? [],
+            workoutFrequency: frequencyResponse.data ?? [],
           ),
         );
         logger.i(
