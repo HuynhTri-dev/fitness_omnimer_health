@@ -13,6 +13,9 @@ services:
     environment:
       - PORT=8000
       - NODE_ENV=production
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - omnimer_network
 
@@ -27,18 +30,6 @@ services:
       - "8888:8888"
     environment:
       - PYTHONUNBUFFERED=1
-    networks:
-      - omnimer_network
-
-  # 3. 📊 Admin Dashboard (React/Vite + NGINX)
-  adminpage:
-    container_name: omnimer_health_admin
-    build:
-      context: ./adminpage
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    ports:
-      - "3000:80"
     networks:
       - omnimer_network
 
