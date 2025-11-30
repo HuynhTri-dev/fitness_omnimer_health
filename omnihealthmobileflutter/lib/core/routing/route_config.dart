@@ -38,6 +38,7 @@ import 'package:omnihealthmobileflutter/domain/entities/workout/workout_template
 import 'package:omnihealthmobileflutter/domain/usecases/workout/save_workout_log_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/workout_log_repository_abs.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/health_connect_repository.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/workout/create_workout_feedback_usecase.dart';
 
 class RouteConfig {
   // ==================== ROUTE NAMES ====================
@@ -205,6 +206,7 @@ class RouteConfig {
             saveWorkoutLogUseCase: sl<SaveWorkoutLogUseCase>(),
             workoutLogRepository: sl<WorkoutLogRepositoryAbs>(),
             healthConnectRepository: sl<HealthConnectRepository>(),
+            createWorkoutFeedbackUseCase: sl<CreateWorkoutFeedbackUseCase>(),
           ),
           child: WorkoutSessionScreen(template: template),
         );

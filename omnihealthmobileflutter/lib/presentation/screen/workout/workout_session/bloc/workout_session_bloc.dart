@@ -506,8 +506,17 @@ class WorkoutSessionBloc
     CreateWorkoutFeedbackEvent event,
     Emitter<WorkoutSessionState> emit,
   ) async {
-    if (state.session?.workoutId == null ||
-        createWorkoutFeedbackUseCase == null) {
+    if (state.session?.workoutId == null) {
+      logger.w(
+        '[WorkoutSessionBloc] Workout ID is null, skipping feedback submission and completing locally.',
+      );
+      emit(state.copyWith(feedbackStatus: FeedbackSubmissionStatus.success));
+      return;
+    }
+
+    if (createWorkoutFeedbackUseCase == null) {
+      logger.e('[WorkoutSessionBloc] CreateWorkoutFeedbackUseCase is null');
+      emit(state.copyWith(feedbackStatus: FeedbackSubmissionStatus.failure));
       return;
     }
 
