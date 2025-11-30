@@ -15,6 +15,7 @@ import 'package:omnihealthmobileflutter/data/datasources/goal_remote_datasource.
 import 'package:omnihealthmobileflutter/data/datasources/workout_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/verification_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/ai_remote_datasource.dart';
+import 'package:omnihealthmobileflutter/data/datasources/forgot_password_datasource.dart';
 import 'package:omnihealthmobileflutter/data/repositories/auth_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/verification_repository_impl.dart';
 import 'package:omnihealthmobileflutter/data/repositories/body_part_repository_impl.dart';
@@ -41,6 +42,8 @@ import 'package:omnihealthmobileflutter/domain/abstracts/health_profile_reposito
 import 'package:omnihealthmobileflutter/domain/abstracts/goal_repository.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/ai_repository_abs.dart';
 import 'package:omnihealthmobileflutter/domain/abstracts/verification_repository_abs.dart';
+import 'package:omnihealthmobileflutter/domain/abstracts/forgot_password_repository_abs.dart';
+import 'package:omnihealthmobileflutter/data/repositories/forgot_password_repository_impl.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/auth/get_auth_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/auth/get_verification_status_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/auth/send_verification_email_usecase.dart';
@@ -52,6 +55,10 @@ import 'package:omnihealthmobileflutter/domain/usecases/auth/refresh_token_useca
 import 'package:omnihealthmobileflutter/domain/usecases/auth/register_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/auth/update_user_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/auth/change_password_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/auth/request_password_reset_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/auth/verify_reset_code_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/auth/reset_password_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/auth/resend_reset_code_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_body_parts_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_equipments_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_exercise_categories_usecase.dart';
@@ -126,6 +133,7 @@ import 'package:omnihealthmobileflutter/domain/abstracts/healthkit_connect_abs.d
 import 'package:omnihealthmobileflutter/data/repositories/healthkit_connect_impl.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/healthkit_connect/bloc/healthkit_connect_bloc.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/change_password/cubits/change_password_cubit.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/forgot_password/cubits/forgot_password_cubit.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_ai/cubit/workout_template_ai_cubit.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_session/bloc/workout_session_bloc.dart';
 import 'package:omnihealthmobileflutter/data/datasources/chart_datasource.dart';
@@ -218,6 +226,10 @@ Future<void> init() async {
     () => ChartDataSource(apiClient: sl()),
   );
 
+  sl.registerLazySingleton<ForgotPasswordDataSource>(
+    () => ForgotPasswordDataSourceImpl(apiClient: sl()),
+  );
+
   // ======================
   // Repositories
   // ======================
@@ -290,6 +302,10 @@ Future<void> init() async {
     () => ChartRepositoryImpl(chartDataSource: sl()),
   );
 
+  sl.registerLazySingleton<ForgotPasswordRepositoryAbs>(
+    () => ForgotPasswordRepositoryImpl(dataSource: sl()),
+  );
+
   // ======================
   // Use case
   // ======================
@@ -303,6 +319,20 @@ Future<void> init() async {
   sl.registerLazySingleton<UpdateUserUseCase>(() => UpdateUserUseCase(sl()));
   sl.registerLazySingleton<ChangePasswordUseCase>(
     () => ChangePasswordUseCase(sl()),
+  );
+
+  // Forgot Password Use Cases
+  sl.registerLazySingleton<RequestPasswordResetUseCase>(
+    () => RequestPasswordResetUseCase(sl()),
+  );
+  sl.registerLazySingleton<VerifyResetCodeUseCase>(
+    () => VerifyResetCodeUseCase(sl()),
+  );
+  sl.registerLazySingleton<ResetPasswordUseCase>(
+    () => ResetPasswordUseCase(sl()),
+  );
+  sl.registerLazySingleton<ResendResetCodeUseCase>(
+    () => ResendResetCodeUseCase(sl()),
   );
 
   // Verification Use Cases
@@ -594,6 +624,16 @@ Future<void> init() async {
 
   // Change Password Cubit
   sl.registerFactory(() => ChangePasswordCubit(changePasswordUseCase: sl()));
+
+  // Forgot Password Cubit
+  sl.registerFactory(
+    () => ForgotPasswordCubit(
+      requestPasswordResetUseCase: sl(),
+      verifyResetCodeUseCase: sl(),
+      resetPasswordUseCase: sl(),
+      resendResetCodeUseCase: sl(),
+    ),
+  );
   sl.registerFactory(
     () => WorkoutTemplateAICubit(
       getAllBodyPartsUseCase: sl(),

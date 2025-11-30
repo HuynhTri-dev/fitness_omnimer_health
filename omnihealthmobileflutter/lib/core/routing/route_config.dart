@@ -27,6 +27,7 @@ import 'package:omnihealthmobileflutter/presentation/screen/auth/info_account/in
 import 'package:omnihealthmobileflutter/presentation/screen/more/more_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/change_password/change_password_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/auth/verify_account/verify_account_screen.dart';
+import 'package:omnihealthmobileflutter/presentation/screen/auth/forgot_password/forgot_password_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_form/workout_template_form_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_detail/workout_template_detail_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_detail/cubits/workout_template_detail_cubit.dart';
@@ -80,8 +81,7 @@ class RouteConfig {
         );
 
       case forgetPassword:
-      // TODO: Implement ForgetPasswordCubit
-      // return const ForgetPasswordScreen();
+        return const ForgotPasswordScreen();
 
       case login:
       default:
@@ -171,6 +171,10 @@ class RouteConfig {
 
       case verifyAccount:
         return const VerifyAccountScreen();
+
+      case forgetPassword:
+        // From authenticated context (e.g., Change Password screen)
+        return const ForgotPasswordScreen(fromAuthenticated: true);
 
       case workoutTemplateForm:
         final templateId = arguments?['templateId'] as String?;
