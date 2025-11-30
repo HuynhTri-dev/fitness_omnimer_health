@@ -3,6 +3,7 @@ import permissionRoute from "./permission.route";
 import roleRoute from "./role.route";
 import authRoute from "./auth.route";
 import verificationRoute from "./verification.route";
+import forgotPasswordRoute from "./forgot-password.route";
 import bodyPartRoute from "./body-part.route";
 import equipmentRoute from "./equipment.route";
 import exerciseTypeRoute from "./exercise-type.route";
@@ -28,6 +29,7 @@ function setupRoutes(app: Express) {
   // Profile
   app.use("/api/v1/auth", authRoute);
   app.use("/api/v1/verification", verificationRoute);
+  app.use("/api/v1/forgot-password", forgotPasswordRoute);
   app.use("/api/v1/user", userRoute);
   app.use("/api/v1/health-profile", healthProfileRoute);
   app.use("/api/v1/goal", goalRoute);

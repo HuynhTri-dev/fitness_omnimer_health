@@ -490,11 +490,7 @@ class _ChangePasswordViewState extends State<_ChangePasswordView> {
   }
 
   void _forgotPassword() {
-    _showSnackBar(
-      context,
-      'Password reset link sent to your email',
-      isSuccess: true,
-    );
+    Navigator.pushNamed(context, '/forget-password');
   }
 
   void _showSnackBar(

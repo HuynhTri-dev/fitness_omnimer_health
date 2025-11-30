@@ -25,6 +25,11 @@ export interface IUser extends Document {
   // Phone Verification Fields (for future use)
   phoneNumber?: string | null;
   isPhoneVerified: boolean;
+
+  // Password Reset Fields
+  passwordResetCode?: string | null;
+  passwordResetExpires?: Date | null;
+  passwordResetToken?: string | null;
 }
 
 const userSchema = new Schema<IUser>(
@@ -87,6 +92,20 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+
+    // Password Reset Fields
+    passwordResetCode: {
+      type: String,
+      default: null,
+    },
+    passwordResetExpires: {
+      type: Date,
+      default: null,
+    },
+    passwordResetToken: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -97,5 +116,7 @@ const userSchema = new Schema<IUser>(
 userSchema.index({ email: 1, uid: 1 });
 // Index for email verification token lookup
 userSchema.index({ emailVerificationToken: 1 });
+// Index for password reset token lookup
+userSchema.index({ passwordResetToken: 1 });
 
 export const User = mongoose.model<IUser>("User", userSchema);

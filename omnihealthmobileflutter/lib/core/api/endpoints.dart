@@ -10,6 +10,14 @@ class Endpoints {
   static const String createNewAccessToken = "/v1/auth/new-access-token";
   static const String changePassword = "/v1/auth/change-password";
 
+  // ================== FORGOT PASSWORD ==================
+  static const String forgotPasswordRequest = "/v1/forgot-password/request";
+  static const String forgotPasswordVerifyCode =
+      "/v1/forgot-password/verify-code";
+  static const String forgotPasswordReset = "/v1/forgot-password/reset";
+  static const String forgotPasswordResendCode =
+      "/v1/forgot-password/resend-code";
+
   // ================== VERIFICATION ==================
   static const String verificationStatus = "/v1/verification/status";
   static const String sendVerificationEmail =
