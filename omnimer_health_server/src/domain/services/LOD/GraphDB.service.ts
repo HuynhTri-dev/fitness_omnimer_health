@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Writer } from "n3";
 
 import { graphDBConfig } from "../../../common/configs/graphdb.config";
 
@@ -27,15 +26,20 @@ export class GraphDBService {
           .replace(/^@prefix/, "PREFIX")
           .replace(/\.\s*$/, "");
         prefixes.push(sparqlPrefix);
-      } else {
+      } else if (trimmed && !trimmed.startsWith("#")) {
+        // Chỉ thêm các dòng không rỗng và không phải comment
         triples.push(line);
       }
     });
 
+    // Xây dựng SPARQL UPDATE query
+    const prefixSection = prefixes.length > 0 ? prefixes.join("\n") : "";
+    const tripleSection = triples.length > 0 ? triples.join("\n") : "";
+
     const sparqlUpdate = `
-      ${prefixes.join("\n")}
+      ${prefixSection}
       INSERT DATA {
-        ${triples.join("\n")}
+        ${tripleSection}
       }
     `;
 

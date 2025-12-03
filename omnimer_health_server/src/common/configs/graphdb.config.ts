@@ -5,7 +5,7 @@ dotenv.config();
 
 export const graphDBConfig = {
   baseUrl: process.env.GRAPHDB_URL || "http://localhost:7200",
-  repoName: process.env.GRAPHDB_REPO || "omnimer_health",
+  repoName: process.env.GRAPHDB_REPO || "omnimer_health_lod",
 };
 
 /**

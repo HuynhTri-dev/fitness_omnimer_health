@@ -218,3 +218,16 @@ WHERE {
 }
 ORDER BY DESC(?date)
 ```
+
+### 3.7. Lấy toàn bộ dữ liệu (Dump All Data)
+
+Lệnh này sẽ trả về tất cả các bộ ba (triples) có trong cơ sở dữ liệu.
+
+```sparql
+SELECT ?s ?p ?o
+WHERE {
+    ?s ?p ?o .
+}
+LIMIT 1000
+
+```
