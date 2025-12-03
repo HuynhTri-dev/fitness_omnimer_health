@@ -1,5 +1,6 @@
 import axios from "axios";
 import { RiskLevelEnum } from "../../common/constants/EnumConstants";
+import { OLLAMA_BASE_URL } from "../../common/configs/ollamaConfig";
 
 /**
  * Loại bỏ Markdown code block và text dư trước khi JSON.parse
@@ -25,8 +26,7 @@ function parseJsonSafe(str: string): any {
  */
 export async function callOllamaEvaluation(profileData: any) {
   try {
-    const ollamaUrl =
-      process.env.OLLAMA_BASE_URL || "http://host.docker.internal:11434";
+    const ollamaUrl = OLLAMA_BASE_URL;
     const response = await axios.post(`${ollamaUrl}/api/generate`, {
       model: "gpt-oss:120b-cloud",
       prompt: `

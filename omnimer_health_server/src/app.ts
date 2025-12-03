@@ -5,6 +5,7 @@ import morgan from "morgan";
 
 import { connectMongoDB } from "./common/configs/mongoDBConfig";
 import { connectGraphDB } from "./common/configs/graphdb.config";
+import { connectOllama } from "./common/configs/ollamaConfig";
 //import { initializeFirebaseAdmin } from "./common/configs/firebase/firebaseAdminConfig";
 import helmet from "helmet";
 
@@ -40,6 +41,7 @@ const initializeApp = async () => {
   try {
     await connectMongoDB();
     await connectGraphDB();
+    await connectOllama();
     // await initializeFirebaseAdmin();
 
     const redisClient = await connectRedis(); // connect trước

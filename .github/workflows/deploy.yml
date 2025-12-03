@@ -40,7 +40,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }} # Khóa riêng tư SSH
           script: |
             # 1. Di chuyển đến thư mục dự án trên VPS
-            cd ~/Downloads/omnimerhealth
+            cd ~/Downloads/omnimerhealth/fitness_omnimer_health
 
             # 2. Cập nhật mã nguồn mới nhất từ kho Git
             git pull origin main
