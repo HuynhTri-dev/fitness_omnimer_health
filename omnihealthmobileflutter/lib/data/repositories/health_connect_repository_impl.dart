@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:health/health.dart' as health_pkg;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:logger/logger.dart';
 import '../../domain/abstracts/health_connect_repository.dart';
 import '../../domain/entities/health_connect_entity.dart';
@@ -68,6 +69,14 @@ class HealthConnectRepositoryImpl implements HealthConnectRepository {
   Future<bool> requestPermissions() async {
     try {
       if (!Platform.isAndroid) return false;
+
+      // Request Activity Recognition permission using permission_handler
+      // This is required regarding the AndroidManifest.xml: <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+      final activityRecognitionStatus = await Permission.activityRecognition
+          .request();
+      _logger.i(
+        'Activity Recognition permission status: $activityRecognitionStatus',
+      );
 
       final readTypes = [
         health_pkg.HealthDataType.STEPS,

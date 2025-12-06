@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,20 +6,19 @@ import seaborn as sns
 from sklearn.metrics import (
     mean_squared_error, mean_absolute_error, r2_score, explained_variance_score,
     accuracy_score, precision_score, recall_score, f1_score, roc_auc_score,
-    confusion_matrix, classification_report, roc_curve, precision_recall_curve,
-    average_precision_score
+    confusion_matrix, roc_curve, average_precision_score
 )
 from sklearn.preprocessing import StandardScaler
 import pickle
 import json
 import os
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple
 import logging
 from datetime import datetime
 import warnings
 
 # Import the training model
-from training_model import TwoBranchRecommendationModel, ExerciseDataset, ModelTrainer
+from training_model import TwoBranchRecommendationModel
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -751,7 +749,7 @@ def main():
         logger.info(f"  Suitability F1-Score: {evaluation_report['suitability_prediction_metrics']['F1_Score']:.3f}")
         logger.info(f"  Suitability AUC-ROC: {evaluation_report['suitability_prediction_metrics']['AUC_ROC']:.3f}")
 
-        logger.info(f"\nDetailed evaluation results saved to: ./personal_evaluation_results")
+        logger.info("\nDetailed evaluation results saved to: ./personal_evaluation_results")
         logger.info("="*60)
 
         return evaluation_report

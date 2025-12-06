@@ -1,14 +1,13 @@
 import torch
-import pandas as pd
 import numpy as np
 import pickle
 import json
 import os
 import logging
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 from models.model_v4_arch import TwoBranchRecommendationModel
-from schema.recommend_schemas import RecommendInput, RecommendOutput, RecommendedExercise, SetDetail
+from schema.recommend_schemas import RecommendInput, RecommendOutput, RecommendedExercise
 from schema.common_schemas import HealthProfile
 from utils.intensity_converter import convert_intensity_to_params
 

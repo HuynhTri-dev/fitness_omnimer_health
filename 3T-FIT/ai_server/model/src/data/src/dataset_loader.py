@@ -10,10 +10,8 @@ This provides easy access to:
 """
 
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from typing import Dict, Tuple, List, Optional
+from typing import Dict, Tuple, Optional
 import joblib
 import os
 
@@ -275,7 +273,7 @@ def main():
 
     # Get statistics
     stats = loader.get_dataset_statistics()
-    print(f"\nDataset Statistics:")
+    print("\nDataset Statistics:")
     print(f"- Total records: {stats['shape'][0]:,}")
     print(f"- Total features: {stats['shape'][1]}")
     print(f"- Unique exercises: {stats['exercise_count']:,}")
@@ -283,14 +281,14 @@ def main():
 
     # Get train/test split
     splits = loader.get_train_test_split()
-    print(f"\nTraining/Testing Split:")
+    print("\nTraining/Testing Split:")
     print(f"- Training samples: {len(splits['X_train']):,}")
     print(f"- Testing samples: {len(splits['X_test']):,}")
     print(f"- Features: {len(splits['feature_columns'])}")
 
     # Get top suitable exercises
     top_exercises = loader.get_suitable_exercises(limit=5)
-    print(f"\nTop 5 Suitable Exercises:")
+    print("\nTop 5 Suitable Exercises:")
     for idx, row in top_exercises.iterrows():
         print(f"- {row['exercise_name']} (Score: {row['enhanced_suitability']:.3f}, Type: {row['workout_type']})")
 
@@ -301,7 +299,7 @@ def main():
         max_duration=30,
         limit=3
     )
-    print(f"\nStrength Training Recommendations:")
+    print("\nStrength Training Recommendations:")
     for idx, row in strength_recs.iterrows():
         print(f"- {row['exercise_name']} (Duration: {row['duration_min']:.1f}min, Score: {row['enhanced_suitability']:.3f})")
 

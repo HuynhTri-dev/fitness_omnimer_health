@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import torch
 import os
 from datetime import datetime
@@ -46,7 +45,7 @@ def test_model_evaluation():
         y_true_intensity = df_test['intensity_score'].values * 10  # Scale to 1-10 for RPE
         y_true_suitability = df_test['enhanced_suitability'].values
 
-        logger.info(f"Data preparation complete:")
+        logger.info("Data preparation complete:")
         logger.info(f"  Features: {X_test.shape}")
         logger.info(f"  Intensity targets: min={y_true_intensity.min():.2f}, max={y_true_intensity.max():.2f}, mean={y_true_intensity.mean():.2f}")
         logger.info(f"  Suitability targets: min={y_true_suitability.min():.3f}, max={y_true_suitability.max():.3f}, mean={y_true_suitability.mean():.3f}")
@@ -271,7 +270,7 @@ def demonstrate_dnn_architecture():
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-    logger.info(f"\\nModel Parameters:")
+    logger.info("\\nModel Parameters:")
     logger.info(f"  Total Parameters: {total_params:,}")
     logger.info(f"  Trainable Parameters: {trainable_params:,}")
 

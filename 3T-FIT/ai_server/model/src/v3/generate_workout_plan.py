@@ -1,9 +1,6 @@
 import json
 import argparse
 import sys
-import os
-import pandas as pd
-import numpy as np
 from pathlib import Path
 
 # Add the current directory to sys.path to import modules

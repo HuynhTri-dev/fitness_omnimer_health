@@ -5,7 +5,7 @@ Based on Strategy_Analysis.md principles: 1RM/Pace prediction + Rule-based decod
 
 import json
 import numpy as np
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, Optional
 import logging
 
 logger = logging.getLogger(__name__)

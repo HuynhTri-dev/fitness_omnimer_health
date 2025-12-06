@@ -170,7 +170,7 @@ export class AuthService {
   async login(email: string, password: string): Promise<IAuthResponse> {
     try {
       const userWithHash = await this.userRepo.userByEmailWithPassword(email);
-      console.log("User With Hash", userWithHash);
+
       if (!userWithHash) {
         throw new HttpError(401, "Email hoặc password không đúng");
       }

@@ -15,7 +15,6 @@ import joblib
 from typing import Dict, Tuple
 
 import torch
-import torch.nn as nn
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 # Import từ training script
@@ -207,7 +206,7 @@ def main(model_path: str, test_data_path: str, artifacts_dir: str):
     print(f"  ✓ Preprocessed {X_test_array.shape[1]} features")
     
     # Initialize model
-    print(f"\n[4/6] Initializing model...")
+    print("\n[4/6] Initializing model...")
     
     model = MTLNet(
         in_dim=in_dim,
@@ -218,10 +217,10 @@ def main(model_path: str, test_data_path: str, artifacts_dir: str):
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     
-    print(f"  ✓ Model loaded successfully")
+    print("  ✓ Model loaded successfully")
     
     # Evaluate
-    print(f"\n[5/6] Running evaluation...")
+    print("\n[5/6] Running evaluation...")
     
     X_tensor = torch.FloatTensor(X_test_array).to(device)
     y_cls_tensor = torch.FloatTensor(y_cls).to(device)
@@ -241,7 +240,7 @@ def main(model_path: str, test_data_path: str, artifacts_dir: str):
         regression_results = evaluate_regression(reg_pred_np, reg_target_np, param_ranges)
     
     # Print results
-    print(f"\n[6/6] Evaluation Results:")
+    print("\n[6/6] Evaluation Results:")
     print("=" * 80)
     
     print("\n📊 CLASSIFICATION METRICS (Exercise Recommendation)")
@@ -313,7 +312,7 @@ def main(model_path: str, test_data_path: str, artifacts_dir: str):
     with open(results_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
     
-    print(f"\n✅ Evaluation completed!")
+    print("\n✅ Evaluation completed!")
     print(f"Results saved to: {results_path}")
     print("=" * 80)
 

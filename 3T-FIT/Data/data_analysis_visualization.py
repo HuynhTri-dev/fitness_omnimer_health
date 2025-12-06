@@ -8,7 +8,6 @@ Date: 2025-11-20
 """
 
 import os
-import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -58,13 +57,13 @@ def load_and_validate_data(file_path: str, dataset_name: str = "Dataset"):
     print(f"  ✓ Đã đọc {len(df):,} records, {len(df.columns)} columns")
     
     # Thống kê cơ bản
-    print(f"\n[2] Thống kê cơ bản:")
+    print("\n[2] Thống kê cơ bản:")
     print(f"  - Shape: {df.shape}")
     print(f"  - Memory usage: {df.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
     print(f"  - Duplicates: {df.duplicated().sum():,} ({df.duplicated().sum()/len(df)*100:.2f}%)")
     
     # Missing values
-    print(f"\n[3] Missing values:")
+    print("\n[3] Missing values:")
     missing = df.isna().sum()
     missing_pct = (missing / len(df) * 100).round(2)
     missing_df = pd.DataFrame({
@@ -81,10 +80,10 @@ def load_and_validate_data(file_path: str, dataset_name: str = "Dataset"):
         if len(missing_df) > 10:
             print(f"    ... và {len(missing_df) - 10} columns khác")
     else:
-        print(f"  ✓ Không có missing values")
+        print("  ✓ Không có missing values")
     
     # Data types
-    print(f"\n[4] Data types:")
+    print("\n[4] Data types:")
     dtype_counts = df.dtypes.value_counts()
     for dtype, count in dtype_counts.items():
         print(f"  - {dtype}: {count} columns")
@@ -128,7 +127,7 @@ def analyze_numeric_features(df: pd.DataFrame, dataset_name: str = "Dataset"):
     important_cols = ['age', 'weight_kg', 'height_m', 'bmi', 'avg_hr', 'max_hr', 
                      'calories', 'duration_min', 'suitability_x', 'suitability_y']
     
-    print(f"\nThống kê các features quan trọng:")
+    print("\nThống kê các features quan trọng:")
     for col in important_cols:
         if col in stats:
             s = stats[col]
@@ -171,7 +170,7 @@ def analyze_categorical_features(df: pd.DataFrame, dataset_name: str = "Dataset"
             
             print(f"\n  {col}:")
             print(f"    Unique values: {df[col].nunique()}")
-            print(f"    Top 5:")
+            print("    Top 5:")
             for val, count in value_counts.head(5).items():
                 pct = count / len(df) * 100
                 print(f"      - {val}: {count:,} ({pct:.2f}%)")
@@ -200,7 +199,7 @@ def check_data_quality(df: pd.DataFrame, dataset_name: str = "Dataset"):
     }
     
     # Kiểm tra outliers cho các features quan trọng
-    print(f"\n[1] Kiểm tra outliers:")
+    print("\n[1] Kiểm tra outliers:")
     
     outlier_checks = {
         'age': (0, 100),
@@ -224,10 +223,10 @@ def check_data_quality(df: pd.DataFrame, dataset_name: str = "Dataset"):
                 print(f"    Range: [{min_val}, {max_val}], Found: [{df[col].min():.2f}, {df[col].max():.2f}]")
     
     if not issues['outliers']:
-        print(f"  ✓ Không phát hiện outliers bất thường")
+        print("  ✓ Không phát hiện outliers bất thường")
     
     # Kiểm tra giá trị không hợp lệ
-    print(f"\n[2] Kiểm tra giá trị không hợp lệ:")
+    print("\n[2] Kiểm tra giá trị không hợp lệ:")
     
     # BMI consistency
     if all(col in df.columns for col in ['weight_kg', 'height_m', 'bmi']):
@@ -248,10 +247,10 @@ def check_data_quality(df: pd.DataFrame, dataset_name: str = "Dataset"):
                 print(f"  ⚠ {col}: {negative_count:,} giá trị âm")
     
     if not issues['invalid_values']:
-        print(f"  ✓ Không phát hiện giá trị không hợp lệ")
+        print("  ✓ Không phát hiện giá trị không hợp lệ")
     
     # Warnings
-    print(f"\n[3] Cảnh báo:")
+    print("\n[3] Cảnh báo:")
     
     # Check for low variance features
     for col in numeric_cols:
@@ -270,7 +269,7 @@ def check_data_quality(df: pd.DataFrame, dataset_name: str = "Dataset"):
         if len(issues['warnings']) > 5:
             print(f"  ... và {len(issues['warnings']) - 5} cảnh báo khác")
     else:
-        print(f"  ✓ Không có cảnh báo")
+        print("  ✓ Không có cảnh báo")
     
     return issues
 
@@ -286,13 +285,13 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
         output_dir: Thư mục lưu biểu đồ
     """
     print(f"\n{'='*80}")
-    print(f"TẠO BIỂU ĐỒ TRỰC QUAN HÓA")
+    print("TẠO BIỂU ĐỒ TRỰC QUAN HÓA")
     print(f"{'='*80}")
     
     os.makedirs(output_dir, exist_ok=True)
     
     # 1. Phân bố Age
-    print(f"\n[1] Vẽ biểu đồ phân bố Age...")
+    print("\n[1] Vẽ biểu đồ phân bố Age...")
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
     
     if 'age' in train_df.columns:
@@ -312,10 +311,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '01_age_distribution.png'), dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"  ✓ Đã lưu: 01_age_distribution.png")
+    print("  ✓ Đã lưu: 01_age_distribution.png")
     
     # 2. Phân bố BMI
-    print(f"\n[2] Vẽ biểu đồ phân bố BMI...")
+    print("\n[2] Vẽ biểu đồ phân bố BMI...")
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
     
     if 'bmi' in train_df.columns:
@@ -339,10 +338,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '02_bmi_distribution.png'), dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"  ✓ Đã lưu: 02_bmi_distribution.png")
+    print("  ✓ Đã lưu: 02_bmi_distribution.png")
     
     # 3. Phân bố Gender
-    print(f"\n[3] Vẽ biểu đồ phân bố Gender...")
+    print("\n[3] Vẽ biểu đồ phân bố Gender...")
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
     
     if 'gender' in train_df.columns:
@@ -366,10 +365,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '03_gender_distribution.png'), dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"  ✓ Đã lưu: 03_gender_distribution.png")
+    print("  ✓ Đã lưu: 03_gender_distribution.png")
     
     # 4. Phân bố Experience Level
-    print(f"\n[4] Vẽ biểu đồ phân bố Experience Level...")
+    print("\n[4] Vẽ biểu đồ phân bố Experience Level...")
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
     
     if 'experience_level' in train_df.columns:
@@ -396,10 +395,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '04_experience_level_distribution.png'), dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"  ✓ Đã lưu: 04_experience_level_distribution.png")
+    print("  ✓ Đã lưu: 04_experience_level_distribution.png")
     
     # 5. Phân bố Workout Type
-    print(f"\n[5] Vẽ biểu đồ phân bố Workout Type...")
+    print("\n[5] Vẽ biểu đồ phân bố Workout Type...")
     
     workout_col = None
     for col in ['workout_type', 'category_type_want_todo', 'category_exercise_want_todo']:
@@ -424,10 +423,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, '05_workout_type_distribution.png'), dpi=150, bbox_inches='tight')
         plt.close()
-        print(f"  ✓ Đã lưu: 05_workout_type_distribution.png")
+        print("  ✓ Đã lưu: 05_workout_type_distribution.png")
     
     # 6. Phân bố Intensity
-    print(f"\n[6] Vẽ biểu đồ phân bố Intensity...")
+    print("\n[6] Vẽ biểu đồ phân bố Intensity...")
     if 'intensity' in train_df.columns:
         fig, axes = plt.subplots(1, 2, figsize=(14, 5))
         
@@ -458,10 +457,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, '06_intensity_distribution.png'), dpi=150, bbox_inches='tight')
         plt.close()
-        print(f"  ✓ Đã lưu: 06_intensity_distribution.png")
+        print("  ✓ Đã lưu: 06_intensity_distribution.png")
     
     # 7. Correlation Heatmap (Train)
-    print(f"\n[7] Vẽ correlation heatmap...")
+    print("\n[7] Vẽ correlation heatmap...")
     numeric_cols = ['age', 'weight_kg', 'bmi', 'avg_hr', 'max_hr', 'calories', 'duration_min']
     available_cols = [col for col in numeric_cols if col in train_df.columns]
     
@@ -474,10 +473,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, '07_correlation_heatmap.png'), dpi=150, bbox_inches='tight')
         plt.close()
-        print(f"  ✓ Đã lưu: 07_correlation_heatmap.png")
+        print("  ✓ Đã lưu: 07_correlation_heatmap.png")
     
     # 8. Boxplot cho các features quan trọng
-    print(f"\n[8] Vẽ boxplot cho features quan trọng...")
+    print("\n[8] Vẽ boxplot cho features quan trọng...")
     boxplot_cols = ['age', 'weight_kg', 'bmi', 'avg_hr', 'calories']
     available_boxplot = [col for col in boxplot_cols if col in train_df.columns]
     
@@ -501,10 +500,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, '08_boxplots.png'), dpi=150, bbox_inches='tight')
         plt.close()
-        print(f"  ✓ Đã lưu: 08_boxplots.png")
+        print("  ✓ Đã lưu: 08_boxplots.png")
     
     # 9. Suitability Score Distribution
-    print(f"\n[9] Vẽ biểu đồ phân bố Suitability Scores...")
+    print("\n[9] Vẽ biểu đồ phân bố Suitability Scores...")
     if 'suitability_x' in train_df.columns or 'suitability_y' in train_df.columns:
         fig, axes = plt.subplots(1, 2, figsize=(14, 5))
         
@@ -533,10 +532,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, '09_suitability_distribution.png'), dpi=150, bbox_inches='tight')
         plt.close()
-        print(f"  ✓ Đã lưu: 09_suitability_distribution.png")
+        print("  ✓ Đã lưu: 09_suitability_distribution.png")
     
     # 10. Top Exercises
-    print(f"\n[10] Vẽ biểu đồ Top Exercises...")
+    print("\n[10] Vẽ biểu đồ Top Exercises...")
     if 'exercise_name' in train_df.columns:
         fig, axes = plt.subplots(1, 2, figsize=(14, 6))
         
@@ -562,10 +561,10 @@ def create_visualizations(train_df: pd.DataFrame, test_df: pd.DataFrame, output_
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, '10_top_exercises.png'), dpi=150, bbox_inches='tight')
         plt.close()
-        print(f"  ✓ Đã lưu: 10_top_exercises.png")
+        print("  ✓ Đã lưu: 10_top_exercises.png")
     
     print(f"\n{'='*80}")
-    print(f"✅ ĐÃ TẠO XONG TẤT CẢ BIỂU ĐỒ!")
+    print("✅ ĐÃ TẠO XONG TẤT CẢ BIỂU ĐỒ!")
     print(f"{'='*80}")
 
 # ==================== MAIN ====================
@@ -589,7 +588,7 @@ def main():
     output_dir = os.path.join(script_dir, args.output) if not os.path.isabs(args.output) else args.output
     
     print(f"\n{'#'*80}")
-    print(f"# PHÂN TÍCH VÀ TRỰC QUAN HÓA DỮ LIỆU TRAIN/TEST")
+    print("# PHÂN TÍCH VÀ TRỰC QUAN HÓA DỮ LIỆU TRAIN/TEST")
     print(f"# Thời gian: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"{'#'*80}")
     
@@ -636,7 +635,7 @@ def main():
         json.dump(report, f, ensure_ascii=False, indent=2)
     
     print(f"\n{'='*80}")
-    print(f"✅ HOÀN THÀNH PHÂN TÍCH!")
+    print("✅ HOÀN THÀNH PHÂN TÍCH!")
     print(f"{'='*80}")
     print(f"\nKết quả đã được lưu tại: {output_dir}")
     print(f"  - Biểu đồ: {output_dir}/*.png")

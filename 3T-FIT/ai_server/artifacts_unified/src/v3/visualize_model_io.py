@@ -12,12 +12,13 @@ Author: Claude Code Assistant
 Date: 2025-11-25
 """
 
-import os, json, numpy as np, pandas as pd, torch
+import json
+import numpy as np
+import pandas as pd
+import torch
 from pathlib import Path
 import joblib
-import matplotlib.pyplot as plt
-import seaborn as sns
-from typing import Dict, List, Any
+from typing import Dict
 
 # Import model classes
 try:
@@ -111,7 +112,7 @@ class ModelIOVisualizer:
         )
         df_sample['readiness_factor'] = readiness_factor
 
-        print(f"\n[2] PROCESSED SEPA VALUES:")
+        print("\n[2] PROCESSED SEPA VALUES:")
         print("-" * 40)
         print(f"{'mood_numeric':20}: {df_sample['mood_numeric'].iloc[0]} ({sample_data.get('mood', 'N/A')})")
         print(f"{'fatigue_numeric':20}: {df_sample['fatigue_numeric'].iloc[0]} ({sample_data.get('fatigue', 'N/A')})")
@@ -122,7 +123,7 @@ class ModelIOVisualizer:
         available_features = [col for col in self.feature_columns if col in df_sample.columns]
         df_features = df_sample[available_features].copy()
 
-        print(f"\n[3] MODEL INPUT FEATURES:")
+        print("\n[3] MODEL INPUT FEATURES:")
         print("-" * 40)
         for col in available_features:
             value = df_features[col].iloc[0]
@@ -133,7 +134,7 @@ class ModelIOVisualizer:
         if hasattr(processed_input, 'toarray'):
             processed_input = processed_input.toarray()
 
-        print(f"\n[4] PROCESSED INPUT ARRAY:")
+        print("\n[4] PROCESSED INPUT ARRAY:")
         print("-" * 40)
         print(f"Shape: {processed_input.shape}")
         print(f"Values: {processed_input[0][:10]}...")  # Show first 10 values
@@ -147,7 +148,7 @@ class ModelIOVisualizer:
             input_tensor = torch.from_numpy(processed_input.astype(np.float32))
             pred_1rm, pred_suitability, pred_readiness = self.model(input_tensor)
 
-        print(f"\n[5] MODEL OUTPUTS (RAW):")
+        print("\n[5] MODEL OUTPUTS (RAW):")
         print("-" * 40)
         print(f"1RM tensor:         {pred_1rm}")
         print(f"Suitability tensor: {pred_suitability}")
@@ -158,14 +159,14 @@ class ModelIOVisualizer:
         final_suitability = pred_suitability.item()
         final_readiness = pred_readiness.item()
 
-        print(f"\n[6] FINAL OUTPUT VALUES:")
+        print("\n[6] FINAL OUTPUT VALUES:")
         print("-" * 40)
         print(f"{'Predicted 1RM':20}: {final_1rm:.2f} kg")
         print(f"{'Suitability Score':20}: {final_suitability:.3f}")
         print(f"{'Readiness Factor':20}: {final_readiness:.3f}")
 
         # Generate workout recommendations
-        print(f"\n[7] WORKOUT RECOMMENDATIONS:")
+        print("\n[7] WORKOUT RECOMMENDATIONS:")
         print("-" * 40)
 
         goals = ['strength', 'hypertrophy', 'endurance']
@@ -302,12 +303,12 @@ class ModelIOVisualizer:
         feature_cols = [col for col in self.feature_columns if col in df_sample.columns]
         df_features = df_sample[feature_cols].copy()
 
-        print(f"\n[3] FEATURE SELECTION:")
+        print("\n[3] FEATURE SELECTION:")
         print(f"   Selected features: {feature_cols}")
         print(df_features.to_string())
 
         # Preprocessing step by step
-        print(f"\n[4] PREPROCESSING STEPS:")
+        print("\n[4] PREPROCESSING STEPS:")
 
         # Handle missing values
         print("   [4a] Handling missing values...")
@@ -333,14 +334,14 @@ class ModelIOVisualizer:
         if hasattr(processed, 'toarray'):
             processed = processed.toarray()
 
-        print(f"\n[5] FINAL PROCESSED ARRAY:")
+        print("\n[5] FINAL PROCESSED ARRAY:")
         print(f"   Shape: {processed.shape}")
         print(f"   Type: {type(processed)}")
         print(f"   Min/Max values: [{processed.min():.3f}, {processed.max():.3f}]")
 
         # Show feature importance (if available)
         feature_names = self.preprocessor.get_feature_names_out()
-        print(f"\n[6] FEATURE NAMES AFTER PREPROCESSING:")
+        print("\n[6] FEATURE NAMES AFTER PREPROCESSING:")
         for i, name in enumerate(feature_names):
             print(f"   {i:3d}: {name} = {processed[0, i]:.4f}")
 
@@ -425,7 +426,7 @@ def main():
         result = visualizer.visualize_single_sample(profile['data'])
 
         # Quick summary
-        print(f"\nQuick Summary:")
+        print("\nQuick Summary:")
         print(f"  1RM Prediction: {result['predictions']['1rm']:.1f} kg")
         print(f"  Strength Workout: {decode_1rm_to_workout(result['predictions']['1rm'], 'strength', result['predictions']['readiness'])['training_weight_kg']['recommended']:.1f} kg")
 

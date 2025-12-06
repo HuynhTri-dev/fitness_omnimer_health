@@ -6,7 +6,6 @@ random health profiles for testing.
 
 import json
 import random
-import os
 from pathlib import Path
 
 def load_exercise_names(exercises_dir):
@@ -160,7 +159,7 @@ def main():
         print(f"\n{'='*60}")
         print(f"Test Case {i} generated: {output_file.name}")
         print(f"{'='*60}")
-        print(f"Health Profile:")
+        print("Health Profile:")
         print(f"  - Age: {test_request['healthProfile']['age']}")
         print(f"  - Gender: {test_request['healthProfile']['gender']}")
         print(f"  - Weight: {test_request['healthProfile']['weight']} kg")
@@ -176,8 +175,8 @@ def main():
     print(f"\n{'='*60}")
     print(f"✅ Generated {num_test_cases} test cases successfully!")
     print(f"{'='*60}")
-    print(f"\nTo test, run:")
-    print(f"  python generate_workout_plan.py --input test_request_1.json --output output_1.json")
+    print("\nTo test, run:")
+    print("  python generate_workout_plan.py --input test_request_1.json --output output_1.json")
 
 if __name__ == "__main__":
     main()

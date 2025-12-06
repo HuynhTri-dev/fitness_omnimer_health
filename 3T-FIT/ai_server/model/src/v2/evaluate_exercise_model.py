@@ -15,7 +15,6 @@ import joblib
 from typing import Dict, List, Tuple
 
 import torch
-import torch.nn as nn
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 # Import model từ training script
@@ -250,7 +249,7 @@ def main(model_path: str, test_data_path: str, artifacts_dir: str):
     print(f"  ✓ Model loaded (epoch {checkpoint['epoch']})")
     
     # Evaluate
-    print(f"\n[5/6] Running evaluation...")
+    print("\n[5/6] Running evaluation...")
     
     X_tensor = torch.FloatTensor(X_test_array).to(device)
     y_labels_tensor = torch.FloatTensor(test_labels).to(device)
@@ -281,7 +280,7 @@ def main(model_path: str, test_data_path: str, artifacts_dir: str):
         )
     
     # Print results
-    print(f"\n[6/6] Evaluation Results:")
+    print("\n[6/6] Evaluation Results:")
     print("=" * 80)
     
     print("\n📊 CLASSIFICATION METRICS (Exercise Recommendation)")
@@ -326,7 +325,7 @@ def main(model_path: str, test_data_path: str, artifacts_dir: str):
     with open(results_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
     
-    print(f"\n✅ Evaluation completed!")
+    print("\n✅ Evaluation completed!")
     print(f"Results saved to: {results_path}")
     print("=" * 80)
 

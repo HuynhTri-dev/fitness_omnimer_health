@@ -26,16 +26,21 @@ Author: Claude Code Assistant
 Date: 2025-11-25
 """
 
-import os, re, json, argparse, numpy as np, pandas as pd, joblib
-import torch, torch.nn as nn, torch.nn.functional as F
+import os
+import json
+import argparse
+import numpy as np
+import pandas as pd
+import joblib
+import torch
+import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
-from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -500,7 +505,7 @@ def plot_training_data_analysis(df: pd.DataFrame, artifacts_dir: str):
     viz_dir = os.path.join(artifacts_dir, 'visualizations')
     os.makedirs(viz_dir, exist_ok=True)
     
-    print(f"\n📊 Generating Training Data Visualizations...")
+    print("\n📊 Generating Training Data Visualizations...")
     
     # Set style
     sns.set_style("whitegrid")
@@ -549,7 +554,7 @@ def plot_training_data_analysis(df: pd.DataFrame, artifacts_dir: str):
     plt.tight_layout()
     plt.savefig(os.path.join(viz_dir, '01_target_distributions.png'), dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"  ✅ Saved: 01_target_distributions.png")
+    print("  ✅ Saved: 01_target_distributions.png")
     
     # 2. SePA (Sleep, Psychology, Activity) Analysis
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
@@ -571,7 +576,7 @@ def plot_training_data_analysis(df: pd.DataFrame, artifacts_dir: str):
     plt.tight_layout()
     plt.savefig(os.path.join(viz_dir, '02_sepa_distributions.png'), dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"  ✅ Saved: 02_sepa_distributions.png")
+    print("  ✅ Saved: 02_sepa_distributions.png")
     
     # 3. Correlation Heatmap
     numeric_cols = ['age', 'weight_kg', 'height_m', 'bmi', 'experience_level', 
@@ -594,7 +599,7 @@ def plot_training_data_analysis(df: pd.DataFrame, artifacts_dir: str):
         plt.tight_layout()
         plt.savefig(os.path.join(viz_dir, '03_correlation_heatmap.png'), dpi=300, bbox_inches='tight')
         plt.close()
-        print(f"  ✅ Saved: 03_correlation_heatmap.png")
+        print("  ✅ Saved: 03_correlation_heatmap.png")
     
     # 4. 1RM vs User Characteristics
     fig, axes = plt.subplots(2, 3, figsize=(18, 10))
@@ -626,7 +631,7 @@ def plot_training_data_analysis(df: pd.DataFrame, artifacts_dir: str):
     plt.tight_layout()
     plt.savefig(os.path.join(viz_dir, '04_1rm_relationships.png'), dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"  ✅ Saved: 04_1rm_relationships.png")
+    print("  ✅ Saved: 04_1rm_relationships.png")
     
     # 5. Gender Analysis
     if 'gender' in df.columns and 'estimated_1rm' in df.columns:
@@ -650,7 +655,7 @@ def plot_training_data_analysis(df: pd.DataFrame, artifacts_dir: str):
         plt.tight_layout()
         plt.savefig(os.path.join(viz_dir, '05_gender_analysis.png'), dpi=300, bbox_inches='tight')
         plt.close()
-        print(f"  ✅ Saved: 05_gender_analysis.png")
+        print("  ✅ Saved: 05_gender_analysis.png")
     
     # 6. Experience Level Analysis
     if 'experience_level' in df.columns and 'estimated_1rm' in df.columns:
@@ -666,7 +671,7 @@ def plot_training_data_analysis(df: pd.DataFrame, artifacts_dir: str):
         plt.tight_layout()
         plt.savefig(os.path.join(viz_dir, '06_experience_analysis.png'), dpi=300, bbox_inches='tight')
         plt.close()
-        print(f"  ✅ Saved: 06_experience_analysis.png")
+        print("  ✅ Saved: 06_experience_analysis.png")
     
     print(f"\n✅ All visualizations saved to: {viz_dir}/")
     return viz_dir
@@ -716,7 +721,7 @@ def plot_training_history(train_losses: List[float], val_losses: List[float],
     plt.tight_layout()
     plt.savefig(os.path.join(viz_dir, '07_training_history.png'), dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"  ✅ Saved: 07_training_history.png")
+    print("  ✅ Saved: 07_training_history.png")
 
 
 
@@ -740,7 +745,7 @@ def load_and_combine_datasets(data_dir: str) -> pd.DataFrame:
 
     # Load primary dataset
     if os.path.exists(primary_path):
-        print(f"Loading primary dataset: enhanced_gym_member_exercise_tracking_10k.xlsx")
+        print("Loading primary dataset: enhanced_gym_member_exercise_tracking_10k.xlsx")
         df_primary = pd.read_excel(primary_path)
         df_primary['source'] = 'primary'
         datasets.append(df_primary)
@@ -748,7 +753,7 @@ def load_and_combine_datasets(data_dir: str) -> pd.DataFrame:
 
     # Load test dataset (prioritized for test set)
     if os.path.exists(test_path):
-        print(f"Loading test dataset: test_dataset.xlsx")
+        print("Loading test dataset: test_dataset.xlsx")
         df_test = pd.read_excel(test_path)
         df_test['source'] = 'test'
         datasets.append(df_test)
@@ -774,7 +779,7 @@ def load_and_combine_datasets(data_dir: str) -> pd.DataFrame:
     # Combine all datasets
     df_combined = pd.concat(datasets, ignore_index=True)
     print(f"\nCombined dataset shape: {df_combined.shape}")
-    print(f"Source distribution:")
+    print("Source distribution:")
     print(df_combined['source'].value_counts().to_dict())
 
     return df_combined
@@ -795,7 +800,7 @@ def create_train_val_test_split(df: pd.DataFrame, train_ratio: float = 0.7,
     Returns:
         Tuple of (train_df, val_df, test_df)
     """
-    print(f"\n[2] Creating train/validation/test split")
+    print("\n[2] Creating train/validation/test split")
     print(f"Target ratios - Train: {train_ratio}, Val: {val_ratio}, Test: {test_ratio}")
 
     # Prioritize test dataset for test set
@@ -840,7 +845,7 @@ def create_train_val_test_split(df: pd.DataFrame, train_ratio: float = 0.7,
         train_df = pd.DataFrame()
         val_df = pd.DataFrame()
 
-    print(f"\nFinal split:")
+    print("\nFinal split:")
     print(f"  Train: {len(train_df)} samples ({len(train_df)/len(df)*100:.1f}%)")
     print(f"  Validation: {len(val_df)} samples ({len(val_df)/len(df)*100:.1f}%)")
     print(f"  Test: {len(test_df)} samples ({len(test_df)/len(df)*100:.1f}%)")
@@ -868,7 +873,7 @@ def main(data_dir: str, artifacts_dir: str, epochs: int = 100, batch_size: int =
     print(f"Columns: {list(df_combined.columns)}")
 
     # Generate training data visualizations
-    print(f"\n📊 Generating Training Data Analysis...")
+    print("\n📊 Generating Training Data Analysis...")
     plot_training_data_analysis(df_combined, artifacts_dir)
 
     # Create train/validation/test split
@@ -961,7 +966,7 @@ def main(data_dir: str, artifacts_dir: str, epochs: int = 100, batch_size: int =
     categorical_columns = ['gender'] if 'gender' in feature_columns else []
     numeric_columns = [col for col in feature_columns if col not in categorical_columns]
 
-    print(f"\n[4] Feature Preprocessing")
+    print("\n[4] Feature Preprocessing")
     print(f"  - Numeric features: {numeric_columns}")
     print(f"  - Categorical features: {categorical_columns}")
 
@@ -993,7 +998,7 @@ def main(data_dir: str, artifacts_dir: str, epochs: int = 100, batch_size: int =
 
     # ==================== MODEL TRAINING ====================
 
-    print(f"\n[5] Model Training")
+    print("\n[5] Model Training")
     print(f"  - Input dimension: {X_train_processed.shape[1]}")
     print(f"  - Training samples: {len(X_train_processed)}")
     print(f"  - Validation samples: {len(X_val_processed)}")
@@ -1093,7 +1098,7 @@ def main(data_dir: str, artifacts_dir: str, epochs: int = 100, batch_size: int =
     model.load_state_dict(torch.load(os.path.join(artifacts_dir, "best_v3.pt")))
 
     # Final evaluation on test set
-    print(f"\n[6] Final Test Evaluation")
+    print("\n[6] Final Test Evaluation")
     test_loss, test_metrics = validate_epoch(
         model, test_loader, criterion_1rm, criterion_suit,
         criterion_ready, device
@@ -1199,14 +1204,14 @@ def main(data_dir: str, artifacts_dir: str, epochs: int = 100, batch_size: int =
         json.dump(WORKOUT_GOAL_MAPPING, f, indent=2, ensure_ascii=False)
 
     print(f"Artifacts saved to {artifacts_dir}/:")
-    print(f"  - best_v3.pt (model weights)")
-    print(f"  - preprocessor_v3.joblib (feature preprocessing)")
-    print(f"  - meta_v3.json (metadata and config)")
-    print(f"  - decoding_rules.json (workout generation rules)")
+    print("  - best_v3.pt (model weights)")
+    print("  - preprocessor_v3.joblib (feature preprocessing)")
+    print("  - meta_v3.json (metadata and config)")
+    print("  - decoding_rules.json (workout generation rules)")
 
     # ==================== DEMONSTRATION ====================
 
-    print(f"\n[8] Model Demonstration")
+    print("\n[8] Model Demonstration")
     print("Example workout decoding:")
 
     # Sample demonstration

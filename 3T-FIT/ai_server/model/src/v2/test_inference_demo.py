@@ -7,7 +7,6 @@ Tạo nhiều test cases khác nhau và hiển thị kết quả
 """
 
 import json
-import os
 import torch  # Cần import torch để fix lỗi
 
 # --- FIX LỖI UNPICKLING ERROR (PYTORCH 2.6+) ---
@@ -157,7 +156,7 @@ def test_case_4():
 
 def run_test(recommender, test_name, health_profile, exercises, top_k=5):
     """Chạy một test case"""
-    print(f"\n👤 Health Profile:")
+    print("\n👤 Health Profile:")
     print(f"   Age: {health_profile['age']}, Gender: {health_profile['gender']}")
     print(f"   Height: {health_profile['height_m']}m, Weight: {health_profile['weight_kg']}kg")
     print(f"   BMI: {health_profile['bmi']:.1f}, Body Fat: {health_profile['fat_percentage']:.1f}%")
@@ -220,7 +219,7 @@ def main():
         json.dump(all_results, f, ensure_ascii=False, indent=2)
     
     print_separator('═')
-    print(f"✅ All tests completed!")
+    print("✅ All tests completed!")
     print(f"📄 Results saved to: {output_file}")
     print_separator('═')
 

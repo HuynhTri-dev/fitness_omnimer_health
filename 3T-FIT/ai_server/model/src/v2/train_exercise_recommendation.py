@@ -24,7 +24,7 @@ import argparse
 import numpy as np
 import pandas as pd
 import joblib
-from typing import List, Dict, Tuple
+from typing import Tuple
 from datetime import datetime
 
 import torch
@@ -251,7 +251,7 @@ def main(train_path: str, test_path: str, artifacts_dir: str,
     print(f"  ✓ Loaded {len(test_df):,} test records")
     
     # ==================== BUILD EXERCISE VOCABULARY ====================
-    print(f"\n[3/10] Building exercise vocabulary...")
+    print("\n[3/10] Building exercise vocabulary...")
     
     # Normalize exercise names
     train_df['exercise_name_norm'] = train_df['exercise_name'].apply(normalize_exercise_name)
@@ -271,7 +271,7 @@ def main(train_path: str, test_path: str, artifacts_dir: str,
     print(f"  Top 10 exercises: {exercise_list[:10]}")
     
     # ==================== CREATE LABELS ====================
-    print(f"\n[4/10] Creating labels...")
+    print("\n[4/10] Creating labels...")
     
     # Multi-label for suitability (binary matrix)
     def create_exercise_labels(df, exercise_to_idx):
@@ -290,10 +290,10 @@ def main(train_path: str, test_path: str, artifacts_dir: str,
     train_labels, train_ex_idx = create_exercise_labels(train_df, exercise_to_idx)
     test_labels, test_ex_idx = create_exercise_labels(test_df, exercise_to_idx)
     
-    print(f"  ✓ Created labels for train and test")
+    print("  ✓ Created labels for train and test")
     
     # ==================== PARSE INTENSITY PARAMETERS ====================
-    print(f"\n[5/10] Parsing intensity parameters...")
+    print("\n[5/10] Parsing intensity parameters...")
     
     def parse_intensity_params(df):
         """
@@ -366,10 +366,10 @@ def main(train_path: str, test_path: str, artifacts_dir: str,
     train_intensity, train_intensity_mask = scale_intensity(train_intensity_raw, intensity_scales)
     test_intensity, test_intensity_mask = scale_intensity(test_intensity_raw, intensity_scales)
     
-    print(f"  ✓ Parsed and scaled intensity parameters")
+    print("  ✓ Parsed and scaled intensity parameters")
     
     # ==================== PREPARE FEATURES ====================
-    print(f"\n[6/10] Preparing features...")
+    print("\n[6/10] Preparing features...")
     
     feature_candidates = [
         'age', 'height_m', 'height_cm', 'weight_kg', 'bmi', 'bmr', 
@@ -427,7 +427,7 @@ def main(train_path: str, test_path: str, artifacts_dir: str,
     print(f"  ✓ Preprocessed features: {X_train.shape[1]} dimensions")
     
     # ==================== CREATE VALIDATION SPLIT ====================
-    print(f"\n[7/10] Creating validation split...")
+    print("\n[7/10] Creating validation split...")
     
     # Split train into train/val
     indices = np.arange(len(X_train))
@@ -444,7 +444,7 @@ def main(train_path: str, test_path: str, artifacts_dir: str,
     print(f"  ✓ Test: {len(X_test):,} samples")
     
     # ==================== CREATE DATALOADERS ====================
-    print(f"\n[8/10] Creating dataloaders...")
+    print("\n[8/10] Creating dataloaders...")
     
     train_dataset = ExerciseDataset(X_tr, y_suit_tr, y_int_tr, int_mask_tr, ex_idx_tr)
     val_dataset = ExerciseDataset(X_val, y_suit_val, y_int_val, int_mask_val, ex_idx_val)
@@ -457,7 +457,7 @@ def main(train_path: str, test_path: str, artifacts_dir: str,
     print(f"  ✓ Created dataloaders (batch_size={batch_size})")
     
     # ==================== INITIALIZE MODEL ====================
-    print(f"\n[9/10] Initializing model...")
+    print("\n[9/10] Initializing model...")
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"  Using device: {device}")
@@ -500,7 +500,7 @@ def main(train_path: str, test_path: str, artifacts_dir: str,
     print(f"  ✓ Model initialized with {sum(p.numel() for p in model.parameters()):,} parameters")
     
     # ==================== TRAINING LOOP ====================
-    print(f"\n[10/10] Starting training...")
+    print("\n[10/10] Starting training...")
     print("=" * 80)
     
     best_val_precision = -1.0

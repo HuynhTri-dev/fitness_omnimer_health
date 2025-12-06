@@ -135,7 +135,7 @@ def load_exercise_database():
                            for muscle in primary_muscles) or \
                        equipment in ['barbell', 'dumbbell', 'machine', 'cable', 'kettlebell']:
                         json_exercises.append(exercise_data['name'])
-                except Exception as e:
+                except Exception:
                     continue
 
             # Remove duplicates and add to list
@@ -1088,7 +1088,7 @@ def process_gym_data_enhanced(input_file: str, output_file: str, target_records:
         print(f"Number of rows in raw data: {len(raw_df)}")
         return enhanced_df
 
-    print(f"Workout type distribution:")
+    print("Workout type distribution:")
     if 'workout_type' in enhanced_df.columns:
         print(enhanced_df['workout_type'].value_counts())
     else:
