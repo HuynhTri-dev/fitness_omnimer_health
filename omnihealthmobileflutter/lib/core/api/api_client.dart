@@ -17,6 +17,9 @@ class ApiClient {
   // Queue để chứa các request đang chờ token mới
   final List<_RequestOptions> _requestQueue = [];
 
+  // Callback khi refresh token thất bại -> điều hướng về login
+  void Function()? onUnauthorized;
+
   ApiClient({required this.secureStorage})
     : dio = Dio(
         BaseOptions(
@@ -116,9 +119,15 @@ Data: ${error.response?.data}
                 _isRefreshing = false;
                 return handler.resolve(response);
               } else {
+                logger.e("⛔ Refresh token failed: newAccessToken is null");
                 await _clearAuthData();
                 _isRefreshing = false;
                 _rejectQueue(error);
+                // 🔥 Gọi callback để notify app về việc unauthorized
+                logger.i(
+                  "🔥 Calling onUnauthorized callback (callback is ${onUnauthorized != null ? 'set' : 'null'})",
+                );
+                onUnauthorized?.call();
                 return handler.reject(error);
               }
             } catch (e) {
@@ -126,6 +135,11 @@ Data: ${error.response?.data}
               await _clearAuthData();
               _isRefreshing = false;
               _rejectQueue(error);
+              // 🔥 Gọi callback để notify app về việc unauthorized
+              logger.i(
+                "🔥 Calling onUnauthorized callback after exception (callback is ${onUnauthorized != null ? 'set' : 'null'})",
+              );
+              onUnauthorized?.call();
               return handler.reject(error);
             }
           }

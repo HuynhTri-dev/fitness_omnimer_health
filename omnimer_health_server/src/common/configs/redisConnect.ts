@@ -19,6 +19,11 @@ export const connectRedis = async (): Promise<RedisClientType> => {
   const username = process.env.REDIS_USERNAME;
   const password = process.env.REDIS_PASSWORD;
 
+  console.log("Redis connecting to host: ", host);
+  console.log("Redis connecting to port: ", port);
+  console.log("Redis connecting to username: ", username);
+  console.log("Redis connecting to password: ", password);
+
   redisClient = createClient({
     socket: { host, port },
     username, // optional, Redis Cloud

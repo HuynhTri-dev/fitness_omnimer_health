@@ -1,5 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:omnihealthmobileflutter/core/api/api_client.dart';
+import 'package:omnihealthmobileflutter/utils/logger.dart';
+import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_event.dart';
 import 'package:omnihealthmobileflutter/data/datasources/auth_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/body_part_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/equipment_datasource.dart';
@@ -667,4 +669,15 @@ Future<void> init() async {
       createWorkoutFeedbackUseCase: sl(),
     ),
   );
+
+  // ======================
+  // Post-initialization setup
+  // ======================
+  // Setup ApiClient callback để auto logout khi refresh token thất bại
+  final apiClient = sl<ApiClient>();
+  final authBloc = sl<AuthenticationBloc>();
+  apiClient.onUnauthorized = () {
+    logger.i('🔥 Refresh token failed, triggering logout...');
+    authBloc.add(AuthenticationLoggedOut());
+  };
 }

@@ -61,13 +61,18 @@ class AuthenticationBloc
     AuthenticationLoggedOut event,
     Emitter<AuthenticationState> emit,
   ) async {
+    // QUAN TRỌNG: LUÔN emit Unauthenticated bất kể logout API có thành công hay không
+    // Vì khi refresh token đã thất bại, token đã invalid rồi, không cần quan tâm logout API
     try {
       await logoutUseCase.call(NoParams());
-      emit(AuthenticationUnauthenticated());
     } catch (e) {
-      // Thông báo lỗi nếu việc logout trên server/data source thất bại
-      emit(AuthenticationError('Đăng xuất thất bại: ${e.toString()}'));
+      // Ignore error - vẫn tiếp tục logout ở phía client
+      // Log để debug nhưng không block logout flow
+      print('⚠️ Logout API failed (expected if token expired): $e');
     }
+
+    // LUÔN emit Unauthenticated để trigger navigation về login
+    emit(AuthenticationUnauthenticated());
   }
 
   Future<void> _onAuthenticationUserUpdated(

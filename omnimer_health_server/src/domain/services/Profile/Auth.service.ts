@@ -213,6 +213,8 @@ export class AuthService {
    */
   async createNewAccessToken(refreshToken: string) {
     try {
+      console.log("Refresh token: ", refreshToken);
+
       const decoded: any = JwtUtils.verifyRefreshToken(refreshToken);
 
       const user = await this.userRepo.findById(decoded.id);
