@@ -100,12 +100,12 @@ def _prepare_input_vector(profile: HealthProfile, exercise: Dict[str, Any], goal
     weight = profile.weight
     bmi = profile.bmi
     fat = profile.bodyFatPercentage
-    rhr = profile.restingHeartRate
+    rhr = profile.restingHeartRate if profile.restingHeartRate else 70.0 # Default RHR
     
     # 2. Context & State
     gender = _map_text_to_numeric(profile.gender)
     exp_level = _map_text_to_numeric(profile.experienceLevel)
-    freq = profile.workoutFrequency
+    freq = profile.workoutFrequency if profile.workoutFrequency else 3 # Default Freq
     
     # Defaults for missing context in new schema
     mood = 3 # Neutral

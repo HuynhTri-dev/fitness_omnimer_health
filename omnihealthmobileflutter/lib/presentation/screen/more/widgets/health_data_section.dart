@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:omnihealthmobileflutter/core/theme/app_radius.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/more/widgets/more_menu_item.dart';
 
@@ -8,7 +7,6 @@ import 'package:omnihealthmobileflutter/presentation/screen/health_connect/healt
 import 'package:omnihealthmobileflutter/presentation/screen/health_connect/health_connect_setup_widget.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/healthkit_connect/healthkit_connect_screen.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/healthkit_connect/healthkit_connect_setup_widget.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 /// Health & Data section widget for More screen
 class HealthDataSection extends StatefulWidget {
@@ -34,8 +32,6 @@ class _HealthDataSectionState extends State<HealthDataSection>
   late Animation<double> _expandAnimation;
 
   // State for health data sources
-
-  bool _isSamsungHealthEnabled = false;
 
   @override
   void initState() {
@@ -144,17 +140,6 @@ class _HealthDataSectionState extends State<HealthDataSection>
                     },
                   ),
                 ),
-                _buildDropdownItem(
-                  assetPath: 'assets/samsung_health.png',
-                  title: 'Samsung Health',
-                  subtitle: 'Connect Samsung Health',
-                  value: _isSamsungHealthEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                      _isSamsungHealthEnabled = value;
-                    });
-                  },
-                ),
               ],
             ),
           ),
@@ -179,74 +164,6 @@ class _HealthDataSectionState extends State<HealthDataSection>
           onTap: widget.onExportDataTap,
         ),
       ],
-    );
-  }
-
-  Widget _buildDropdownItem({
-    required String assetPath,
-    required String title,
-    required String subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Builder(
-      builder: (context) {
-        final theme = Theme.of(context);
-        final colorScheme = theme.colorScheme;
-        final textTheme = theme.textTheme;
-
-        return InkWell(
-          onTap: () => onChanged(!value),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(AppSpacing.xs),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary.withOpacity(0.1),
-                    borderRadius: AppRadius.radiusSm,
-                  ),
-                  child: assetPath.endsWith('.svg')
-                      ? SvgPicture.asset(
-                          assetPath,
-                          width: 30.sp,
-                          height: 30.sp,
-                          fit: BoxFit.contain,
-                        )
-                      : Image.asset(
-                          assetPath,
-                          width: 30.sp,
-                          height: 30.sp,
-                          fit: BoxFit.contain,
-                        ),
-                ),
-                SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(subtitle, style: textTheme.bodySmall),
-                    ],
-                  ),
-                ),
-                Switch(value: value, onChanged: onChanged),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

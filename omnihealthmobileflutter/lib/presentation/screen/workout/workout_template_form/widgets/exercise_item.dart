@@ -26,80 +26,103 @@ class _ExerciseItem extends StatelessWidget {
           // Exercise Header
           Row(
             children: [
-              // Exercise Image
-              Container(
-                width: 50.w,
-                height: 50.w,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child:
-                    exercise.exerciseImageUrl != null &&
-                        exercise.exerciseImageUrl!.isNotEmpty
-                    ? Image.network(
-                        exercise.exerciseImageUrl!,
-                        fit: BoxFit.cover,
+              // Exercise Image & Info clickable
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    if (exercise.exerciseId.isNotEmpty) {
+                      RouteConfig.navigateToExerciseDetail(
+                        context,
+                        exerciseId: exercise.exerciseId,
+                      );
+                    }
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Row(
+                    children: [
+                      // Exercise Image
+                      Container(
                         width: 50.w,
                         height: 50.w,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.fitness_center,
-                            color: Colors.grey[500],
-                            size: 24.sp,
-                          );
-                        },
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: SizedBox(
-                              width: 20.w,
-                              height: 20.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                value:
-                                    loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                    : null,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child:
+                            exercise.exerciseImageUrl != null &&
+                                exercise.exerciseImageUrl!.isNotEmpty
+                            ? Image.network(
+                                exercise.exerciseImageUrl!,
+                                fit: BoxFit.cover,
+                                width: 50.w,
+                                height: 50.w,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(
+                                    Icons.fitness_center,
+                                    color: Colors.grey[500],
+                                    size: 24.sp,
+                                  );
+                                },
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: SizedBox(
+                                          width: 20.w,
+                                          height: 20.w,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            value:
+                                                loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                              )
+                            : Icon(
+                                Icons.fitness_center,
+                                color: Colors.grey[500],
+                                size: 24.sp,
+                              ),
+                      ),
+
+                      SizedBox(width: 12.w),
+
+                      // Exercise Info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              exercise.exerciseName,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              '${exercise.sets.length} sets',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.grey[600],
                               ),
                             ),
-                          );
-                        },
-                      )
-                    : Icon(
-                        Icons.fitness_center,
-                        color: Colors.grey[500],
-                        size: 24.sp,
+                          ],
+                        ),
                       ),
-              ),
-
-              SizedBox(width: 12.w),
-
-              // Exercise Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      exercise.exerciseName,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      '${exercise.sets.length} sets',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
 
@@ -323,12 +346,7 @@ class _ExerciseItem extends StatelessWidget {
             ),
             SizedBox(width: 8.w),
             Expanded(
-              child: Center(
-                child: Text(
-                  'CUSTOM FIELDS',
-                  style: headerStyle,
-                ),
-              ),
+              child: Center(child: Text('CUSTOM FIELDS', style: headerStyle)),
             ),
             SizedBox(width: 32.w),
           ],

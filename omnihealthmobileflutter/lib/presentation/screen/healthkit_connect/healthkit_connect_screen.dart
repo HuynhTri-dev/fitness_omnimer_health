@@ -152,10 +152,14 @@ class _HealthKitConnectScreenContentState
                 color: Theme.of(context).colorScheme.primary,
               ),
               SizedBox(width: AppSpacing.sm),
-              Text(
-                'Apple Health Status',
-                style: AppTypography.h3.copyWith(
-                  color: Theme.of(context).textTheme.displaySmall?.color,
+              Expanded(
+                child: Text(
+                  'Apple Health Status',
+                  style: AppTypography.h3.copyWith(
+                    color: Theme.of(context).textTheme.displaySmall?.color,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -181,10 +185,14 @@ class _HealthKitConnectScreenContentState
             children: [
               Icon(Icons.check_circle_outline, color: AppColors.success),
               SizedBox(width: AppSpacing.sm),
-              Text(
-                'Apple Health Status',
-                style: AppTypography.h3.copyWith(
-                  color: Theme.of(context).textTheme.displaySmall?.color,
+              Expanded(
+                child: Text(
+                  'Apple Health Status',
+                  style: AppTypography.h3.copyWith(
+                    color: Theme.of(context).textTheme.displaySmall?.color,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -448,10 +456,14 @@ class _HealthKitConnectScreenContentState
             children: [
               Icon(icon, color: Theme.of(context).colorScheme.error),
               SizedBox(width: AppSpacing.sm),
-              Text(
-                title,
-                style: AppTypography.h3.copyWith(
-                  color: Theme.of(context).colorScheme.error,
+              Expanded(
+                child: Text(
+                  title,
+                  style: AppTypography.h3.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
