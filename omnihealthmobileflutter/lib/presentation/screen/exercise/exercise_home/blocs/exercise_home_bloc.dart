@@ -16,6 +16,7 @@ import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_exercis
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_muscles_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_exercises_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_muscle_by_id_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_muscle_by_name_usecase.dart';
 import 'package:omnihealthmobileflutter/utils/query_util/default_query_entity.dart';
 import 'exercise_home_event.dart';
 import 'exercise_home_state.dart';
@@ -28,6 +29,7 @@ class ExerciseHomeBloc extends Bloc<ExerciseHomeEvent, ExerciseHomeState> {
   final GetAllMuscleTypesUseCase getAllMusclesUseCase;
   final GetExercisesUseCase getExercisesUseCase;
   final GetMuscleByIdUsecase getMuscleByIdUsecase;
+  final GetMuscleByNameUseCase getMuscleByNameUseCase;
 
   ExerciseHomeBloc({
     required this.getAllBodyPartsUseCase,
@@ -37,6 +39,7 @@ class ExerciseHomeBloc extends Bloc<ExerciseHomeEvent, ExerciseHomeState> {
     required this.getAllMusclesUseCase,
     required this.getExercisesUseCase,
     required this.getMuscleByIdUsecase,
+    required this.getMuscleByNameUseCase,
   }) : super(const ExerciseHomeState()) {
     on<LoadInitialData>(_onLoadInitialData);
     on<LoadExercises>(_onLoadExercises);
@@ -45,6 +48,7 @@ class ExerciseHomeBloc extends Bloc<ExerciseHomeEvent, ExerciseHomeState> {
     on<ApplyFilters>(_onApplyFilters);
     on<ClearFilters>(_onClearFilters);
     on<SelectMuscleById>(_onSelectMuscleById);
+    on<SelectMuscleByName>(_onSelectMuscleByName);
   }
 
   Future<void> _onLoadInitialData(
@@ -251,6 +255,28 @@ class ExerciseHomeBloc extends Bloc<ExerciseHomeEvent, ExerciseHomeState> {
       if (response.success && response.data != null) {
         emit(state.copyWith(selectedMuscle: response.data));
       } else {
+        emit(state.copyWith(errorMessage: response.message));
+      }
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> _onSelectMuscleByName(
+    SelectMuscleByName event,
+    Emitter<ExerciseHomeState> emit,
+  ) async {
+    try {
+      final response = await getMuscleByNameUseCase(event.name);
+
+      if (response.success && response.data != null) {
+        emit(state.copyWith(selectedMuscle: response.data));
+      } else {
+        // If muscle not found by name, maybe clear selection or show error
+        // For now, logging or doing nothing is safer to avoid UI flicker
+        // Or emit error if critical.
+        // The user request: "lấy tên của Mesh để chạy get muscle by name"
+        // Let's reuse errorMessage if it fails.
         emit(state.copyWith(errorMessage: response.message));
       }
     } catch (e) {

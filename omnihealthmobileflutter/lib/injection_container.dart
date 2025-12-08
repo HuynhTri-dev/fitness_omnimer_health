@@ -70,6 +70,7 @@ import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_muscles
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_exercise_by_id_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_exercises_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_muscle_by_id_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_muscle_by_name_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/rate_exercise_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/goal/get_goal_by_id_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/role/get_roles_for_select_box_usecase.dart';
@@ -376,6 +377,9 @@ Future<void> init() async {
   sl.registerLazySingleton<GetMuscleByIdUsecase>(
     () => GetMuscleByIdUsecase(sl()),
   );
+  sl.registerLazySingleton<GetMuscleByNameUseCase>(
+    () => GetMuscleByNameUseCase(sl()),
+  );
   sl.registerLazySingleton<RateExerciseUseCase>(
     () => RateExerciseUseCase(sl()),
   );
@@ -540,6 +544,7 @@ Future<void> init() async {
       getAllMusclesUseCase: sl(),
       getExercisesUseCase: sl(),
       getMuscleByIdUsecase: sl(),
+      getMuscleByNameUseCase: sl(),
     ),
   );
 

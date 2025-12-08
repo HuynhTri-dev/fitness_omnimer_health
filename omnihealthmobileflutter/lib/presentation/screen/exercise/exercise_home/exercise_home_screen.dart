@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart' as vector;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:omnihealthmobileflutter/core/constants/enum_constant.dart';
@@ -64,7 +65,7 @@ class _ExerciseHomeViewState extends State<_ExerciseHomeView> {
                         children: [
                           CircularProgressIndicator(),
                           SizedBox(height: 16),
-                          Text('Đang tải dữ liệu...'),
+                          Text('Loading...'),
                         ],
                       ),
                     );
