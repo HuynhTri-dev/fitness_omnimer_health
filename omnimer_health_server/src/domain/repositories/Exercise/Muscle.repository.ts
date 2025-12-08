@@ -27,4 +27,21 @@ export class MuscleRepository extends BaseRepository<IMuscle> {
       throw e;
     }
   }
+
+  async getMuscleByName(name: string) {
+    try {
+      const muscle = await this.model
+        .findOne({ name })
+        .populate({
+          path: "bodyPartIds",
+          select: "name", // chỉ lấy trường name
+        })
+        .lean()
+        .exec();
+
+      return muscle;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

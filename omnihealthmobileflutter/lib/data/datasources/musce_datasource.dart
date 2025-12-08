@@ -11,6 +11,8 @@ abstract class MuscleDataSource {
 
   /// Lấy danh sách tất cả roles (để hiển thị select box)
   Future<ApiResponse<List<MuscleModel>>> getAllMuscles();
+
+  Future<ApiResponse<MuscleModel>> getMuscleByName(String name);
 }
 
 class MuscleDataSourceImpl implements MuscleDataSource {
@@ -58,6 +60,24 @@ class MuscleDataSourceImpl implements MuscleDataSource {
       logger.e(e);
       return ApiResponse<List<MuscleModel>>.error(
         "Get All Muscles Error: ${e.toString()}",
+      );
+    }
+  }
+
+  @override
+  Future<ApiResponse<MuscleModel>> getMuscleByName(String name) async {
+    try {
+      final response = await apiClient.get<MuscleModel>(
+        Endpoints.getMuscleByName(name),
+        requiresAuth: false,
+        parser: (json) => MuscleModel.fromJson(json),
+      );
+
+      return response;
+    } catch (e) {
+      logger.e(e);
+      return ApiResponse<MuscleModel>.error(
+        "Get Muscle By Name Error: ${e.toString()}",
       );
     }
   }

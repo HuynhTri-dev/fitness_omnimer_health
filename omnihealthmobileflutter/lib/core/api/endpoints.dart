@@ -85,6 +85,7 @@ class Endpoints {
   static const String getMuscles = "/v1/muscle";
   static const String createMuscle = "/v1/muscle";
   static String getMuscleById(String id) => "/v1/muscle/$id";
+  static String getMuscleByName(String name) => "/v1/muscle/name?name=$name";
   static String updateMuscle(String id) => "/v1/muscle/$id";
   static String deleteMuscle(String id) => "/v1/muscle/$id";
 

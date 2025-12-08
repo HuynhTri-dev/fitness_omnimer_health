@@ -4,6 +4,7 @@ import {
   sendSuccess,
   sendCreated,
   sendUnauthorized,
+  sendBadRequest,
 } from "../../../utils/ResponseHelper";
 import { DecodePayload } from "../../entities";
 import { buildQueryOptions } from "../../../utils/BuildQueryOptions";
@@ -71,11 +72,26 @@ export class MuscleController {
     }
   };
 
-  // =================== GET ALL ===================
+  // =================== GET BY ID ===================
   getMuscleById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = req.params.id;
       const muscle = await this.muscleService.getMuscleById(id);
+
+      return sendSuccess(res, muscle, "Get Muscle success");
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  // =================== GET BY NAME ===================
+  getMuscleByName = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const name = req.query.name as string;
+
+      if (!name) return sendBadRequest(res, "Missing name parameter");
+
+      const muscle = await this.muscleService.getMuscleByName(name);
 
       return sendSuccess(res, muscle, "Get Muscle success");
     } catch (err) {
