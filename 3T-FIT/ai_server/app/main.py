@@ -74,7 +74,7 @@ async def startup_event():
             logger.info("✅ Model v4 loaded successfully")
         else:
             logger.warning("⚠️ Model v4 loading failed - Server will run but /v4/recommend endpoint will not work")
-            logger.warning("⚠️ Please ensure model files exist at: d:/dacn_omnimer_health/3T-FIT/ai_server/model/src/v4/personal_model_v4/")
+            logger.warning("⚠️ Please ensure model files are present in 'ai_server/model/src/v4/personal_model_v4/'")
 
     except Exception as e:
         logger.error(f"❌ Failed to load models: {e}")

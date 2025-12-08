@@ -29,7 +29,14 @@ FEATURE_COLUMNS = [
     'hr_reserve', 'calorie_efficiency'
 ]
 
-def load_model_v4_artifacts(model_dir: str = "d:/dacn_omnimer_health/3T-FIT/ai_server/model/src/v4/personal_model_v4"):
+# Calculate dynamic path for Docker/Local compatibility
+# File is in: .../ai_server/app/services/recommendation_v4.py
+# We want: .../ai_server/model/src/v4/personal_model_v4
+current_dir = os.path.dirname(os.path.abspath(__file__))
+ai_server_dir = os.path.dirname(os.path.dirname(current_dir))
+DEFAULT_MODEL_DIR = os.path.join(ai_server_dir, "model", "src", "v4", "personal_model_v4")
+
+def load_model_v4_artifacts(model_dir: str = DEFAULT_MODEL_DIR):
     """Load Model v4 weights, scaler, and metadata"""
     global MODEL_V4, SCALER_V4, METADATA_V4, DEVICE
     

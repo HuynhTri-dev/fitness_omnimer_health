@@ -5,6 +5,8 @@ services:
     build:
       context: ./omnimer_health_server
       dockerfile: Dockerfile
+      target: builder # Sử dụng stage builder để có đầy đủ node_modules
+    command: npm run dev # Chạy nodemon để hot-reload
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -12,16 +14,18 @@ services:
       - ./omnimer_health_server/.env
     environment:
       - PORT=8000
-      - NODE_ENV=production
-      # Nếu model là online/cloud, hãy điền URL của server đó vào đây (hoặc trong file .env)
-      # Nếu chạy qua proxy trên máy host, dùng http://host.docker.internal:11434
-      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - NODE_ENV=development
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - AI_API=http://omnimer_health_ai:8888
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
       - omnimer_network
     depends_on:
-      - graphdb
+      - ai_service
+    volumes:
+      - ./omnimer_health_server:/app
+      - /app/node_modules # Giữ lại node_modules của container (Linux) tránh xung đột Windows
 
   # 2. 🤖 Python AI/FastAPI Service (3T-FIT)
   ai_service:
@@ -29,6 +33,7 @@ services:
     build:
       context: ./3T-FIT
       dockerfile: Dockerfile
+    command: uvicorn ai_server.app.main:app --host 0.0.0.0 --port 8888 --reload
     restart: unless-stopped
     ports:
       - "8888:8888"
@@ -36,21 +41,10 @@ services:
       - PYTHONUNBUFFERED=1
     networks:
       - omnimer_network
-
-  # 3. 🕸️ GraphDB (Knowledge Graph)
-  graphdb:
-    image: ontotext/graphdb:11.2.0
-    container_name: omnimer_health_graphdb
-    ports:
-      - "7200:7200"
-    environment:
-      - GDB_HEAP_SIZE=2G
-    networks:
-      - omnimer_network
     volumes:
-      - ./graphdb_data:/opt/graphdb/home
+      - ./3T-FIT:/app
 
-  # 4. 🖥️ Admin Dashboard (React/Vite)
+  # 3. 🖥️ Admin Dashboard (React/Vite)
   admin_page:
     container_name: omnimer_admin_page
     build:
@@ -58,7 +52,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "5137:5137"
+      - "5137:80"
     networks:
       - omnimer_network
 
