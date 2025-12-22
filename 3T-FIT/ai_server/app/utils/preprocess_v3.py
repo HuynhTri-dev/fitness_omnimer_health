@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import json
 import os
-from typing import Dict, List, Tuple
+from typing import Dict
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
@@ -61,9 +61,6 @@ class PreprocessorV3:
 
     def _create_fallback_preprocessor(self):
         """Create a basic preprocessor for fallback"""
-        from sklearn.compose import ColumnTransformer
-        from sklearn.preprocessing import StandardScaler, OneHotEncoder
-        from sklearn.impute import SimpleImputer
 
         numeric_transformer = Pipeline(steps=[
             ('imputer', SimpleImputer(strategy='median')),

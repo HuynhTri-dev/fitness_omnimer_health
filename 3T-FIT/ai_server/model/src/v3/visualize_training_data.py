@@ -15,7 +15,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from pathlib import Path
 
 # Import from train_v3_enhanced
 try:
@@ -38,7 +37,7 @@ def plot_training_data_analysis(df: pd.DataFrame, output_dir: str):
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
     
-    print(f"\n📊 Generating Training Data Visualizations...")
+    print("\n📊 Generating Training Data Visualizations...")
     
     # Set style
     sns.set_style("whitegrid")
@@ -87,7 +86,7 @@ def plot_training_data_analysis(df: pd.DataFrame, output_dir: str):
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '01_target_distributions.png'), dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"  ✅ Saved: 01_target_distributions.png")
+    print("  ✅ Saved: 01_target_distributions.png")
     
     # 2. SePA (Sleep, Psychology, Activity) Analysis
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
@@ -109,7 +108,7 @@ def plot_training_data_analysis(df: pd.DataFrame, output_dir: str):
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '02_sepa_distributions.png'), dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"  ✅ Saved: 02_sepa_distributions.png")
+    print("  ✅ Saved: 02_sepa_distributions.png")
     
     # 3. Correlation Heatmap
     numeric_cols = ['age', 'weight_kg', 'height_m', 'bmi', 'experience_level', 
@@ -132,7 +131,7 @@ def plot_training_data_analysis(df: pd.DataFrame, output_dir: str):
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, '03_correlation_heatmap.png'), dpi=300, bbox_inches='tight')
         plt.close()
-        print(f"  ✅ Saved: 03_correlation_heatmap.png")
+        print("  ✅ Saved: 03_correlation_heatmap.png")
     
     # 4. 1RM vs User Characteristics
     fig, axes = plt.subplots(2, 3, figsize=(18, 10))
@@ -166,7 +165,7 @@ def plot_training_data_analysis(df: pd.DataFrame, output_dir: str):
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '04_1rm_relationships.png'), dpi=300, bbox_inches='tight')
     plt.close()
-    print(f"  ✅ Saved: 04_1rm_relationships.png")
+    print("  ✅ Saved: 04_1rm_relationships.png")
     
     # 5. Gender Analysis
     if 'gender' in df.columns and 'estimated_1rm' in df.columns:
@@ -190,7 +189,7 @@ def plot_training_data_analysis(df: pd.DataFrame, output_dir: str):
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, '05_gender_analysis.png'), dpi=300, bbox_inches='tight')
         plt.close()
-        print(f"  ✅ Saved: 05_gender_analysis.png")
+        print("  ✅ Saved: 05_gender_analysis.png")
     
     # 6. Experience Level Analysis
     if 'experience_level' in df.columns and 'estimated_1rm' in df.columns:
@@ -206,7 +205,7 @@ def plot_training_data_analysis(df: pd.DataFrame, output_dir: str):
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, '06_experience_analysis.png'), dpi=300, bbox_inches='tight')
         plt.close()
-        print(f"  ✅ Saved: 06_experience_analysis.png")
+        print("  ✅ Saved: 06_experience_analysis.png")
     
     print(f"\n✅ All visualizations saved to: {output_dir}/")
     return output_dir

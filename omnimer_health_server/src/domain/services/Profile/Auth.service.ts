@@ -118,11 +118,13 @@ export class AuthService {
       session.endSession();
 
       const userResponse: IUserResponse = {
+        _id: created._id,
         fullname: created.fullname,
         email: created.email,
         imageUrl: created.imageUrl,
         gender: created.gender,
         birthday: created.birthday,
+        roleIds: defaultRoleIds,
         roleName: defaultRoleNames,
         isDataSharingAccepted: created.isDataSharingAccepted,
       };
@@ -139,7 +141,7 @@ export class AuthService {
       // 10. Trả về
       return {
         user: this.buildUserResponse(userResponse),
-        ...this.generateTokens(created),
+        ...this.generateTokens(userResponse),
       };
     } catch (err: any) {
       //! Hủy session khi có lỗi
@@ -170,7 +172,7 @@ export class AuthService {
   async login(email: string, password: string): Promise<IAuthResponse> {
     try {
       const userWithHash = await this.userRepo.userByEmailWithPassword(email);
-      console.log("User With Hash", userWithHash);
+
       if (!userWithHash) {
         throw new HttpError(401, "Email hoặc password không đúng");
       }
@@ -211,6 +213,8 @@ export class AuthService {
    */
   async createNewAccessToken(refreshToken: string) {
     try {
+      console.log("Refresh token: ", refreshToken);
+
       const decoded: any = JwtUtils.verifyRefreshToken(refreshToken);
 
       const user = await this.userRepo.findById(decoded.id);

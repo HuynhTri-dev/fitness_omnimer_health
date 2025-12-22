@@ -102,7 +102,7 @@ class HealthKitConnectSetupWidget extends StatelessWidget {
                 children: [
                   Text(
                     'Apple Health',
-                    style: AppTypography.h1.copyWith(
+                    style: AppTypography.h3.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).textTheme.displayLarge?.color,
                     ),
@@ -214,6 +214,8 @@ class HealthKitConnectSetupWidget extends StatelessWidget {
                     : AppColors.warning,
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -246,6 +248,8 @@ class HealthKitConnectSetupWidget extends StatelessWidget {
                 color: Theme.of(context).colorScheme.error,
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -271,6 +275,8 @@ class HealthKitConnectSetupWidget extends StatelessWidget {
                 color: AppColors.success,
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -303,6 +309,8 @@ class HealthKitConnectSetupWidget extends StatelessWidget {
                 color: Theme.of(context).colorScheme.error,
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -334,6 +342,8 @@ class HealthKitConnectSetupWidget extends StatelessWidget {
               style: AppTypography.bodySmall.copyWith(
                 color: Theme.of(context).textTheme.bodySmall?.color,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -345,24 +355,25 @@ class HealthKitConnectSetupWidget extends StatelessWidget {
     BuildContext context,
     HealthKitConnectState state,
   ) {
+    // Determine if we should show any actions
+    // We only show actions for loading, requesting permissions, or error states.
+    // If the state is connected/available (initial/connected), we don't show "Open Apple Health" anymore.
+
+    // Check if we need to show the primary button (Request Permissions, Loading)
+    final showPrimary =
+        state is HealthKitConnectLoading ||
+        (state is HealthKitConnectAvailable && !state.hasPermissions) ||
+        (state is HealthKitConnectPermissionsDenied);
+
+    if (!showPrimary) {
+      return SizedBox.shrink();
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Column(
         children: [
-          // Primary action button
           _buildPrimaryActionButton(context, state),
-
-          // Secondary action
-          if (state is HealthKitConnectAvailable && state.hasPermissions) ...[
-            SizedBox(height: AppSpacing.sm),
-            ButtonPrimary(
-              title: 'Manage Settings',
-              variant: ButtonVariant.primaryOutline,
-              onPressed: onNavigateToHealthKit,
-              size: ButtonSize.small,
-            ),
-          ],
-
           SizedBox(height: AppSpacing.md),
         ],
       ),
@@ -407,11 +418,7 @@ class HealthKitConnectSetupWidget extends StatelessWidget {
       );
     }
 
-    // For initial state or connected state
-    return ButtonPrimary(
-      title: 'Open Apple Health Settings',
-      onPressed: onNavigateToHealthKit,
-      fullWidth: true,
-    );
+    // For initial state or connected state, we return empty as requested
+    return SizedBox.shrink();
   }
 }

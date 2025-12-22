@@ -1,5 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:omnihealthmobileflutter/core/api/api_client.dart';
+import 'package:omnihealthmobileflutter/utils/logger.dart';
+import 'package:omnihealthmobileflutter/presentation/common/blocs/auth/authentication_event.dart';
 import 'package:omnihealthmobileflutter/data/datasources/auth_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/body_part_datasource.dart';
 import 'package:omnihealthmobileflutter/data/datasources/equipment_datasource.dart';
@@ -68,6 +70,7 @@ import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_all_muscles
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_exercise_by_id_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_exercises_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_muscle_by_id_usecase.dart';
+import 'package:omnihealthmobileflutter/domain/usecases/exercise/get_muscle_by_name_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/exercise/rate_exercise_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/goal/get_goal_by_id_usecase.dart';
 import 'package:omnihealthmobileflutter/domain/usecases/role/get_roles_for_select_box_usecase.dart';
@@ -374,6 +377,9 @@ Future<void> init() async {
   sl.registerLazySingleton<GetMuscleByIdUsecase>(
     () => GetMuscleByIdUsecase(sl()),
   );
+  sl.registerLazySingleton<GetMuscleByNameUseCase>(
+    () => GetMuscleByNameUseCase(sl()),
+  );
   sl.registerLazySingleton<RateExerciseUseCase>(
     () => RateExerciseUseCase(sl()),
   );
@@ -538,6 +544,7 @@ Future<void> init() async {
       getAllMusclesUseCase: sl(),
       getExercisesUseCase: sl(),
       getMuscleByIdUsecase: sl(),
+      getMuscleByNameUseCase: sl(),
     ),
   );
 
@@ -667,4 +674,15 @@ Future<void> init() async {
       createWorkoutFeedbackUseCase: sl(),
     ),
   );
+
+  // ======================
+  // Post-initialization setup
+  // ======================
+  // Setup ApiClient callback để auto logout khi refresh token thất bại
+  final apiClient = sl<ApiClient>();
+  final authBloc = sl<AuthenticationBloc>();
+  apiClient.onUnauthorized = () {
+    logger.i('🔥 Refresh token failed, triggering logout...');
+    authBloc.add(AuthenticationLoggedOut());
+  };
 }

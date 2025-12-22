@@ -1,14 +1,13 @@
 import torch
-import pandas as pd
 import numpy as np
 import pickle
 import json
 import os
 import logging
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 from models.model_v4_arch import TwoBranchRecommendationModel
-from schema.recommend_schemas import RecommendInput, RecommendOutput, RecommendedExercise, SetDetail
+from schema.recommend_schemas import RecommendInput, RecommendOutput, RecommendedExercise
 from schema.common_schemas import HealthProfile
 from utils.intensity_converter import convert_intensity_to_params
 
@@ -30,7 +29,14 @@ FEATURE_COLUMNS = [
     'hr_reserve', 'calorie_efficiency'
 ]
 
-def load_model_v4_artifacts(model_dir: str = "d:/dacn_omnimer_health/3T-FIT/ai_server/model/src/v4/personal_model_v4"):
+# Calculate dynamic path for Docker/Local compatibility
+# File is in: .../ai_server/app/services/recommendation_v4.py
+# We want: .../ai_server/model/src/v4/personal_model_v4
+current_dir = os.path.dirname(os.path.abspath(__file__))
+ai_server_dir = os.path.dirname(os.path.dirname(current_dir))
+DEFAULT_MODEL_DIR = os.path.join(ai_server_dir, "model", "src", "v4", "personal_model_v4")
+
+def load_model_v4_artifacts(model_dir: str = DEFAULT_MODEL_DIR):
     """Load Model v4 weights, scaler, and metadata"""
     global MODEL_V4, SCALER_V4, METADATA_V4, DEVICE
     
@@ -94,12 +100,12 @@ def _prepare_input_vector(profile: HealthProfile, exercise: Dict[str, Any], goal
     weight = profile.weight
     bmi = profile.bmi
     fat = profile.bodyFatPercentage
-    rhr = profile.restingHeartRate
+    rhr = profile.restingHeartRate if profile.restingHeartRate else 70.0 # Default RHR
     
     # 2. Context & State
     gender = _map_text_to_numeric(profile.gender)
     exp_level = _map_text_to_numeric(profile.experienceLevel)
-    freq = profile.workoutFrequency
+    freq = profile.workoutFrequency if profile.workoutFrequency else 3 # Default Freq
     
     # Defaults for missing context in new schema
     mood = 3 # Neutral

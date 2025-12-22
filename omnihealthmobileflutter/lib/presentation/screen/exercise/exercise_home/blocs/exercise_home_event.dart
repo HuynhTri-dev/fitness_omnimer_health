@@ -58,3 +58,12 @@ class SelectMuscleById extends ExerciseHomeEvent {
   @override
   List<Object?> get props => [muscleId];
 }
+
+class SelectMuscleByName extends ExerciseHomeEvent {
+  final String name;
+
+  const SelectMuscleByName(this.name);
+
+  @override
+  List<Object?> get props => [name];
+}

@@ -179,7 +179,7 @@ class ModelV3Loader:
             self.model.load_state_dict(checkpoint)  # Direct load since checkpoint contains state_dict
             self.model.eval()
 
-            print(f"Model v3 loaded successfully")
+            print("Model v3 loaded successfully")
             print(f"   - Input dimension: {input_dim}")
             print(f"   - Number of exercises: {num_exercises}")
             print(f"   - Device: {device}")

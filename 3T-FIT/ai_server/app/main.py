@@ -66,13 +66,15 @@ async def startup_event():
 
         # Load V4
         logger.info("Loading Model v4...")
-        # Adjust path to point to correct model directory relative to app/main.py
-        model_v4_loaded = load_model_v4_artifacts("/app/ai_server/model/src/v4/model_v4")
+        # Use default path from recommendation_v4.py (local path)
+        # For Docker deployment, this path needs to be adjusted in Dockerfile
+        model_v4_loaded = load_model_v4_artifacts()
         
         if model_v4_loaded:
             logger.info("✅ Model v4 loaded successfully")
         else:
-            logger.warning("⚠️ Model v4 loading failed")
+            logger.warning("⚠️ Model v4 loading failed - Server will run but /v4/recommend endpoint will not work")
+            logger.warning("⚠️ Please ensure model files are present in 'ai_server/model/src/v4/personal_model_v4/'")
 
     except Exception as e:
         logger.error(f"❌ Failed to load models: {e}")

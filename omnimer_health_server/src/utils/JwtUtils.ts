@@ -2,12 +2,25 @@ import jwt, { SignOptions, Secret } from "jsonwebtoken";
 import { StringValue } from "ms";
 import crypto from "crypto";
 
-const ACCESS_TOKEN_SECRET: Secret =
-  process.env.ACCESS_TOKEN_SECRET || "ACCESS_SECRET_DEV";
-const REFRESH_TOKEN_SECRET: Secret =
-  process.env.REFRESH_TOKEN_SECRET || "REFRESH_SECRET_DEV";
-const VERIFICATION_TOKEN_SECRET: Secret =
-  process.env.VERIFICATION_TOKEN_SECRET || "VERIFICATION_SECRET_DEV";
+if (!process.env.ACCESS_TOKEN_SECRET) {
+  throw new Error(
+    "ACCESS_TOKEN_SECRET is not defined in environment variables"
+  );
+}
+if (!process.env.REFRESH_TOKEN_SECRET) {
+  throw new Error(
+    "REFRESH_TOKEN_SECRET is not defined in environment variables"
+  );
+}
+if (!process.env.VERIFICATION_TOKEN_SECRET) {
+  throw new Error(
+    "VERIFICATION_TOKEN_SECRET is not defined in environment variables"
+  );
+}
+
+const ACCESS_TOKEN_SECRET: Secret = process.env.ACCESS_TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET: Secret = process.env.REFRESH_TOKEN_SECRET;
+const VERIFICATION_TOKEN_SECRET: Secret = process.env.VERIFICATION_TOKEN_SECRET;
 
 export const JwtUtils = {
   generateAccessToken(payload: any, expiresIn: StringValue | number = "1h") {

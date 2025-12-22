@@ -14,10 +14,8 @@ It checks:
 """
 
 import pandas as pd
-import numpy as np
 import json
-from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict
 import warnings
 warnings.filterwarnings('ignore')
 

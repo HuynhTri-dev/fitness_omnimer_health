@@ -300,6 +300,15 @@ class RouteConfig {
     Navigator.of(context).pushNamed(verifyAccount);
   }
 
+  static Future<dynamic> navigateToExerciseDetail(
+    BuildContext context, {
+    required String exerciseId,
+  }) {
+    return Navigator.of(
+      context,
+    ).pushNamed(exerciseDetail, arguments: {'exerciseId': exerciseId});
+  }
+
   static Future<dynamic> navigateToWorkoutTemplateDetail(
     BuildContext context, {
     required String templateId,
@@ -318,8 +327,8 @@ class RouteConfig {
     ).pushNamed(workoutTemplateForm, arguments: {'templateId': templateId});
   }
 
-  static void navigateToWorkoutTemplateAI(BuildContext context) {
-    Navigator.of(context).pushNamed(workoutTemplateAI);
+  static Future<dynamic> navigateToWorkoutTemplateAI(BuildContext context) {
+    return Navigator.of(context).pushNamed(workoutTemplateAI);
   }
 
   static Future<dynamic> navigateToWorkoutSession(

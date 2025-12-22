@@ -103,42 +103,51 @@ class WorkoutTemplateAICubit extends Cubit<WorkoutTemplateAIState> {
   Future<void> createWorkoutById() async {
     emit(state.copyWith(status: WorkoutTemplateAIStatus.submitting));
 
-    final result = await recommendWorkoutUseCase(
-      RecommendWorkoutParams(
-        bodyPartIds: state.selectedBodyPartIds.isNotEmpty
-            ? state.selectedBodyPartIds
-            : null,
-        equipmentIds: state.selectedEquipmentIds.isNotEmpty
-            ? state.selectedEquipmentIds
-            : null,
-        exerciseCategoryIds: state.selectedExerciseCategoryIds.isNotEmpty
-            ? state.selectedExerciseCategoryIds
-            : null,
-        exerciseTypeIds: state.selectedExerciseTypeIds.isNotEmpty
-            ? state.selectedExerciseTypeIds
-            : null,
-        muscleIds: state.selectedMuscleIds.isNotEmpty
-            ? state.selectedMuscleIds
-            : null,
-        location: state.selectedLocation != LocationEnum.None
-            ? state.selectedLocation
-            : null,
-        k: state.k,
-      ),
-    );
-
-    if (result.success) {
-      emit(
-        state.copyWith(
-          status: WorkoutTemplateAIStatus.success,
-          recommendedWorkout: result.data,
+    try {
+      final result = await recommendWorkoutUseCase(
+        RecommendWorkoutParams(
+          bodyPartIds: state.selectedBodyPartIds.isNotEmpty
+              ? state.selectedBodyPartIds
+              : null,
+          equipmentIds: state.selectedEquipmentIds.isNotEmpty
+              ? state.selectedEquipmentIds
+              : null,
+          exerciseCategoryIds: state.selectedExerciseCategoryIds.isNotEmpty
+              ? state.selectedExerciseCategoryIds
+              : null,
+          exerciseTypeIds: state.selectedExerciseTypeIds.isNotEmpty
+              ? state.selectedExerciseTypeIds
+              : null,
+          muscleIds: state.selectedMuscleIds.isNotEmpty
+              ? state.selectedMuscleIds
+              : null,
+          location: state.selectedLocation != LocationEnum.None
+              ? state.selectedLocation
+              : null,
+          k: state.k,
         ),
       );
-    } else {
+
+      if (result.success) {
+        emit(
+          state.copyWith(
+            status: WorkoutTemplateAIStatus.success,
+            recommendedWorkout: result.data,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            status: WorkoutTemplateAIStatus.failure,
+            errorMessage: result.message,
+          ),
+        );
+      }
+    } catch (e) {
       emit(
         state.copyWith(
           status: WorkoutTemplateAIStatus.failure,
-          errorMessage: result.message,
+          errorMessage: e.toString(),
         ),
       );
     }

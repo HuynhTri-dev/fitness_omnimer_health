@@ -1,5 +1,4 @@
 import pandas as pd
-import os
 
 def check_data_overlap():
     # Define paths

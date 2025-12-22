@@ -1,4 +1,4 @@
-from typing import List, Optional, Any
+from typing import List, Optional
 from pydantic import BaseModel
 
 class HealthStatus(BaseModel):
@@ -18,9 +18,9 @@ class HealthProfile(BaseModel):
     bodyFatPercentage: float
     activityLevel: int
     experienceLevel: str
-    workoutFrequency: int
-    restingHeartRate: int
-    maxWeightLifted: float
+    workoutFrequency: Optional[int] = None
+    restingHeartRate: Optional[int] = None
+    maxWeightLifted: Optional[float] = None
     healthStatus: HealthStatus
 
 class TargetMetric(BaseModel):

@@ -53,4 +53,26 @@ class MuscleRepositoryImpl implements MuscleRepositoryAbs {
       );
     }
   }
+
+  @override
+  Future<ApiResponse<MuscleEntity>> getMuscleByName(String name) async {
+    try {
+      final res = await muscleDataSource.getMuscleByName(name);
+
+      // Chuyển Model -> Entity
+      final entity = res.data?.toEntity();
+
+      return ApiResponse<MuscleEntity>(
+        success: res.success,
+        message: res.message,
+        data: entity,
+        error: res.error,
+      );
+    } catch (e) {
+      return ApiResponse<MuscleEntity>.error(
+        "Failed to get muscle by name: ${e.toString()}",
+        error: e,
+      );
+    }
+  }
 }

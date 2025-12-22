@@ -9,7 +9,6 @@ Date: 2025-11-25
 """
 
 import pandas as pd
-import numpy as np
 from pathlib import Path
 
 # ==================== SEPA MAPPING FUNCTIONS ====================
@@ -349,7 +348,7 @@ def clean_test_dataset(df: pd.DataFrame) -> pd.DataFrame:
 
     if 'experience_level' in df_cleaned.columns:
         df_cleaned['experience_level'] = df_cleaned['experience_level'].astype(str).str.lower().map(experience_map)
-        print(f"\nĐã biến đổi cột 'experience_level' sang dạng số")
+        print("\nĐã biến đổi cột 'experience_level' sang dạng số")
 
     intensity_map = {
         'low': 1,
@@ -360,7 +359,7 @@ def clean_test_dataset(df: pd.DataFrame) -> pd.DataFrame:
 
     if 'intensity' in df_cleaned.columns:
         df_cleaned['intensity'] = df_cleaned['intensity'].astype(str).str.lower().map(intensity_map)
-        print(f"Đã biến đổi cột 'intensity' sang dạng số")
+        print("Đã biến đổi cột 'intensity' sang dạng số")
 
     # Bước 7: Tính toán các chỉ số năng lực (bao gồm 1RM)
     print("\n" + "="*50)
@@ -391,7 +390,7 @@ def clean_test_dataset(df: pd.DataFrame) -> pd.DataFrame:
     # Hiển thị thông tin về 1RM
     if 'estimated_1rm' in df_cleaned.columns:
         non_zero_1rm = df_cleaned[df_cleaned['estimated_1rm'] > 0]
-        print(f"\nThông tin 1RM:")
+        print("\nThông tin 1RM:")
         print(f"  - Số bài tập có 1RM > 0: {len(non_zero_1rm)}/{len(df_cleaned)}")
         if len(non_zero_1rm) > 0:
             print(f"  - 1RM min: {non_zero_1rm['estimated_1rm'].min():.2f} kg")
@@ -400,13 +399,13 @@ def clean_test_dataset(df: pd.DataFrame) -> pd.DataFrame:
             print(f"  - Sample 1RM values: {non_zero_1rm['estimated_1rm'].head().tolist()}")
 
     # Hiển thị thống kê SePA cuối cùng
-    print(f"\nThống kê SePA cuối cùng:")
+    print("\nThống kê SePA cuối cùng:")
     for col in ['mood', 'fatigue', 'effort']:
         if col in df_cleaned.columns:
             stats = df_cleaned[col].value_counts().sort_index()
             print(f"  - {col}: {stats.to_dict()}")
 
-    print(f"\nKết quả xử lý:")
+    print("\nKết quả xử lý:")
     print(f"  - Số dòng cuối cùng: {len(df_cleaned)}")
     print(f"  - Số cột cuối cùng: {len(df_cleaned.columns)}")
     print(f"  - Các cột: {list(df_cleaned.columns)}")
@@ -438,7 +437,7 @@ def process_test_dataset(input_file: str, output_file: str = None) -> pd.DataFra
         input_path = Path(input_file)
         output_file = input_path.parent / f"{input_path.stem}_processed{input_path.suffix}"
 
-    print(f"\n" + "="*60)
+    print("\n" + "="*60)
     print(f"Lưu dữ liệu đã xử lý vào: {output_file}")
     print("="*60)
 

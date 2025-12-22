@@ -20,8 +20,14 @@ class ActionButtons extends StatelessWidget {
             title: '3T-FIT',
             subtitle: 'Suggest your own workout by 3T-FIT Model',
             backgroundColor: Theme.of(context).primaryColor,
-            onTap: () {
-              RouteConfig.navigateToWorkoutTemplateAI(context);
+            onTap: () async {
+              final result = await RouteConfig.navigateToWorkoutTemplateAI(
+                context,
+              );
+
+              if (result == true && context.mounted) {
+                context.read<WorkoutHomeBloc>().add(RefreshWorkoutData());
+              }
             },
           ),
         ),

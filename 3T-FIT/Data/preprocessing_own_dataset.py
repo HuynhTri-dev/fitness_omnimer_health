@@ -5,7 +5,6 @@ Dữ liệu sẽ được loại bỏ các thông tin không cần thiết và �
 """
 
 import pandas as pd
-import numpy as np
 from pathlib import Path
 
 
@@ -210,7 +209,7 @@ def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
     if 'total_duration_min' in df_cleaned.columns:
         df_cleaned['session_duration'] = (df_cleaned['total_duration_min'] / 60).round(2)
         df_cleaned = df_cleaned.drop(columns=['total_duration_min'])
-        print(f"\nĐã đổi tên 'total_duration_min' thành 'session_duration' và chuyển đổi từ phút sang giờ")
+        print("\nĐã đổi tên 'total_duration_min' thành 'session_duration' và chuyển đổi từ phút sang giờ")
     else:
         print("\nKhông tìm thấy cột 'total_duration_min' trong dữ liệu")
 
@@ -271,7 +270,7 @@ def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
     # Bước 8: Đổi tên cột category_type_want_todo thành workout_type
     if 'category_type_want_todo' in df_cleaned.columns:
         df_cleaned = df_cleaned.rename(columns={'category_type_want_todo': 'workout_type'})
-        print(f"\nĐã đổi tên cột 'category_type_want_todo' thành 'workout_type'")
+        print("\nĐã đổi tên cột 'category_type_want_todo' thành 'workout_type'")
     else:
         print("\nKhông tìm thấy cột 'category_type_want_todo'")
     
@@ -299,7 +298,7 @@ def process_dataset(input_file: str, output_file: str = None) -> pd.DataFrame:
         input_path = Path(input_file)
         output_file = input_path.parent / f"{input_path.stem}_cleaned{input_path.suffix}"
     
-    print(f"\n" + "="*60)
+    print("\n" + "="*60)
     print(f"Lưu dữ liệu đã làm sạch vào: {output_file}")
     print("="*60)
     

@@ -169,6 +169,24 @@ export class MuscleService {
     }
   }
 
+  // =================== GET BY NAME ===================
+  async getMuscleByName(name: string) {
+    try {
+      const muscle = await this.muscleRepository.getMuscleByName(name);
+      if (!muscle) {
+        throw new HttpError(401, "Cannot find the muscle");
+      }
+      return muscle;
+    } catch (err: any) {
+      await logError({
+        action: "getMuscleByName",
+        message: err.message || err,
+        errorMessage: err.stack || err,
+      });
+      throw err;
+    }
+  }
+
   // =================== DELETE ===================
   async deleteMuscle(userId: string, id: string) {
     const session = await mongoose.startSession();

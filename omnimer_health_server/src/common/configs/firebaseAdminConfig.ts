@@ -31,7 +31,8 @@ export const initializeFirebaseAdmin = (): void => {
     console.log("✅ Firebase Admin SDK đã khởi tạo.");
   } catch (error: any) {
     console.error("❌ Lỗi Firebase Admin:", error.message);
-    process.exit(1);
+    // process.exit(1);
+    console.warn("⚠️  Firebase Admin features will be disabled.");
   }
 };
 

@@ -1,8 +1,12 @@
 # Use an official Python runtime as a parent image
-FROM python:3.13-slim
+FROM python:3.11-slim
 
 # Set the working directory in the container
 WORKDIR /app
+
+# Install system dependencies if needed
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements file into the container at /app
 COPY requirements.txt .
@@ -13,11 +17,18 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the ai_server directory into the container at /app/ai_server
 COPY ai_server ./ai_server
 
+# Explicitly ensure model files are copied (in case of .dockerignore issues)
+COPY ai_server/model ./ai_server/model
+
 # Set the PYTHONPATH to include the current directory
 ENV PYTHONPATH=/app:/app/ai_server/app
 
 # Expose port 8888
 EXPOSE 8888
 
-# Run app.main:app when the container launches
-CMD ["uvicorn", "ai_server.app.main:app", "--host", "0.0.0.0", "--port", "8888", "--reload"]
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8888/health || exit 1
+
+# Run app.main:app when the container launches (remove --reload for production)
+CMD ["uvicorn", "ai_server.app.main:app", "--host", "0.0.0.0", "--port", "8888"]

@@ -21,7 +21,8 @@ class HealthConnectSetupWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl.get<HealthConnectBloc>(),
+      create: (context) =>
+          sl.get<HealthConnectBloc>()..add(CheckHealthConnectAvailability()),
       child: BlocConsumer<HealthConnectBloc, HealthConnectState>(
         listener: (context, state) {
           if (state is HealthConnectError) {
@@ -102,7 +103,7 @@ class HealthConnectSetupWidget extends StatelessWidget {
                 children: [
                   Text(
                     'Health Connect',
-                    style: AppTypography.h1.copyWith(
+                    style: AppTypography.h3.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).textTheme.displayLarge?.color,
                     ),
@@ -341,24 +342,26 @@ class HealthConnectSetupWidget extends StatelessWidget {
   }
 
   Widget _buildActionsSection(BuildContext context, HealthConnectState state) {
+    // Determine if we should show any actions
+    // We only show actions for loading, requesting permissions, or error/not installed states.
+    // If the state is connected/available (initial/connected), we don't show "Open Health Connect" anymore.
+
+    // Check if we need to show the primary button (Request Permissions, Install, Loading)
+    final showPrimary =
+        state is HealthConnectLoading ||
+        (state is HealthConnectAvailable && !state.hasPermissions) ||
+        (state is HealthConnectAvailable && !state.isInstalled) ||
+        (state is HealthConnectPermissionsDenied);
+
+    if (!showPrimary) {
+      return SizedBox.shrink();
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Column(
         children: [
-          // Primary action button
           _buildPrimaryActionButton(context, state),
-
-          // Secondary action
-          if (state is HealthConnectAvailable && state.hasPermissions) ...[
-            SizedBox(height: AppSpacing.sm),
-            ButtonPrimary(
-              title: 'Manage Settings',
-              variant: ButtonVariant.primaryOutline,
-              onPressed: onNavigateToHealthConnect,
-              size: ButtonSize.small,
-            ),
-          ],
-
           SizedBox(height: AppSpacing.md),
         ],
       ),
@@ -412,11 +415,7 @@ class HealthConnectSetupWidget extends StatelessWidget {
       );
     }
 
-    // For initial state or connected state
-    return ButtonPrimary(
-      title: 'Open Health Connect',
-      onPressed: onNavigateToHealthConnect,
-      fullWidth: true,
-    );
+    // For initial state or connected state, we return empty as requested
+    return SizedBox.shrink();
   }
 }

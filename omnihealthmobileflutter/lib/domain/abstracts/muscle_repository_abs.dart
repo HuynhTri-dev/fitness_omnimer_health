@@ -5,4 +5,6 @@ abstract class MuscleRepositoryAbs {
   Future<ApiResponse<MuscleEntity>> getMuscleById(String id);
 
   Future<ApiResponse<List<MuscleEntity>>> getAllMuscles();
+
+  Future<ApiResponse<MuscleEntity>> getMuscleByName(String name);
 }

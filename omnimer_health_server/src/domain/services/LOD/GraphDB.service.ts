@@ -11,51 +11,22 @@ export class GraphDBService {
     this.repoName = graphDBConfig.repoName;
   }
 
-  // Hàm gửi SPARQL UPDATE để lưu dữ liệu
+  // Hàm gửi dữ liệu Turtle trực tiếp đến GraphDB
   async insertData(turtleData: string): Promise<void> {
-    // Tách các dòng @prefix và chuyển đổi sang định dạng SPARQL PREFIX
-    const lines = turtleData.split("\n");
-    const prefixes: string[] = [];
-    const triples: string[] = [];
-
-    lines.forEach((line) => {
-      const trimmed = line.trim();
-      if (trimmed.startsWith("@prefix")) {
-        // Chuyển đổi: @prefix ns: <url> .  ->  PREFIX ns: <url>
-        const sparqlPrefix = trimmed
-          .replace(/^@prefix/, "PREFIX")
-          .replace(/\.\s*$/, "");
-        prefixes.push(sparqlPrefix);
-      } else if (trimmed && !trimmed.startsWith("#")) {
-        // Chỉ thêm các dòng không rỗng và không phải comment
-        triples.push(line);
-      }
-    });
-
-    // Xây dựng SPARQL UPDATE query
-    const prefixSection = prefixes.length > 0 ? prefixes.join("\n") : "";
-    const tripleSection = triples.length > 0 ? triples.join("\n") : "";
-
-    const sparqlUpdate = `
-      ${prefixSection}
-      INSERT DATA {
-        ${tripleSection}
-      }
-    `;
-
     try {
       await axios.post(
         `${this.baseUrl}/repositories/${this.repoName}/statements`,
-        sparqlUpdate,
+        turtleData,
         {
           headers: {
-            "Content-Type": "application/sparql-update",
+            "Content-Type": "text/turtle",
           },
         }
       );
       console.log("✅ Data pushed to GraphDB successfully");
     } catch (error) {
       console.error("❌ Failed to push to GraphDB:", error);
+      throw error;
     }
   }
   async deleteUserData(userId: string): Promise<void> {

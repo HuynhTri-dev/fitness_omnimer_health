@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:omnihealthmobileflutter/core/theme/app_spacing.dart';
+import 'package:omnihealthmobileflutter/core/routing/route_config.dart';
 import 'package:omnihealthmobileflutter/injection_container.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_form/cubits/workout_template_form_cubit.dart';
 import 'package:omnihealthmobileflutter/presentation/screen/workout/workout_template_form/cubits/workout_template_form_state.dart';
@@ -29,18 +30,16 @@ part 'widgets/add_exercise_sheet.dart';
 class WorkoutTemplateFormScreen extends StatelessWidget {
   final String? templateId; // null for create, non-null for edit
 
-  const WorkoutTemplateFormScreen({
-    super.key,
-    this.templateId,
-  });
+  const WorkoutTemplateFormScreen({super.key, this.templateId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) {
         final cubit = WorkoutTemplateFormCubit(
-          getWorkoutTemplateByIdUseCase:
-              templateId != null ? sl<GetWorkoutTemplateByIdUseCase>() : null,
+          getWorkoutTemplateByIdUseCase: templateId != null
+              ? sl<GetWorkoutTemplateByIdUseCase>()
+              : null,
           createWorkoutTemplateUseCase: sl<CreateWorkoutTemplateUseCase>(),
           updateWorkoutTemplateUseCase: sl<UpdateWorkoutTemplateUseCase>(),
         );
@@ -69,9 +68,11 @@ class _WorkoutTemplateFormView extends StatelessWidget {
         child: BlocConsumer<WorkoutTemplateFormCubit, WorkoutTemplateFormState>(
           listener: (context, state) {
             if (state.status == WorkoutTemplateFormStatus.saved) {
-              Navigator.of(context).pop(true); // Return true to indicate success
-            } else if (state.status == WorkoutTemplateFormStatus.error && 
-                       state.errorMessage != null) {
+              Navigator.of(
+                context,
+              ).pop(true); // Return true to indicate success
+            } else if (state.status == WorkoutTemplateFormStatus.error &&
+                state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.errorMessage!),
@@ -99,7 +100,10 @@ class _WorkoutTemplateFormView extends StatelessWidget {
                 // Content
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 16.h,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -117,9 +121,8 @@ class _WorkoutTemplateFormView extends StatelessWidget {
                             padding: EdgeInsets.only(bottom: AppSpacing.md.h),
                             child: Text(
                               'Exercises (${state.exercises.length})',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ),
 
@@ -138,9 +141,8 @@ class _WorkoutTemplateFormView extends StatelessWidget {
                                   SizedBox(height: 16.h),
                                   Text(
                                     'No exercises added yet',
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                          color: Colors.grey,
-                                        ),
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(color: Colors.grey),
                                   ),
                                 ],
                               ),
@@ -151,7 +153,8 @@ class _WorkoutTemplateFormView extends StatelessWidget {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: state.exercises.length,
-                            separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                            separatorBuilder: (context, index) =>
+                                SizedBox(height: 12.h),
                             itemBuilder: (context, index) {
                               final exercise = state.exercises[index];
                               return _ExerciseItem(
@@ -229,14 +232,13 @@ class _WorkoutTemplateFormView extends StatelessWidget {
       context: context,
       builder: (dialogContext) => MultiBlocProvider(
         providers: [
-          BlocProvider.value(
-            value: context.read<WorkoutTemplateFormCubit>(),
-          ),
+          BlocProvider.value(value: context.read<WorkoutTemplateFormCubit>()),
           BlocProvider(
             create: (_) => TemplateDetailsCubit(
               getAllBodyPartsUseCase: sl<GetAllBodyPartsUseCase>(),
               getAllEquipmentsUseCase: sl<GetAllEquipmentsUseCase>(),
-              getAllExerciseCategoriesUseCase: sl<GetAllExerciseCategoriesUseCase>(),
+              getAllExerciseCategoriesUseCase:
+                  sl<GetAllExerciseCategoriesUseCase>(),
               getAllExerciseTypesUseCase: sl<GetAllExerciseTypesUseCase>(),
               getAllMusclesUseCase: sl<GetAllMuscleTypesUseCase>(),
             ),
@@ -254,9 +256,7 @@ class _WorkoutTemplateFormView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (sheetContext) => MultiBlocProvider(
         providers: [
-          BlocProvider.value(
-            value: context.read<WorkoutTemplateFormCubit>(),
-          ),
+          BlocProvider.value(value: context.read<WorkoutTemplateFormCubit>()),
           BlocProvider(
             create: (_) => ExerciseSelectionCubit(
               getExercisesUseCase: sl<GetExercisesUseCase>(),
@@ -270,13 +270,12 @@ class _WorkoutTemplateFormView extends StatelessWidget {
 
   void _handleSave(BuildContext context) async {
     final cubit = context.read<WorkoutTemplateFormCubit>();
-    
+
     final success = await cubit.saveTemplate();
-    
+
     if (!success && context.mounted) {
       // Error message already handled by cubit listener
       // Just stay on the page
     }
   }
 }
-

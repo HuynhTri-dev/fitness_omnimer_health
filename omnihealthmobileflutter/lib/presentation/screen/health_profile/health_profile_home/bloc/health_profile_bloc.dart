@@ -130,11 +130,35 @@ class HealthProfileBloc extends Bloc<HealthProfileEvent, HealthProfileState> {
     GetLatestHealthProfileEvent event,
     Emitter<HealthProfileState> emit,
   ) async {
-    await _executeUseCase<HealthProfile>(
-      () => _getLatestHealthProfileUseCase(NoParams()),
-      emit,
-      (data) => HealthProfileLoaded(data),
-    );
+    List<GoalEntity> currentGoals = [];
+    if (state is HealthProfileLoaded) {
+      currentGoals = (state as HealthProfileLoaded).goals;
+    } else if (state is HealthProfileEmpty) {
+      currentGoals = (state as HealthProfileEmpty).goals;
+    }
+
+    emit(const HealthProfileLoading());
+    try {
+      final response = await _getLatestHealthProfileUseCase(NoParams());
+      if (response.success && response.data != null) {
+        emit(HealthProfileLoaded(response.data!, goals: currentGoals));
+      } else {
+        if (response.message.toLowerCase().contains('not found') ||
+            response.message.contains('404')) {
+          emit(HealthProfileEmpty(goals: currentGoals));
+        } else {
+          emit(HealthProfileError(response.message));
+        }
+      }
+    } catch (e) {
+      final errorMsg = _extractErrorMessage(e);
+      if (errorMsg.toLowerCase().contains('not found') ||
+          errorMsg.contains('404')) {
+        emit(HealthProfileEmpty(goals: currentGoals));
+      } else {
+        emit(HealthProfileError(errorMsg));
+      }
+    }
   }
 
   Future<void> _onGetHealthProfilesByUserId(

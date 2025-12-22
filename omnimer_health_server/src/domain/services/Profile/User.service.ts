@@ -152,19 +152,29 @@ export class UserService {
       isDataSharingAccepted: newValue,
     });
 
-    const graphDBService = new GraphDBService();
+    // Sync with GraphDB (soft fail if error)
+    try {
+      const graphDBService = new GraphDBService();
 
-    if (newValue) {
-      // If turning ON, map to RDF and insert
-      if (updatedUser) {
-        const rdfData = LODMapper.mapUserToRDF(updatedUser);
-        if (rdfData) {
-          await graphDBService.insertData(rdfData);
+      if (newValue) {
+        // If turning ON, map to RDF and insert
+        if (updatedUser) {
+          const rdfData = LODMapper.mapUserToRDF(updatedUser);
+          if (rdfData) {
+            await graphDBService.insertData(rdfData);
+          }
         }
+      } else {
+        // If turning OFF, delete from GraphDB
+        await graphDBService.deleteUserData(userId);
       }
-    } else {
-      // If turning OFF, delete from GraphDB
-      await graphDBService.deleteUserData(userId);
+    } catch (err) {
+      // GraphDB failure should not block the main user update
+      console.warn(
+        "⚠️ GraphDB sync failed (likely disk full or service down), but User DB updated:",
+        err
+      );
+      // Optional: Add to a retry queue or log specific error
     }
 
     return updatedUser;

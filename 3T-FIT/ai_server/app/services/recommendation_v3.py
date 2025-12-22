@@ -1,8 +1,6 @@
 import numpy as np
-import pandas as pd
 import torch
 import logging
-from typing import Dict, List, Optional
 from services.decoders import WorkoutDecoder
 from utils.preprocess_v3 import transform_profile_v3
 from models.model_v3 import get_model_v3, get_exercise_columns_v3, get_target_scales_v3

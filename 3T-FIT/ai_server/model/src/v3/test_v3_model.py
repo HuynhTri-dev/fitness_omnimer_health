@@ -19,13 +19,16 @@ Author: Claude Code Assistant
 Date: 2025-11-25
 """
 
-import os, json, argparse, numpy as np, pandas as pd, torch, torch.nn.functional as F
+import os
+import json
+import argparse
+import numpy as np
+import pandas as pd
+import torch
 from pathlib import Path
 import joblib
-from typing import Dict, List, Tuple, Optional, Union
+from typing import Dict, List, Optional, Union
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Import model classes and functions from training script
 try:
@@ -58,7 +61,7 @@ class V3ModelTester:
         self.metadata = None
         self.feature_columns = None
 
-        print(f"Initializing V3 Model Tester...")
+        print("Initializing V3 Model Tester...")
         print(f"Artifacts directory: {self.artifacts_dir}")
         print(f"Using device: {self.device}")
 
@@ -91,7 +94,7 @@ class V3ModelTester:
             self.model.load_state_dict(checkpoint['model_state_dict'])
             self.model.eval()
 
-            print(f"✅ Model loaded successfully")
+            print("✅ Model loaded successfully")
             print(f"   - Input dimensions: {input_dim}")
             print(f"   - Parameters: {sum(p.numel() for p in self.model.parameters()):,}")
 
@@ -99,7 +102,7 @@ class V3ModelTester:
             preprocessor_path = self.artifacts_dir / "preprocessor_v3.joblib"
             if preprocessor_path.exists():
                 self.preprocessor = joblib.load(preprocessor_path)
-                print(f"✅ Preprocessor loaded successfully")
+                print("✅ Preprocessor loaded successfully")
             else:
                 raise FileNotFoundError(f"Preprocessor file not found: {preprocessor_path}")
 
@@ -109,7 +112,7 @@ class V3ModelTester:
                 with open(metadata_path, 'r', encoding='utf-8') as f:
                     self.metadata = json.load(f)
                 self.feature_columns = self.metadata['dataset_info']['feature_columns']
-                print(f"✅ Metadata loaded successfully")
+                print("✅ Metadata loaded successfully")
                 print(f"   - Model version: {self.metadata.get('model_version', 'unknown')}")
                 print(f"   - Feature columns: {self.feature_columns}")
             else:
@@ -301,7 +304,7 @@ class V3ModelTester:
         y_suit_true = df_test['suitability_score'].values
         y_ready_true = df_test['readiness_factor'].values
 
-        print(f"📋 Test data info:")
+        print("📋 Test data info:")
         print(f"   - Samples: {len(df_test)}")
         print(f"   - Features used: {available_features}")
         print(f"   - 1RM range: [{y_1rm_true.min():.1f}, {y_1rm_true.max():.1f}]")
@@ -337,19 +340,19 @@ class V3ModelTester:
         }
 
         # Print results
-        print(f"\n📈 Evaluation Results:")
-        print(f"   1RM Prediction:")
+        print("\n📈 Evaluation Results:")
+        print("   1RM Prediction:")
         print(f"      - MAE: {metrics['1RM']['mae']:.3f}")
         print(f"      - RMSE: {metrics['1RM']['rmse']:.3f}")
         print(f"      - R²: {metrics['1RM']['r2']:.3f}")
         print(f"      - MAPE: {metrics['1RM']['mape']:.2f}%")
 
-        print(f"   Suitability Prediction:")
+        print("   Suitability Prediction:")
         print(f"      - MAE: {metrics['Suitability']['mae']:.3f}")
         print(f"      - RMSE: {metrics['Suitability']['rmse']:.3f}")
         print(f"      - R²: {metrics['Suitability']['r2']:.3f}")
 
-        print(f"   Readiness Prediction:")
+        print("   Readiness Prediction:")
         print(f"      - MAE: {metrics['Readiness']['mae']:.3f}")
         print(f"      - RMSE: {metrics['Readiness']['rmse']:.3f}")
         print(f"      - R²: {metrics['Readiness']['r2']:.3f}")
@@ -394,7 +397,7 @@ class V3ModelTester:
         predictions_file = results_dir / f"predictions_{timestamp}.xlsx"
         results_df.to_excel(predictions_file, index=False)
 
-        print(f"💾 Results saved:")
+        print("💾 Results saved:")
         print(f"   - Metrics: {metrics_file}")
         print(f"   - Predictions: {predictions_file}")
 
@@ -498,19 +501,19 @@ class V3ModelTester:
         print("="*60)
 
         # User profile summary
-        print(f"👤 User Profile:")
+        print("👤 User Profile:")
         print(f"   Age: {user_profile['age']}, Weight: {user_profile['weight_kg']:.1f}kg, Height: {user_profile['height_m']:.2f}m")
         print(f"   Experience: Level {user_profile['experience_level']}, Workout Frequency: {user_profile['workout_frequency']}/week")
         print(f"   SePA Status: Mood={user_profile['mood_numeric']}, Fatigue={user_profile['fatigue_numeric']}, Effort={user_profile['effort_numeric']}")
 
         # Predictions
-        print(f"\n🎯 Model Predictions:")
+        print("\n🎯 Model Predictions:")
         print(f"   Estimated 1RM: {recommendation['predicted_1rm']:.1f} kg")
         print(f"   Readiness Factor: {recommendation['readiness_factor']:.3f}")
         print(f"   Suitability Score: {recommendation['suitability_score']:.3f}")
 
         # Workout recommendations
-        print(f"\n💪 Workout Recommendations:")
+        print("\n💪 Workout Recommendations:")
         for goal, workout in recommendation['workout_recommendations'].items():
             print(f"\n   {goal.upper()}:")
             print(f"      Training Weight: {workout['training_weight_kg']['recommended']:.1f}kg "
@@ -565,7 +568,7 @@ def main():
         # Generate recommendations for first few samples
         recommendations = tester.generate_workout_recommendations(predictions)
 
-        print(f"\n📊 Batch Testing Results:")
+        print("\n📊 Batch Testing Results:")
         print(f"Input file: {args.input_file}")
         print(f"Samples processed: {len(df_batch)}")
 
@@ -598,7 +601,7 @@ def main():
             except Exception as e:
                 print(f"❌ Error evaluating {test_file.name}: {e}")
 
-        print(f"\n📋 Summary of All Evaluations:")
+        print("\n📋 Summary of All Evaluations:")
         for filename, results in all_results.items():
             metrics = results['metrics']
             print(f"\n{filename}:")

@@ -4,10 +4,7 @@ class _ExerciseDetailCard extends StatelessWidget {
   final WorkoutTemplateDetailEntity exercise;
   final int index;
 
-  const _ExerciseDetailCard({
-    required this.exercise,
-    required this.index,
-  });
+  const _ExerciseDetailCard({required this.exercise, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -16,118 +13,123 @@ class _ExerciseDetailCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withOpacity(0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header row with index and exercise info
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Index number
-              Container(
-                width: 32.w,
-                height: 32.w,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  '$index',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(width: 12.w),
-
-              // Exercise image (if available)
-              if (exercise.exerciseImageUrl != null &&
-                  exercise.exerciseImageUrl!.isNotEmpty)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8.r),
-                  child: Image.network(
-                    exercise.exerciseImageUrl!,
-                    width: 50.w,
-                    height: 50.w,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 50.w,
-                        height: 50.w,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Icon(
-                          Icons.fitness_center,
-                          color: Colors.grey[400],
-                          size: 24.sp,
-                        ),
-                      );
-                    },
-                  ),
-                )
-              else
+          GestureDetector(
+            onTap: () {
+              RouteConfig.navigateToExerciseDetail(
+                context,
+                exerciseId: exercise.exerciseId,
+              );
+            },
+            behavior: HitTestBehavior.opaque,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Index number
                 Container(
-                  width: 50.w,
-                  height: 50.w,
+                  width: 32.w,
+                  height: 32.w,
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
+                    color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: Icon(
-                    Icons.fitness_center,
-                    color: Colors.grey[400],
-                    size: 24.sp,
+                  alignment: Alignment.center,
+                  child: Text(
+                    '$index',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+                SizedBox(width: 12.w),
 
-              SizedBox(width: 12.w),
-
-              // Exercise name and type
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      exercise.exerciseName,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                // Exercise image (if available)
+                if (exercise.exerciseImageUrl != null &&
+                    exercise.exerciseImageUrl!.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: Image.network(
+                      exercise.exerciseImageUrl!,
+                      width: 50.w,
+                      height: 50.w,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 50.w,
+                          height: 50.w,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(8.r),
                           ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                          child: Icon(
+                            Icons.fitness_center,
+                            color: Colors.grey[400],
+                            size: 24.sp,
+                          ),
+                        );
+                      },
                     ),
-                    SizedBox(height: 4.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 2.h,
+                  )
+                else
+                  Container(
+                    width: 50.w,
+                    height: 50.w,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.fitness_center,
+                      color: Colors.grey[400],
+                      size: 24.sp,
+                    ),
+                  ),
+
+                SizedBox(width: 12.w),
+
+                // Exercise name and type
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        exercise.exerciseName,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      decoration: BoxDecoration(
-                        color: _getTypeColor(exercise.type).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(4.r),
-                      ),
-                      child: Text(
-                        exercise.type,
-                        style: TextStyle(
-                          color: _getTypeColor(exercise.type),
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w600,
+                      SizedBox(height: 4.h),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getTypeColor(exercise.type).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Text(
+                          exercise.type,
+                          style: TextStyle(
+                            color: _getTypeColor(exercise.type),
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           // Sets section
@@ -187,7 +189,9 @@ class _ExerciseDetailCard extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 6.h),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.1),
+                          color: Theme.of(
+                            context,
+                          ).primaryColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Text(
@@ -306,4 +310,3 @@ class _ExerciseDetailCard extends StatelessWidget {
     return '-';
   }
 }
-

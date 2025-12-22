@@ -4,7 +4,6 @@ import numpy as np
 import os
 import sys
 import json
-import pickle
 
 # Add the current directory to path to import training_model
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))

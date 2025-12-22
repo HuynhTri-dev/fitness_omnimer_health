@@ -11,9 +11,8 @@ Output: final_dataset.xlsx - Cleaned, normalized, and combined dataset ready for
 
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
-from typing import Dict, Tuple, List
-import warnings
+from sklearn.preprocessing import MinMaxScaler, LabelEncoder
+from typing import Dict, Tuple
 import logging
 
 # Set up logging
@@ -286,7 +285,7 @@ class DataProcessor:
         logger.info("Calculating enhanced suitability scores...")
 
         df = df.copy()
-        n_samples = len(df)
+        len(df)
 
         # 1. Psychological Component (40%) - based on mood and fatigue
         if 'mood' in df.columns and 'fatigue' in df.columns:
@@ -328,7 +327,7 @@ class DataProcessor:
         # Create binary classification label (threshold = 0.7)
         df['is_suitable'] = (df['enhanced_suitability'] >= 0.7).astype(int)
 
-        logger.info(f"Enhanced suitability scores calculated:")
+        logger.info("Enhanced suitability scores calculated:")
         logger.info(f"  Mean: {df['enhanced_suitability'].mean():.3f}")
         logger.info(f"  Std: {df['enhanced_suitability'].std():.3f}")
         logger.info(f"  Suitable (>=0.7): {df['is_suitable'].sum()} ({df['is_suitable'].mean()*100:.1f}%)")
@@ -428,13 +427,13 @@ class DataProcessor:
                     null_count = self.processed_data[col].isnull().sum()
                     f.write(f"{i:2d}. {col:30s} ({str(dtype):10s}) - Null: {null_count}\n")
 
-                f.write(f"\nDATASET SOURCES:\n")
+                f.write("\nDATASET SOURCES:\n")
                 f.write("-" * 20 + "\n")
                 source_counts = self.processed_data['data_source'].value_counts()
                 for source, count in source_counts.items():
                     f.write(f"{source:10s}: {count:6d} records ({count/len(self.processed_data)*100:.1f}%)\n")
 
-                f.write(f"\nSUITABILITY DISTRIBUTION:\n")
+                f.write("\nSUITABILITY DISTRIBUTION:\n")
                 f.write("-" * 30 + "\n")
                 f.write(f"Enhanced Suitability - Mean: {self.processed_data['enhanced_suitability'].mean():.3f}\n")
                 f.write(f"Enhanced Suitability - Std:  {self.processed_data['enhanced_suitability'].std():.3f}\n")
@@ -481,7 +480,7 @@ def main():
 
     try:
         # Process datasets
-        final_dataset = processor.process_datasets(kaggle_path, real_path)
+        processor.process_datasets(kaggle_path, real_path)
 
         # Save processed data
         processor.save_processed_data(output_path)
