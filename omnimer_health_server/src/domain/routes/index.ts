@@ -21,6 +21,7 @@ import watchLogRoute from "./watch-log.route";
 import AIRoute from "./ai.route";
 import chartRoute from "./chart.route";
 import adminChartRoute from "./admin-chart.route";
+import graphQlRoute from "./grapql.route";
 
 function setupRoutes(app: Express) {
   // System
@@ -53,5 +54,8 @@ function setupRoutes(app: Express) {
   app.use("/api/v1/chart", chartRoute);
   // Admin Charts
   app.use("/api/v1/admin-chart", adminChartRoute);
+
+  // GrapQL
+  app.use("/graphql/health", graphQlRoute);
 }
 export default setupRoutes;

@@ -1640,4 +1640,96 @@ export class LODMapper {
     writer.end((error, result) => (rdfOutput = result));
     return rdfOutput;
   }
+
+  // === SPARQL GENERATION ===
+
+  static getSPARQLUserQuery(userId: string): string {
+    const userHash = this.hashUserId(userId);
+    const userURI = `${PREFIXES[""]}user_${userHash}`;
+    const goalUserRef = `User/${userId}`; // Goals use raw ID ref
+
+    return `
+PREFIX : <${PREFIXES[""]}>
+PREFIX ont: <${PREFIXES.ont}>
+PREFIX sosa: <${PREFIXES.sosa}>
+PREFIX schema: <${PREFIXES.schema}>
+PREFIX fhir: <${PREFIXES.fhir}>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+CONSTRUCT {
+    ?user ?pUser ?oUser .
+    
+    ?hp ?pHp ?oHp .
+    ?hpObs ?pHpObs ?oHpObs .
+    
+    ?wl ?pWl ?oWl .
+    ?wlObs ?pWlObs ?oWlObs .
+    
+    ?wk ?pWk ?oWk .
+    ?wkDetail ?pWkDetail ?oWkDetail .
+    ?wkSet ?pWkSet ?oWkSet .
+    
+    ?gl ?pGl ?oGl .
+    ?glDetail ?pGlDetail ?oGlDetail .
+    ?glDeep ?pGlDeep ?oGlDeep .
+}
+WHERE {
+    {
+        # User Data
+        BIND (<${userURI}> AS ?user)
+        ?user ?pUser ?oUser .
+    }
+    UNION
+    {
+        # Health Profiles
+        ?hp sosa:hasFeatureOfInterest <${userURI}> .
+        ?hp ?pHp ?oHp .
+        OPTIONAL {
+            ?hp sosa:hasMember ?hpObs .
+            ?hpObs ?pHpObs ?oHpObs .
+        }
+    }
+    UNION
+    {
+        # Watch Logs
+        ?wl sosa:hasFeatureOfInterest <${userURI}> .
+        ?wl ?pWl ?oWl .
+        OPTIONAL {
+            ?wl sosa:hasMember ?wlObs .
+            ?wlObs ?pWlObs ?oWlObs .
+        }
+    }
+    UNION
+    {
+        # Workouts
+        ?wk schema:agent <${userURI}> .
+        ?wk ?pWk ?oWk .
+        OPTIONAL {
+            ?wk schema:instrument ?wkDetail .
+            ?wkDetail ?pWkDetail ?oWkDetail .
+            OPTIONAL {
+                ?wkDetail ont:hasSet ?wkSet .
+                ?wkSet ?pWkSet ?oWkSet .
+            }
+        }
+    }
+    UNION
+    {
+        # Goals
+        ?gl fhir:Goal.subject ?sub .
+        ?sub fhir:Reference.reference "${goalUserRef}" .
+        ?gl ?pGl ?oGl .
+        OPTIONAL {
+            # Capture blank nodes 1 level deep (startDate, description, target)
+            ?oGl ?pGlDetail ?oGlDetail .
+            FILTER(isBlank(?oGl))
+            OPTIONAL {
+                # Capture blank nodes 2 levels deep (target -> measure/quantity)
+                ?oGlDetail ?pGlDeep ?oGlDeep .
+                FILTER(isBlank(?oGlDetail))
+            }
+        }
+    }
+}`;
+  }
 }

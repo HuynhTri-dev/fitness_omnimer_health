@@ -436,6 +436,24 @@ export class HealthProfileService {
         status: StatusLogEnum.Success,
       });
 
+      if (profile) {
+        // Sanitization for AI service (prevent 422)
+        if (!profile.experienceLevel) profile.experienceLevel = "Beginner";
+        if (!profile.restingHeartRate) profile.restingHeartRate = 75; // Avg RHR
+        if (!profile.activityLevel) profile.activityLevel = 1; // Sedentary
+        if (!profile.workoutFrequency) profile.workoutFrequency = 3; // Moderate
+        if (!profile.maxWeightLifted) profile.maxWeightLifted = 20; // Beginner weight
+        if (!profile.healthStatus) {
+          profile.healthStatus = {
+            knownConditions: [],
+            painLocations: [],
+            jointIssues: [],
+            injuries: [],
+            abnormalities: [],
+          };
+        }
+      }
+
       return profile;
     } catch (err: any) {
       await logError({

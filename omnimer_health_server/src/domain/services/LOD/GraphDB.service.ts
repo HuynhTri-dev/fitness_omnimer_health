@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { graphDBConfig } from "../../../common/configs/graphdb.config";
+import { LODMapper } from "./LODMapper";
 
 export class GraphDBService {
   private readonly baseUrl: string;
@@ -9,6 +10,26 @@ export class GraphDBService {
   constructor() {
     this.baseUrl = graphDBConfig.baseUrl;
     this.repoName = graphDBConfig.repoName;
+  }
+
+  async getUserGraphData(userId: string): Promise<any> {
+    const query = LODMapper.getSPARQLUserQuery(userId);
+    try {
+      const response = await axios.post(
+        `${this.baseUrl}/repositories/${this.repoName}`,
+        query,
+        {
+          headers: {
+            "Content-Type": "application/sparql-query",
+            Accept: "text/turtle", // Retrieve as Turtle format
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`❌ Failed to fetch graph data for user ${userId}:`, error);
+      throw error;
+    }
   }
 
   // Hàm gửi dữ liệu Turtle trực tiếp đến GraphDB
