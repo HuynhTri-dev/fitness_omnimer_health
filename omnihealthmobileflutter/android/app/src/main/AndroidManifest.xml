@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.omnihealthmobileflutter">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <!-- Check whether Health Connect is installed or not -->
     <queries>
         <package android:name="com.google.android.apps.healthdata" />

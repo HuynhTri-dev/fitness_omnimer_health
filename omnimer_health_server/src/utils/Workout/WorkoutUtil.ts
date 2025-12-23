@@ -4,7 +4,7 @@ import { IWorkout } from "../../domain/models";
  * Tính toán summary cho 1 buổi tập Workout
  * Tổng hợp các chỉ số từ những set có done === true và deviceData (nếu có)
  */
-export function calculateWorkoutSummary(workout: IWorkout) {
+export function calculateWorkoutSummary(workout: IWorkout, endTime?: Date) {
   const summary = {
     totalSets: 0,
     totalReps: 0,
@@ -26,11 +26,14 @@ export function calculateWorkoutSummary(workout: IWorkout) {
     for (const set of doneSets) {
       summary.totalSets++;
       if (set.reps) summary.totalReps += set.reps;
-      if (set.weight) summary.totalWeight += set.weight;
+      // Fix: Total Weight = Weight * Reps (Volume)
+      if (set.weight && set.reps) {
+        summary.totalWeight += set.weight * set.reps;
+      }
       if (set.distance) summary.totalDistance += set.distance;
     }
 
-    // Tổng thời gian bài tập (nếu có)
+    // Tổng thời gian bài tập (tích lũy từ bài tập lẻ)
     if (exercise.durationMin) summary.totalDuration += exercise.durationMin;
 
     // Dữ liệu thiết bị (nếu có)
@@ -50,6 +53,20 @@ export function calculateWorkoutSummary(workout: IWorkout) {
       }
     }
   }
+
+  // Override Total Duration if endTime is provided (Wall-clock time)
+  if (endTime && workout.timeStart) {
+    const start = new Date(workout.timeStart).getTime();
+    const end = new Date(endTime).getTime();
+    const durationMs = end - start;
+    if (durationMs > 0) {
+      summary.totalDuration = durationMs / 60000; // convert to minutes
+    }
+  }
+
+  // Rounding values
+  summary.totalDuration = parseFloat(summary.totalDuration.toFixed(2));
+  summary.totalCalories = parseFloat(summary.totalCalories.toFixed(2));
 
   // Trung bình nhịp tim
   if (heartRateAvgCount > 0) {

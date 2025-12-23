@@ -55,14 +55,49 @@ class ExerciseDetailBody extends StatelessWidget {
                       child: Image.network(
                         exercise.imageUrls[index],
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
                           return Center(
-                            child: Icon(
-                              Icons.broken_image,
-                              size: 48.sp,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.labelSmall?.color,
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          debugPrint(
+                            'Error loading image: ${exercise.imageUrls[index]}, Error: $error',
+                          );
+                          return Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.broken_image,
+                                  size: 48.sp,
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                                SizedBox(height: 8.h),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0,
+                                  ),
+                                  child: Text(
+                                    'Unable to load image',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.copyWith(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.error,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },

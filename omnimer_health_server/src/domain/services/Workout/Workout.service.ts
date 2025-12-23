@@ -586,7 +586,7 @@ export class WorkoutService {
       const workout = await this.workoutRepo.findById(workoutId);
       if (!workout) throw new HttpError(404, "Buổi tập không tồn tại");
 
-      const summary = calculateWorkoutSummary(workout);
+      const summary = calculateWorkoutSummary(workout, new Date());
 
       workout.summary = summary;
       await workout.save();

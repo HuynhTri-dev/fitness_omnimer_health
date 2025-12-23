@@ -125,9 +125,9 @@ enum WorkoutDetailTypeEnum {
 
 // =================== RISK LEVEL ===================
 enum RiskLevelEnum {
-  Low("low"),
+  Low("Low"),
   Medium("Medium"),
-  High("high"),
+  High("High"),
   Unknown("");
 
   final String displayName;
