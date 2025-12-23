@@ -4,6 +4,7 @@ import { ExerciseCategoryService } from "../services";
 import { ExerciseCategoryRepository } from "../repositories";
 import { ExerciseCategory } from "../models";
 import { verifyAccessToken } from "../../common/middlewares/auth.middleware";
+import { RedisService } from "../../redis/RedisService";
 
 const exerciseCategoryRepository = new ExerciseCategoryRepository(
   ExerciseCategory
@@ -11,8 +12,10 @@ const exerciseCategoryRepository = new ExerciseCategoryRepository(
 const exerciseCategoryService = new ExerciseCategoryService(
   exerciseCategoryRepository
 );
+const redisService = new RedisService();
 const exerciseCategoryController = new ExerciseCategoryController(
-  exerciseCategoryService
+  exerciseCategoryService,
+  redisService
 );
 const router = Router();
 

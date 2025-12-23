@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ExerciseCategoryService } from "../../services";
+import { RedisService } from "../../../redis/RedisService";
 import {
   sendSuccess,
   sendCreated,
@@ -10,9 +11,14 @@ import { buildQueryOptions } from "../../../utils/BuildQueryOptions";
 
 export class ExerciseCategoryController {
   private readonly exerciseCategoryService: ExerciseCategoryService;
+  private readonly redisService: RedisService;
 
-  constructor(exerciseCategoryService: ExerciseCategoryService) {
+  constructor(
+    exerciseCategoryService: ExerciseCategoryService,
+    redisService: RedisService
+  ) {
     this.exerciseCategoryService = exerciseCategoryService;
+    this.redisService = redisService;
   }
 
   // =================== CREATE ===================
@@ -30,6 +36,10 @@ export class ExerciseCategoryController {
           userId,
           req.body
         );
+
+      // Invalidate cache
+      await this.redisService.del("exercise_category:list");
+
       return sendCreated(res, exerciseCategory, "Tạo loại bài tập thành công");
     } catch (err) {
       next(err);
@@ -39,9 +49,29 @@ export class ExerciseCategoryController {
   // =================== GET ALL ===================
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const cacheKey = "exercise_category:list";
+
+      // Try reading from cache first
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) {
+        return sendSuccess(
+          res,
+          JSON.parse(cached),
+          "Danh sách loại bài tập (Cache)"
+        );
+      }
+
       const options = buildQueryOptions(req.params as any);
       const exerciseCategories =
         await this.exerciseCategoryService.getExerciseCategorys(options);
+
+      // Save to cache
+      await this.redisService.set(
+        cacheKey,
+        JSON.stringify(exerciseCategories),
+        24 * 60 * 60
+      );
+
       return sendSuccess(res, exerciseCategories, "Danh sách loại bài tập");
     } catch (err) {
       next(err);
@@ -51,10 +81,29 @@ export class ExerciseCategoryController {
   // =================== GET BY ID ===================
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const exerciseCategory =
-        await this.exerciseCategoryService.getExerciseCategoryById(
-          req.params.id
+      const { id } = req.params;
+      const cacheKey = `exercise_category:${id}`;
+
+      // Try cache first
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) {
+        return sendSuccess(
+          res,
+          JSON.parse(cached),
+          "Chi tiết loại bài tập (Cache)"
         );
+      }
+
+      const exerciseCategory =
+        await this.exerciseCategoryService.getExerciseCategoryById(id);
+
+      // Save to cache
+      await this.redisService.set(
+        cacheKey,
+        JSON.stringify(exerciseCategory),
+        24 * 60 * 60
+      );
+
       return sendSuccess(res, exerciseCategory, "Chi tiết loại bài tập");
     } catch (err) {
       next(err);
@@ -71,12 +120,19 @@ export class ExerciseCategoryController {
         return;
       }
 
+      const { id } = req.params;
+
       const exerciseCategory =
         await this.exerciseCategoryService.updateExerciseCategory(
-          req.params.id,
+          id,
           req.body,
           userId
         );
+
+      // Invalidate cache
+      await this.redisService.del("exercise_category:list");
+      await this.redisService.del(`exercise_category:${id}`);
+
       return sendSuccess(
         res,
         exerciseCategory,
@@ -97,11 +153,15 @@ export class ExerciseCategoryController {
         return;
       }
 
+      const { id } = req.params;
+
       const exerciseCategory =
-        await this.exerciseCategoryService.deleteExerciseCategory(
-          req.params.id,
-          userId
-        );
+        await this.exerciseCategoryService.deleteExerciseCategory(id, userId);
+
+      // Invalidate cache
+      await this.redisService.del("exercise_category:list");
+      await this.redisService.del(`exercise_category:${id}`);
+
       return sendSuccess(res, exerciseCategory, "Xóa loại bài tập thành công");
     } catch (err) {
       next(err);
