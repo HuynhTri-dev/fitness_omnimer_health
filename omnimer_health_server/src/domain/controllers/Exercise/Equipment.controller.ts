@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { EquipmentService } from "../../services";
+import { RedisService } from "../../../redis/RedisService";
 import {
   sendSuccess,
   sendCreated,
@@ -10,9 +11,14 @@ import { buildQueryOptions } from "../../../utils/BuildQueryOptions";
 
 export class EquipmentController {
   private readonly equipmentController: EquipmentService;
+  private readonly redisService: RedisService;
 
-  constructor(equipmentController: EquipmentService) {
+  constructor(
+    equipmentController: EquipmentService,
+    redisService: RedisService
+  ) {
     this.equipmentController = equipmentController;
+    this.redisService = redisService;
   }
 
   // =================== CREATE ===================
@@ -28,6 +34,9 @@ export class EquipmentController {
         file,
         req.body
       );
+
+      // Invalidate cache
+      await this.redisService.del("equipment:list");
 
       return sendCreated(res, bodyPart, "Tạo thiết bị thành công");
     } catch (err) {
@@ -52,6 +61,9 @@ export class EquipmentController {
         req.body
       );
 
+      // Invalidate cache
+      await this.redisService.del("equipment:list");
+
       return sendSuccess(res, updated, "Cập nhật thiết bị thành công");
     } catch (err) {
       next(err);
@@ -61,9 +73,32 @@ export class EquipmentController {
   // =================== GET ALL ===================
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const options = buildQueryOptions(req.query as any);
+      // Check cache only if no filters/options are present (simple list)
+      const hasOptions = Object.keys(req.query).length > 0;
+      const cacheKey = "equipment:list";
 
+      if (!hasOptions) {
+        const cachedData = await this.redisService.get(cacheKey);
+        if (cachedData) {
+          return sendSuccess(
+            res,
+            JSON.parse(cachedData),
+            "Lấy danh sách thiết bị thành công (Cache)"
+          );
+        }
+      }
+
+      const options = buildQueryOptions(req.query as any);
       const list = await this.equipmentController.getAllEquipments(options);
+
+      // Set cache if it was a simple list request
+      if (!hasOptions) {
+        await this.redisService.set(
+          cacheKey,
+          JSON.stringify(list),
+          24 * 60 * 60
+        ); // 24 hours
+      }
 
       return sendSuccess(res, list, "Lấy danh sách thiết bị thành công");
     } catch (err) {
@@ -80,6 +115,9 @@ export class EquipmentController {
 
       const { id } = req.params;
       await this.equipmentController.deleteEquipment(userId, id);
+
+      // Invalidate cache
+      await this.redisService.del("equipment:list");
 
       return sendSuccess(res, true, "Xoá thiết bị thành công");
     } catch (err) {
