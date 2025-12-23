@@ -42,6 +42,28 @@
 </tr>
 </table>
 
+### Các tính năng chính đã thực hiện
+
+- [x] **Fitness**: Quản lý các thông tin về luyện tập, bao gồm các bài tập, lịch tập, và các thông tin khác. [Fitness Module](https://github.com/HuynhTri-dev/fitness_omnimer_health.git)
+
+  - [x] Exercise: Quản lý các thông tin về các bài tập, bao gồm các thông tin về các bài tập, và các thông tin khác.
+
+  - [x] Workout: Quản lý các thông tin về các lịch tập, bao gồm các thông tin về các lịch tập, và các thông tin khác.
+
+  - [x] Trung tâm dữ liệu sức khỏe của điện thoại: Kết nối với các ứng dụng Health Connect, Healthkit để thu thập dữ liệu sức khỏe
+
+  - [x] Gợi ý các bài tập và cường độ luyện tập bằng mô hình DNN + RAG
+
+  - [ ] Phân tích và xử lý các nhân hóa các cường độ luyện tập cho người dùng
+
+- [x] Health Profile: Quản lý thông tin về sức khỏe người dùng, bao gồm các thông tin về huyết áp, huyết đường,... như một hồ sơ về bệnh lý sức khỏe người dùng.
+
+  - [x] Lưu thông tin hồ sơ sức khỏe cơ bản người dùng.
+
+  - [x] User: Quản lý thông tin về người dùng, bao gồm các thông tin cá nhân, thông tin liên hệ, và các thông tin khác.
+
+  - [x] Auth: Quản lý thông tin về xác thực người dùng, bao gồm các thông tin về tài khoản, mật khẩu, và các thông tin khác.
+
 ---
 
 ## Kiến Trúc Hệ Thống
