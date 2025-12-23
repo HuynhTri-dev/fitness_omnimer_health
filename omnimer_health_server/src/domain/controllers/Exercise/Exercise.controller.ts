@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ExerciseService } from "../../services";
+import { RedisService } from "../../../redis/RedisService";
 import {
   sendSuccess,
   sendCreated,
@@ -10,9 +11,11 @@ import { buildQueryOptions } from "../../../utils/BuildQueryOptions";
 
 export class ExerciseController {
   private readonly exerciseService: ExerciseService;
+  private readonly redisService: RedisService;
 
-  constructor(exerciseService: ExerciseService) {
+  constructor(exerciseService: ExerciseService, redisService: RedisService) {
     this.exerciseService = exerciseService;
+    this.redisService = redisService;
   }
 
   // =================== CREATE ===================
@@ -34,6 +37,9 @@ export class ExerciseController {
         videoFile,
         req.body
       );
+
+      // Invalidate cache
+      await this.redisService.delPattern("exercise:list*");
 
       return sendCreated(res, exercise, "Create exercise success");
     } catch (err) {
@@ -63,6 +69,10 @@ export class ExerciseController {
         req.body
       );
 
+      // Invalidate cache
+      await this.redisService.delPattern("exercise:list*");
+      await this.redisService.del(`exercise:${id}`);
+
       return sendSuccess(res, updated, "Update exercise success");
     } catch (err) {
       next(err);
@@ -72,9 +82,23 @@ export class ExerciseController {
   // =================== GET ALL ===================
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const options = buildQueryOptions(req.query as any);
+      // Use query params hash or string for cache key
+      const queryString = JSON.stringify(req.query);
+      // Simple hash function for shorter keys (optional but good practice)
+      // For simplicity here, just using base64 of query string or the string itself if short
+      const queryHash = Buffer.from(queryString).toString("base64");
+      const cacheKey = `exercise:list:${queryHash}`;
 
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) {
+        return sendSuccess(res, JSON.parse(cached));
+      }
+
+      const options = buildQueryOptions(req.query as any);
       const list = await this.exerciseService.getAllExercises(options);
+
+      // 1 hour TTL for search results
+      await this.redisService.set(cacheKey, JSON.stringify(list), 60 * 60);
 
       return sendSuccess(res, list);
     } catch (err) {
@@ -82,12 +106,24 @@ export class ExerciseController {
     }
   };
 
-  // =================== GET ALL ===================
+  // =================== GET BY ID ===================
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = req.params.id;
+      const cacheKey = `exercise:${id}`;
+
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) {
+        return sendSuccess(res, JSON.parse(cached));
+      }
 
       const exercise = await this.exerciseService.getExerciseById(id);
+
+      await this.redisService.set(
+        cacheKey,
+        JSON.stringify(exercise),
+        24 * 60 * 60
+      );
 
       return sendSuccess(res, exercise);
     } catch (err) {
@@ -104,6 +140,10 @@ export class ExerciseController {
 
       const { id } = req.params;
       await this.exerciseService.deleteExercise(userId, id);
+
+      // Invalidate cache
+      await this.redisService.delPattern("exercise:list*");
+      await this.redisService.del(`exercise:${id}`);
 
       return sendSuccess(res, true, "Delete exercise success");
     } catch (err) {
