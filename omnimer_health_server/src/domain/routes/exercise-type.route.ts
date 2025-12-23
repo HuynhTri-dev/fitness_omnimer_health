@@ -4,10 +4,15 @@ import { ExerciseTypeService } from "../services";
 import { ExerciseTypeRepository } from "../repositories";
 import { ExerciseType } from "../models";
 import { verifyAccessToken } from "../../common/middlewares/auth.middleware";
+import { RedisService } from "../../redis/RedisService";
 
 const exerciseTypeRepository = new ExerciseTypeRepository(ExerciseType);
 const exerciseTypeService = new ExerciseTypeService(exerciseTypeRepository);
-const exerciseTypeController = new ExerciseTypeController(exerciseTypeService);
+const redisService = new RedisService();
+const exerciseTypeController = new ExerciseTypeController(
+  exerciseTypeService,
+  redisService
+);
 const router = Router();
 
 router.get("/", exerciseTypeController.getAll);
