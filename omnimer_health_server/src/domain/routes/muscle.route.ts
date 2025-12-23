@@ -5,12 +5,14 @@ import { MuscleRepository } from "../repositories";
 import { verifyAccessToken } from "../../common/middlewares/auth.middleware";
 import { uploadImage } from "../../common/middlewares/upload.middleware";
 import { Muscle } from "../models";
+import { RedisService } from "../../redis/RedisService";
 
 const router = express.Router();
 
 const repo = new MuscleRepository(Muscle);
 const service = new MuscleService(repo);
-const controller = new MuscleController(service);
+const redisService = new RedisService();
+const controller = new MuscleController(service, redisService);
 
 router.post("/", verifyAccessToken, uploadImage("image"), controller.create);
 router.put("/:id", verifyAccessToken, uploadImage("image"), controller.update);
